@@ -1,0 +1,33 @@
+from flaskavel.lab.beaker.console.reactor import reactor
+from flaskavel.lab.beaker.console.command import Command
+
+@reactor.register
+class {{command-classname}}(Command):
+    """
+    {{command-classname}} is responsible for [{{command-description}}].
+    """
+
+    # The command signature used to execute this command.
+    signature = '{{command-signature}}'
+
+    # A brief description of the command.
+    description = '{{command-description}}'
+
+    def arguments(self):
+        """
+        Define the command line arguments for this command.
+
+        Returns:
+            list: A list of arguments for the command.
+        """
+        return [
+            # Example of an argument: ('--option', 'description')
+            # ('--name', 'The name of the user'),
+        ]
+
+    def handle(self) -> None:
+        """
+        Execute the command's main logic.
+        """
+        # Implement the main functionality of the command here.
+        pass
