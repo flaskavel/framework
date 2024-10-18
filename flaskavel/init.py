@@ -95,7 +95,7 @@ class FlaskavelInit:
             Console.newLine()
             sys.exit(1)
 
-if __name__ == "__main__":
+def main():
 
     # Startup message
     Console.newLine()
@@ -147,3 +147,6 @@ if __name__ == "__main__":
     # Create and run the app
     app = FlaskavelInit(name_app=args.name_app)
     app.create()
+
+if __name__ == "__main__":
+    main()
