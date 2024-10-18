@@ -1,4 +1,5 @@
-import schedule, time
+import time
+import schedule
 from flaskavel.lab.beaker.console.reactor import reactor
 from flaskavel.lab.beaker.console.threaded import ConsoleThread
 
