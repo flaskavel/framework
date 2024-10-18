@@ -1,4 +1,5 @@
 import os
+import time
 from flaskavel.lab.beaker.console.reactor import reactor
 from flaskavel.lab.beaker.console.register import native_commands
 
@@ -10,6 +11,7 @@ class Kernel:
 
     def __init__(self) -> None:
         self.paths = []
+        self.start_time = time.time()
 
     def set_start_time(self, start_time):
         """
@@ -97,5 +99,5 @@ class Kernel:
         self.load_commands(self.base_path)
 
         # Call the specified command using the reactor.
-        reactor.start_time()
+        reactor.start_time(time=self.start_time)
         reactor.call(command, args)

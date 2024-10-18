@@ -1,4 +1,4 @@
-import datetime
+import time
 from flaskavel.lab.experimentor.logguer import Log
 from flaskavel.lab.beaker.console.output import Console
 
@@ -12,12 +12,12 @@ class Reactor:
         Initializes the Reactor instance.
         """
         self.commands = {}
-        self.starttime = datetime.datetime.now()
+        self.start_time = time.time()
 
-    def start_time(self, time):
+    def set_start_time(self, time):
 
-        datetime_from_time = datetime.datetime.fromtimestamp(time)
-        self.starttime = datetime_from_time.now()
+        if isinstance(time, float):
+            self.start_time = time
 
     def register(self, command_class):
         """
@@ -69,17 +69,13 @@ class Reactor:
             if print_console:
                 Console.executeTimestamp(command=signature, state='RUNNING')
 
-            current_datetime = self.starttime
-
             command_class = command_entry['class']
             command_instance = command_class()
             command_instance._setArguments()
             command_instance._argumentsParse(args)
             command_instance.handle()
 
-            end_datetime = datetime.datetime.now()
-
-            execution_duration = int((end_datetime - current_datetime).total_seconds() * 1000)
+            execution_duration = int((time.time() - self.start_time) * 1000)
 
             if print_console:
                 Console.executeTimestamp(command=signature, seconds=f"{execution_duration}ms", state='DONE')
