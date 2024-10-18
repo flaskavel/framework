@@ -9,7 +9,6 @@ class Kernel:
     """
 
     def __init__(self) -> None:
-        # Initialize an empty list to store command paths.
         self.paths = []
 
     def set_start_time(self, start_time):
@@ -98,4 +97,5 @@ class Kernel:
         self.load_commands(self.base_path)
 
         # Call the specified command using the reactor.
+        reactor.start_time()
         reactor.call(command, args)

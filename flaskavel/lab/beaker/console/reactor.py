@@ -12,6 +12,12 @@ class Reactor:
         Initializes the Reactor instance.
         """
         self.commands = {}
+        self.starttime = datetime.datetime.now()
+
+    def start_time(self, time):
+
+        datetime_from_time = datetime.datetime.fromtimestamp(time)
+        self.starttime = datetime_from_time.now()
 
     def register(self, command_class):
         """
@@ -63,7 +69,7 @@ class Reactor:
             if print_console:
                 Console.executeTimestamp(command=signature, state='RUNNING')
 
-            current_datetime = datetime.datetime.now()
+            current_datetime = self.starttime
 
             command_class = command_entry['class']
             command_instance = command_class()
