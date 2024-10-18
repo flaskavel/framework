@@ -1,7 +1,7 @@
 import os
 import getpass
-from flaskavel.lab.beaker.console.colors import ConsoleColor
 from flaskavel.lab.beaker.console.helpers import strftime
+from flaskavel.lab.beaker.console.colors import ConsoleColor
 
 class Console:
 
@@ -41,8 +41,8 @@ class Console:
         Args:
             message (str, optional): The error message to print. Defaults to an empty string.
         """
-        str_time = strftime() if timestamp else ''
-        print(f"{ConsoleColor.ERROR_COLOR_BG.value}{ConsoleColor.WHITE.value} ERROR {ConsoleColor.DEFAULT.value} {str_time}{message}{ConsoleColor.DEFAULT.value}")
+        str_time = f"{ConsoleColor.MUTED.value}{strftime()}{ConsoleColor.DEFAULT.value}" if timestamp else ''
+        print(f"{ConsoleColor.ERROR_COLOR_BG.value}{ConsoleColor.WHITE.value} ERROR {ConsoleColor.DEFAULT.value} {str_time} {message}{ConsoleColor.DEFAULT.value}")
 
     @staticmethod
     def fail(message:str='', timestamp:bool = False):
@@ -52,8 +52,8 @@ class Console:
         Args:
             message (str, optional): The failure message to print. Defaults to an empty string.
         """
-        str_time = strftime() if timestamp else ''
-        print(f"{ConsoleColor.ERROR_COLOR_BG.value}{ConsoleColor.WHITE.value} FAIL {ConsoleColor.DEFAULT.value} {str_time}{message}{ConsoleColor.DEFAULT.value}")
+        str_time = f"{ConsoleColor.MUTED.value}{strftime()}{ConsoleColor.DEFAULT.value}" if timestamp else ''
+        print(f"{ConsoleColor.ERROR_COLOR_BG.value}{ConsoleColor.WHITE.value} FAIL {ConsoleColor.DEFAULT.value} {str_time} {message}{ConsoleColor.DEFAULT.value}")
 
     @staticmethod
     def info(message:str='', timestamp:bool = False):
@@ -63,8 +63,8 @@ class Console:
         Args:
             message (str, optional): The informational message to print. Defaults to an empty string.
         """
-        str_time = strftime() if timestamp else ''
-        print(f"{ConsoleColor.INFO_COLOR_BG.value}{ConsoleColor.WHITE.value} FAIL {ConsoleColor.DEFAULT.value} {str_time}{message}{ConsoleColor.DEFAULT.value}")
+        str_time = f"{ConsoleColor.MUTED.value}{strftime()}{ConsoleColor.DEFAULT.value}" if timestamp else ''
+        print(f"{ConsoleColor.INFO_COLOR_BG.value}{ConsoleColor.WHITE.value} INFO {ConsoleColor.DEFAULT.value} {str_time} {message}{ConsoleColor.DEFAULT.value}")
 
     @staticmethod
     def ask(question:str):
