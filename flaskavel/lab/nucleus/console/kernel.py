@@ -99,5 +99,5 @@ class Kernel:
         self.load_commands(self.base_path)
 
         # Call the specified command using the reactor.
-        reactor.start_time(time=self.start_time)
+        reactor.set_start_time(time=self.start_time)
         reactor.call(command, args)
