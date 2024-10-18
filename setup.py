@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="flaskavel",
-    version="0.0.7",
+    version="0.0.8",
     author="Raul Mauricio Uñate Castro",
     author_email="raulmauriciounate@gmail.com",
     description="Like in Laravel but with Python",
