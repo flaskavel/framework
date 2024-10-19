@@ -2,7 +2,7 @@ import os
 import logging
 import threading
 
-class _LoggerSingleton:
+class Logger:
 
     _instance = None
     _lock = threading.Lock()
@@ -10,7 +10,7 @@ class _LoggerSingleton:
     def __new__(cls):
         with cls._lock:
             if cls._instance is None:
-                cls._instance = super(_LoggerSingleton, cls).__new__(cls)
+                cls._instance = super(Logger, cls).__new__(cls)
                 cls._instance._initialize_logger()
         return cls._instance
 
@@ -51,20 +51,20 @@ class Log:
 
     @staticmethod
     def info(message: str):
-        instance = _LoggerSingleton()
+        instance = Logger()
         instance.info(message=message)
 
     @staticmethod
     def error(message: str):
-        instance = _LoggerSingleton()
+        instance = Logger()
         instance.error(message=message)
 
     @staticmethod
     def success(message: str):
-        instance = _LoggerSingleton()
+        instance = Logger()
         instance.success(message=message)
 
     @staticmethod
     def warning(message: str):
-        instance = _LoggerSingleton()
+        instance = Logger()
         instance.warning(message=message)

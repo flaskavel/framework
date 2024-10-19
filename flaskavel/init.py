@@ -1,24 +1,24 @@
 import os
 import re
 import sys
-import shutil
 import argparse
 import subprocess
 from flaskavel.lab.beaker.console.output import Console
+from flaskavel.metadata import SKELETON, VERSION
 
-class FlaskavelInit:
+class CreateApp:
 
     def __init__(self, name_app: str):
         # Convert the name to lowercase, replace spaces with underscores, and strip surrounding whitespace
-        self.name_app = str(name_app).strip().replace(" ", "_").replace("-", "_").lower()
+        self.name_app = str(name_app).strip().replace(' ', '-').lower()
 
         # Git Repo Skeleton
-        self.skeleton_repo = "https://github.com/flaskavel/skeleton"
+        self.skeleton_repo = SKELETON
 
     def create(self):
         try:
             # Validate the application name with regex
-            if not re.match(r'^[a-zA-Z0-9_]+$', self.name_app):
+            if not re.match(r'^[a-zA-Z0-9_]+(-[a-zA-Z0-9_]+)*$', self.name_app):
                 raise ValueError("The application name can only contain letters, numbers, and underscores. Special characters and accents are not allowed.")
 
             # Clone the repository
@@ -110,7 +110,7 @@ def main():
     # Startup message
     Console.newLine()
     Console.info(
-        message="Thank you for choosing Flaskavel. Welcome aboard.",
+        message=f"Thank you for choosing Flaskavel v{VERSION}. Welcome aboard.",
         timestamp=True
     )
 
@@ -155,7 +155,7 @@ def main():
         sys.exit(1)
 
     # Create and run the app
-    app = FlaskavelInit(name_app=args.name_app)
+    app = CreateApp(name_app=args.name_app)
     app.create()
 
 if __name__ == "__main__":

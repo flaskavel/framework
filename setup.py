@@ -1,21 +1,22 @@
 from setuptools import setup, find_packages
+from flaskavel.metadata import NAME, VERSION, AUTHOR, AUTHOR_EMAIL, DESCRIPTION, FRAMEWORK, PYTHON_REQUIRES
 
 setup(
-    name="flaskavel",
-    version="0.0.13",
-    author="Raul Mauricio Uñate Castro",
-    author_email="raulmauriciounate@gmail.com",
-    description="Like in Laravel but with Python",
+    name=NAME,
+    version=VERSION,
+    author=AUTHOR,
+    author_email=AUTHOR_EMAIL,
+    description=DESCRIPTION,
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    url="https://github.com/flaskavel/framework",
+    url=FRAMEWORK,
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.12',
+    python_requires=PYTHON_REQUIRES,
     install_requires=[
         "bcrypt==4.2.0",
         "greenlet==3.1.0",

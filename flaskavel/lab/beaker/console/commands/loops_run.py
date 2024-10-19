@@ -19,6 +19,11 @@ class LoopsRun(Command):
         """
         Unleashes the execution of the loops loaded in the kernel.
         """
+
+        self.newLine()
+        self.info(f"The execution of the scheduled loops has started successfully.")
+        self.newLine()
+
         # Initialize a new Loops instance.
         loops = Loops()
 
