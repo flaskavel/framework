@@ -82,10 +82,8 @@ class FlaskavelInit:
                 timestamp=True
             )
 
-            # Delete .git
-            gitdb = os.path.join(project_path, '.git')
-            if os.path.exists(gitdb):
-                shutil.rmtree(gitdb)
+            # remove .git origin
+            subprocess.run(["git", "remote", "remove", "origin"], check=True)
 
             Console.info(
                 message=f"Project '{self.name_app}' has been successfully established at '{os.path.abspath(project_path)}'.",
