@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+import shutil
 import argparse
 import subprocess
 from flaskavel.lab.beaker.console.output import Console
@@ -80,6 +81,11 @@ class FlaskavelInit:
                 message="The .env file has been successfully created.",
                 timestamp=True
             )
+
+            # Delete .git
+            gitdb = os.path.join(project_path, '.git')
+            if os.path.exists(gitdb):
+                shutil.rmtree(gitdb)
 
             Console.info(
                 message=f"Project '{self.name_app}' has been successfully established at '{os.path.abspath(project_path)}'.",
