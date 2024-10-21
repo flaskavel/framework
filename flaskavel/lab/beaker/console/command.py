@@ -1,7 +1,9 @@
 import io
 import sys
 import argparse
+from contextlib import redirect_stdout
 from flaskavel.lab.beaker.console.output import Console
+from flaskavel.lab.beaker.console.progress_bar import ProgressBar
 
 class Command:
     """
@@ -162,8 +164,6 @@ class Command:
         Returns:
             ProgressBar: An instance of the ProgressBar class.
         """
-        # Lazy load
-        from flaskavel.lab.beaker.console.progress_bar import ProgressBar
         return ProgressBar(total=total, width=width, inline=inline)
 
     def arguments(self):
@@ -200,8 +200,6 @@ class Command:
         """
         Prints the command usage detail.
         """
-        # Lazy load
-        from contextlib import redirect_stdout
 
         # Blank line console
         Console.newLine(1)

@@ -1,7 +1,8 @@
 from flaskavel.lab.beaker.console.reactor import reactor
 from flaskavel.lab.beaker.console.command import Command
 from flaskavel.lab.beaker.iterations.loops import Loops
-from app.Console.Kernel import Kernel # type: ignore
+from app.Console.Kernel import Kernel
+# from flaskavel.lab.
 
 @reactor.register
 class LoopsRun(Command):
@@ -10,7 +11,7 @@ class LoopsRun(Command):
     """
 
     # The command signature used to execute this command.
-    signature = 'loops:run'
+    signature = 'key:generate'
 
     # A brief description of the command.
     description = 'Start the execution of the loops loaded in the command Kernel.'

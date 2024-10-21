@@ -1,3 +1,5 @@
+import os
+import getpass
 from flaskavel.lab.beaker.console.helpers import strftime
 from flaskavel.lab.beaker.console.colors import ConsoleColor
 
@@ -5,8 +7,6 @@ class Console:
 
     @staticmethod
     def clear():
-        # Lazy load
-        import os
         os.system('cls') if os.name == 'nt' else os.system('clear')
 
     @staticmethod
@@ -107,8 +107,6 @@ class Console:
         Returns:
             str: The user's hidden input.
         """
-        # Lazy load
-        import getpass
         return getpass.getpass(f"{ConsoleColor.INFO_COLOR.value}{str(question).strip()}{ConsoleColor.DEFAULT.value} ")
 
     @staticmethod
