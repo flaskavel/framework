@@ -16,11 +16,6 @@ class Application:
 
         try:
 
-            if FlaskavelCache.validate(base_path=base_path):
-                return FlaskavelRunner(basePath=base_path)
-
-            FlaskavelCache.clearStart()
-
             return FlaskavelBootstrap(
                 basePath=base_path
             )
@@ -28,7 +23,8 @@ class Application:
         except Exception as e:
 
             Console.error(
-                message=f"Bootstrap Error - Error Critico Flaskavel : {e}"
+                message=f"Bootstrap Error - Error Critico Flaskavel : {e}",
+                timestamp=True
             )
 
 class FlaskavelCache():
@@ -74,7 +70,6 @@ class FlaskavelCache():
 class FlaskavelBootstrap():
 
     def __init__(self, basePath):
-        print("Ejecutando Bootstrap...")
         self.basepath = basePath
 
     def withRouting(self, api:list, web:list):
@@ -89,11 +84,16 @@ class FlaskavelBootstrap():
 
     def create(self):
 
-        _Environment(path=os.path.join(self.basepath, '.env'))
-        _Paths(path=os.path.join(self.basepath))
-        self._update_path()
-        self._init()
-        FlaskavelCache.register()
+        if not FlaskavelCache.validate(base_path=self.basepath):
+            FlaskavelCache.clearStart()
+
+            _Environment(path=os.path.join(self.basepath, '.env'))
+            _Paths(path=os.path.join(self.basepath))
+            self._update_path()
+            self._init()
+
+            FlaskavelCache.register()
+
         return FlaskavelRunner(basePath=self.basepath)
 
     def _update_path(self):
