@@ -11,5 +11,9 @@ native_commands = [
     {
         'module': 'flaskavel.lab.beaker.console.commands.loops_run',
         'class': 'LoopsRun'
+    },
+    {
+        'module': 'flaskavel.lab.beaker.console.commands.key_generate',
+        'class': 'KeyGenerate'
     }
 ]

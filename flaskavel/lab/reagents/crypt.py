@@ -9,24 +9,24 @@ class Crypt:
     """
 
     @staticmethod
-    def encrypt(value: str) -> str:
+    def encrypt(value: str, key=None) -> str:
         """
         Encrypts a given plaintext using AES-GCM encryption.
 
         :param value: The plaintext value to be encrypted.
         :return: Encrypted string in the format "ciphertextΔivΔtag".
         """
-        return _Encryption().encrypt(plaintext=value)
+        return _Encryption(key=key).encrypt(plaintext=value)
 
     @staticmethod
-    def decrypt(value: str) -> str:
+    def decrypt(value: str, key=None) -> str:
         """
         Decrypts a given encrypted string using AES-GCM decryption.
 
         :param value: The encrypted string to be decrypted.
         :return: Decrypted plaintext string.
         """
-        return _Encryption().decrypt(encrypted_data=value)
+        return _Encryption(key=key).decrypt(encrypted_data=value)
 
 
 class _Encryption:
