@@ -25,7 +25,7 @@ setup(
         "SQLAlchemy>=2.0.35",
         "typing_extensions>=4.12.2",
         "python-dotenv>=1.0.1",
-        "cryptography==43.0.3",
+        "cryptography>=43.0.3",
         "Flask>=3.0.3"
     ],
     entry_points={
