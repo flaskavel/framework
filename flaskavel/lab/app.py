@@ -14,15 +14,12 @@ class Application:
     @staticmethod
     def configure(base_path:WindowsPath):
         try:
-
             return FlaskavelBootstrap(
                 basePath=base_path
             )
-
         except Exception as e:
-
             Console.error(
-                message=f"Bootstrap Error - Error Critico Flaskavel : {e}",
+                message=f"Critical Bootstrap Error in Flaskavel: {e}",
                 timestamp=True
             )
 
@@ -30,14 +27,15 @@ class FlaskavelCache:
 
     def __init__(self, basePath: WindowsPath):
         self.basePath = basePath
+        self.started_file = 'started.lab'
 
-    def clearStart(self, started_file: str = 'started.lab'):
-        started_file = os.path.join(tempfile.gettempdir(), started_file)
+    def clearStart(self):
+        started_file = os.path.join(tempfile.gettempdir(), self.started_file)
         if os.path.exists(started_file):
             os.remove(started_file)
 
-    def validate(self, started_file: str = 'started.lab'):
-        started_file = os.path.join(tempfile.gettempdir(), started_file)
+    def validate(self):
+        started_file = os.path.join(tempfile.gettempdir(), self.started_file)
         if not os.path.exists(started_file):
             return False
 
@@ -47,6 +45,11 @@ class FlaskavelCache:
 
         env_path = os.path.join(self.basePath, '.env')
         last_edit = os.path.getmtime(env_path)
+        if float(last_edit) >= float(start_time):
+            return False
+
+        app_path = os.path.join(self.basePath, 'bootstrap', 'app.py')
+        last_edit = os.path.getmtime(app_path)
         if float(last_edit) >= float(start_time):
             return False
 
@@ -113,7 +116,7 @@ class FlaskavelBootstrap:
                 sys.path.append(full_path)
 
     def _init(self):
-        from config.cache import cache
+        from config.cache import cache # type: ignore
 
         # Determina si se debe encriptar.
         encrypt = bool(cache['encrypt'])
@@ -125,15 +128,15 @@ class FlaskavelBootstrap:
         path_cache_config = cache['store'][store]['config']
         path_routes_config = cache['store'][store]['routes']
 
-        from config.app import app
-        from config.auth import auth
-        from config.cors import cors
-        from config.database import database
-        from config.filesystems import filesystems
-        from config.logging import logging
-        from config.mail import mail
-        from config.queue import queue
-        from config.session import session
+        from config.app import app # type: ignore
+        from config.auth import auth # type: ignore
+        from config.cors import cors # type: ignore
+        from config.database import database # type: ignore
+        from config.filesystems import filesystems # type: ignore
+        from config.logging import logging # type: ignore
+        from config.mail import mail # type: ignore
+        from config.queue import queue # type: ignore
+        from config.session import session # type: ignore
 
         data_config = {
             'app': app,
@@ -168,11 +171,8 @@ class FlaskavelRunner():
         return True
 
     def handleCommand(self, *args, **kwargs):
-        from app.Console.Kernel import Kernel
-        try:
-            kernel = Kernel()
-            kernel.set_start_time(time.time())
-            kernel.set_base_path(str(self._basePath))
-            kernel.handle(*args, **kwargs)
-        except Exception as e:
-            Console.error(f"Flaskavel Runtime Error: {str(e)}")
+        from app.Console.Kernel import Kernel # type: ignore
+        kernel = Kernel()
+        kernel.set_start_time(time.time())
+        kernel.set_base_path(str(self._basePath))
+        kernel.handle(*args, **kwargs)
