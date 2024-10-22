@@ -13,7 +13,6 @@ class Application:
 
     @staticmethod
     def configure(base_path:WindowsPath):
-
         try:
 
             return FlaskavelBootstrap(
@@ -27,17 +26,17 @@ class Application:
                 timestamp=True
             )
 
-class FlaskavelCache():
+class FlaskavelCache:
 
-    @staticmethod
-    def clearStart(started_file:str='started.lab'):
+    def __init__(self, basePath: WindowsPath):
+        self.basePath = basePath
+
+    def clearStart(self, started_file: str = 'started.lab'):
         started_file = os.path.join(tempfile.gettempdir(), started_file)
         if os.path.exists(started_file):
             os.remove(started_file)
 
-    @staticmethod
-    def validate(base_path:str, started_file:str='started.lab'):
-
+    def validate(self, started_file: str = 'started.lab'):
         started_file = os.path.join(tempfile.gettempdir(), started_file)
         if not os.path.exists(started_file):
             return False
@@ -46,58 +45,56 @@ class FlaskavelCache():
             data_file = file.read()
         start_time = Crypt.decrypt(value=data_file)
 
-        env_path = os.path.join(base_path, '.env')
+        env_path = os.path.join(self.basePath, '.env')
         last_edit = os.path.getmtime(env_path)
         if float(last_edit) >= float(start_time):
             return False
 
-        list_files = os.listdir(os.path.join(base_path, 'config'))
+        list_files = os.listdir(os.path.join(self.basePath, 'config'))
         for file in list_files:
-            full_path = os.path.abspath(os.path.join(base_path, 'config', file))
+            full_path = os.path.abspath(os.path.join(self.basePath, 'config', file))
             if os.path.isfile(full_path):
                 if float(os.path.getmtime(full_path)) >= float(start_time):
                     return False
 
         return True
 
-    @staticmethod
-    def register(started_file:str='started.lab'):
+    def register(self, started_file: str = 'started.lab'):
         started_file = os.path.join(tempfile.gettempdir(), started_file)
         start_time = Crypt.encrypt(value=str(time.time()))
         with open(started_file, 'wb') as file:
             file.write(start_time.encode())
 
-class FlaskavelBootstrap():
+
+class FlaskavelBootstrap:
 
     def __init__(self, basePath):
-        self.basepath = basePath
+        self.base_path = basePath
+        self.cache = FlaskavelCache(basePath=self.base_path)
 
-    def withRouting(self, api:list, web:list):
+    def withRouting(self, api: list, web: list):
         self.apiRoutes = api
         self.webRoutes = web
         return self
 
-    def withMiddlewares(self, aliases:dict, use:dict):
+    def withMiddlewares(self, aliases: dict, use: dict):
         self.aliasesMiddleware = aliases
         self.useMiddleware = use
         return self
 
     def create(self):
+        if not self.cache.validate():
+            self.cache.clearStart()
 
-        if not FlaskavelCache.validate(base_path=self.basepath):
-            FlaskavelCache.clearStart()
-
-            _Environment(path=os.path.join(self.basepath, '.env'))
-            _Paths(path=os.path.join(self.basepath))
+            _Environment(path=os.path.join(self.base_path, '.env'))
+            _Paths(path=os.path.join(self.base_path))
             self._update_path()
             self._init()
+            self.cache.register()
 
-            FlaskavelCache.register()
-
-        return FlaskavelRunner(basePath=self.basepath)
+        return FlaskavelRunner(basePath=self.base_path)
 
     def _update_path(self):
-
         paths = [
             'app',
             'bootstrap',
@@ -111,22 +108,20 @@ class FlaskavelBootstrap():
         ]
 
         for folder in paths:
-            full_path = os.path.abspath(os.path.join(self.basepath, folder))
-            if os.path.isdir(full_path):
-                if full_path not in sys.path:
-                    sys.path.append(full_path)
+            full_path = os.path.abspath(os.path.join(self.base_path, folder))
+            if os.path.isdir(full_path) and full_path not in sys.path:
+                sys.path.append(full_path)
 
     def _init(self):
-
         from config.cache import cache
 
         # Determina si se debe encriptar.
         encrypt = bool(cache['encrypt'])
 
-        # Determina el storage del cache (Por el momento file)
+        # Determina el almacenamiento del cache (por el momento file)
         store = cache['default']
 
-        # Determina la ruta de guardado del cachde de config
+        # Determina la ruta de guardado del cache de configuración
         path_cache_config = cache['store'][store]['config']
         path_routes_config = cache['store'][store]['routes']
 
@@ -141,27 +136,27 @@ class FlaskavelBootstrap():
         from config.session import session
 
         data_config = {
-            'app' : app,
-            'auth' : auth,
-            'cors' : cors,
-            'database' : database,
-            'filesystems' : filesystems,
-            'logging' : logging,
-            'mail' : mail,
-            'queue' : queue,
-            'session' : session
+            'app': app,
+            'auth': auth,
+            'cors': cors,
+            'database': database,
+            'filesystems': filesystems,
+            'logging': logging,
+            'mail': mail,
+            'queue': queue,
+            'session': session
         }
 
         json_data = json.dumps(data_config)
 
         config_cache = json_data
-        if (encrypt):
+        if encrypt:
             config_cache = Crypt.encrypt(json_data)
 
         if os.path.exists(path_cache_config):
             os.remove(path_cache_config)
 
-        with(open(path_cache_config, 'wb')) as file_cache_config:
+        with open(path_cache_config, 'wb') as file_cache_config:
             file_cache_config.write(config_cache.encode())
 
 class FlaskavelRunner():
@@ -181,4 +176,3 @@ class FlaskavelRunner():
             kernel.handle(*args, **kwargs)
         except Exception as e:
             Console.error(f"Flaskavel Runtime Error: {str(e)}")
-
