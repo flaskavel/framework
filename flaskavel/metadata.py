@@ -1,5 +1,5 @@
 NAME="flaskavel"
-VERSION="0.24.0"
+VERSION="0.25.0"
 AUTHOR="Raul Mauricio Uñate Castro"
 AUTHOR_EMAIL="raulmauriciounate@gmail.com"
 DESCRIPTION="Like in Laravel but with Python"
