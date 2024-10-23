@@ -1,10 +1,9 @@
 import os
 import sys
 import time
-import json
 import tempfile
 import importlib
-from pathlib import WindowsPath
+from pathlib import Path
 from flaskavel.lab.reagents.crypt import Crypt
 from flaskavel.lab.catalyst.paths import _Paths
 from flaskavel.lab.atomic.environment import Env
@@ -16,11 +15,11 @@ class Application:
     """Application class to configure the Flaskavel framework."""
 
     @staticmethod
-    def configure(base_path: WindowsPath):
+    def configure(base_path:Path):
         """Configure the Flaskavel framework with the given base path.
 
         Args:
-            base_path (WindowsPath): The base path for the application.
+            base_path (Path): The base path for the application.
 
         Returns:
             FlaskavelBootstrap: An instance of FlaskavelBootstrap configured with the base path.
@@ -30,11 +29,11 @@ class Application:
 class FlaskavelCache:
     """Handles caching mechanisms for the Flaskavel application."""
 
-    def __init__(self, basePath: WindowsPath):
+    def __init__(self, basePath:Path):
         """Initialize FlaskavelCache with the base path.
 
         Args:
-            basePath (WindowsPath): The base path for the application.
+            basePath (Path): The base path for the application.
         """
         self.basePath = basePath
         self.started_file = 'started.lab'
@@ -92,46 +91,52 @@ class FlaskavelCache:
 class FlaskavelBootstrap:
     """Handles the bootstrapping of the Flaskavel application."""
 
-    def __init__(self, basePath):
+    def __init__(self, basePath:Path):
         """Initialize FlaskavelBootstrap with the base path.
 
         Args:
             basePath: The base path for the application.
         """
         self.base_path = basePath
+
         self.cache = FlaskavelCache(basePath=self.base_path)
+        self.started = self.cache.validate()
+
         self.dict_config = {}
         self.file_config = {}
         self.dict_routes = {}
         self.file_routes = {}
         self.encrypt = False
 
-    def withRouting(self, api: tuple, web: tuple):
+    def withRouting(self, api: list = [], web: list = []):
         """Define API and web routes for the application.
 
         Args:
-            api (tuple): Tuple of API routes.
-            web (tuple): Tuple of web routes.
+            api (list): List of API routes.
+            web (list): List of web routes.
 
         Returns:
             FlaskavelBootstrap: The current instance of FlaskavelBootstrap.
         """
-        self.apiRoutes = api
-        self.webRoutes = web
+        if not self.started:
+            self.apiRoutes = api
+            self.webRoutes = web
+
         return self
 
-    def withMiddlewares(self, aliases: dict, use: dict):
+    def withMiddlewares(self, aliases: dict = {}, use: list = []):
         """Define middleware configurations.
 
         Args:
             aliases (dict): Middleware aliases.
-            use (dict): Middleware to use.
+            use (list): Middleware to use.
 
         Returns:
             FlaskavelBootstrap: The current instance of FlaskavelBootstrap.
         """
-        self.aliasesMiddleware = aliases
-        self.useMiddleware = use
+        if not self.started:
+            self.aliasesMiddleware = aliases
+            self.useMiddleware = use
         return self
 
     def create(self):
@@ -141,13 +146,13 @@ class FlaskavelBootstrap:
             FlaskavelRunner: An instance of FlaskavelRunner if the application is created successfully.
         """
         try:
-            if not self.cache.validate():
+            if not self.started:
                 self.cache.clearStart()
-
                 _Environment(path=os.path.join(self.base_path, '.env'))
                 _Paths(path=os.path.join(self.base_path))
                 self._update_path()
                 self._config()
+                self._middlewares()
                 self._routes()
                 self._cache()
                 self.cache.register()
@@ -162,8 +167,88 @@ class FlaskavelBootstrap:
             )
             exit(1)
 
+    def _middlewares(self):
+        """Load and validate middlewares for aliases and used middleware."""
+
+        # Initialize the dictionaries for middlewares
+        aliasesMiddleware = {}
+
+        # Iterate over the alias-based middlewares
+        for alias, details in self.aliasesMiddleware.items():
+            module_path = f"app.Http.Middleware.{details['module']}"
+
+            # Import the module and validate the middleware class and method
+            try:
+                module = __import__(module_path, fromlist=[details["classname"]])
+            except ImportError:
+                raise ImportError(
+                    f"Module '{module_path}' for middleware alias '{alias}' does not exist in 'aliasesMiddleware:aliases'."
+                )
+
+            # Check if the middleware class exists in the module
+            middleware_class = getattr(module, details["classname"], None)
+            if not middleware_class:
+                raise ImportError(
+                    f"Middleware class '{details['classname']}' for alias '{alias}' not found in module '{module_path}'."
+                )
+
+            # Check if the 'handle' method exists in the middleware class
+            if not hasattr(middleware_class, 'handle'):
+                raise AttributeError(
+                    f"The 'handle' method is required in the middleware class '{details['classname']}' for alias '{alias}'."
+                )
+
+            # Add the middleware to the aliasesMiddleware dictionary
+            aliasesMiddleware[alias] = {
+                'module': module_path,
+                'classname': details['classname'],
+                'method': 'handle',
+            }
+
+        # Update the class attribute with the validated aliases middleware
+        self.aliasesMiddleware = aliasesMiddleware
+
+        # Initialize the dictionary for useMiddleware
+        useMiddleware = []
+
+        # Iterate over the globally used middlewares
+        for middleware in self.useMiddleware:
+            module_path = f"app.Http.Middleware.{middleware['module']}"
+
+            # Import the module and validate the middleware class and method
+            try:
+                module = __import__(module_path, fromlist=[middleware["classname"]])
+            except ImportError:
+                raise ImportError(
+                    f"Module '{module_path}' does not exist in 'withMiddlewares:use'."
+                )
+
+            # Check if the middleware class exists in the module
+            middleware_class = getattr(module, middleware["classname"], None)
+            if not middleware_class:
+                raise ImportError(
+                    f"Middleware class '{middleware['classname']}' not found in module '{module_path}'."
+                )
+
+            # Check if the 'handle' method exists in the middleware class
+            if not hasattr(middleware_class, 'handle'):
+                raise AttributeError(
+                    f"The 'handle' method is required in the middleware class '{middleware['classname']}'."
+                )
+
+            # Add the middleware to the useMiddleware dictionary
+            useMiddleware.append({
+                'module': module_path,
+                'classname': middleware['classname'],
+                'method': 'handle',
+            })
+
+        # Update the class attribute with the validated used middleware
+        self.useMiddleware = useMiddleware
+
     def _update_path(self):
         """Update the system path to include application directories."""
+
         paths = [
             'app',
             'bootstrap',
@@ -176,10 +261,13 @@ class FlaskavelBootstrap:
             'tests'
         ]
 
+        if self.base_path not in sys.path:
+            sys.path.append(self.base_path)
+
         for folder in paths:
-            full_path = os.path.abspath(os.path.join(self.base_path, folder))
-            if os.path.isdir(full_path) and full_path not in sys.path:
-                sys.path.append(full_path)
+            for root, dirs, files in os.walk(os.path.join(self.base_path, folder)):
+                if os.path.isdir(root) and root not in sys.path:
+                    sys.path.append(root)
 
     def _config(self):
         """Load application configuration from config files."""
@@ -205,17 +293,7 @@ class FlaskavelBootstrap:
         from config.queue import queue # type: ignore
         from config.session import session # type: ignore
 
-        self.dict_config = {
-            'app': app,
-            'auth': auth,
-            'cors': cors,
-            'database': database,
-            'filesystems': filesystems,
-            'logging': logging,
-            'mail': mail,
-            'queue': queue,
-            'session': session
-        }
+        self.dict_config = f"config = {{'app':{app},'auth':{auth},'cors':{cors},'database':{database},'filesystems':{filesystems},'logging':{logging},'mail':{mail},'queue': {queue},'session':{session}}}"
 
     def _routes(self):
         """Load and validate application routes."""
@@ -223,83 +301,116 @@ class FlaskavelBootstrap:
         # Mount the Singleton instance for routes
         routes = _RouteInstances()
 
-        # Load and execute route files
-        for file in self.apiRoutes:
+        # Load and execute route files dynamically
+        for file in self.apiRoutes + self.webRoutes:
             importlib.import_module(f"routes.{file}")
 
         # Retrieve all generated routes
         all_routes = routes.get_routes()
 
-        # Ensure route integrity
+        # Ensure route integrity and validate each route
+        required_fields = ['controller', 'module', 'method', 'verb', 'uri']
+
         for route in all_routes:
 
             # Check for required fields in each route
-            required_fields = ['controller', 'module', 'method', 'verb', 'uri']
             for field in required_fields:
-                if not route[field]:
-                    raise ValueError(f"Missing required value for <{field}> in route.")
+                if not route.get(field):
+                    raise ValueError(f"Missing required value for '{field}' in route: {str(route)}")
 
             # Check for duplicate route names
-            if route["name"]:
-                for _route in all_routes:
-                    if _route['name'] == route["name"] and _route is not route:
-                        raise ValueError(f"Route name is already in use: <{route['name']}>")
+            if route.get("name"):
+                duplicate_name = next((_r for _r in all_routes if _r["name"] == route["name"] and _r is not route), None)
+                if duplicate_name:
+                    raise ValueError(f"Route name '{route['name']}' is already in use by another route: {duplicate_name}")
 
-        for _route in all_routes:
+        # Check for duplicate URIs with the same HTTP verb and prefix
+        for route in all_routes:
+            for _route in all_routes:
+                if (_route is not route and
+                    route["uri"] == _route["uri"] and
+                    route["prefix"] == _route["prefix"] and
+                    route["verb"] == _route["verb"]):
+                    raise ValueError(f"URI '{route['uri']}' with prefix '{route['prefix']}' "
+                                    f"and verb '{route['verb']}' is already in use by another route: {_route}")
 
-            # Check for duplicate URIs with the same HTTP verb
-            if (route["uri"] == _route["uri"] and
-                route["prefix"] == _route["prefix"] and
-                route["verb"] == _route["verb"] and _route is not route):
-                raise ValueError(f"URI <{route['uri']}> with prefix <{route['prefix']}> and verb <{route['verb']}> is already in use.")
-
+            # Import the module and validate the controller and method
             try:
                 module = __import__(route["module"], fromlist=[route["controller"]])
             except ImportError:
-                raise ImportError(f"The module '{route['module']}' dont exist.")
+                raise ImportError(f"Module '{route['module']}' does not exist for route: {route}")
 
-            if not hasattr(module, route["controller"]):
-                raise ImportError(f"The class '{route['controller']}' was not found in the module '{route['module']}'.")
+            controller_class = getattr(module, route["controller"], None)
+            if not controller_class:
+                raise ImportError(f"Controller class '{route['controller']}' not found in module '{route['module']}' for route: {route}")
 
-            # Check if the class has the specified method
-            new_class = getattr(module, route["controller"])
-            if not hasattr(new_class, route["method"]):
-                raise AttributeError(f"The method '{route['method']}' does not exist in the class '{route['controller']}'.")
+            # Check if the method exists in the controller
+            if not hasattr(controller_class, route["method"]):
+                raise AttributeError(f"Method '{route['method']}' not found in controller '{route['controller']}' for route: {route}")
 
-        self.dict_routes = all_routes
+        # Validate Middlewares in routes
+        for route in all_routes:
+            middlewares = route.get("middleware", [])
+            if isinstance(middlewares, list):
+                for middleware in middlewares:
+                    if middleware not in self.aliasesMiddleware:
+                        raise KeyError(f"The middleware with alias '{middleware}' does not exist in 'aliasesMiddleware'.")
+
+        real_routes = []
+        for route in all_routes:
+
+            # Create a copy to avoid modifying the original list
+            route_middleware = self.useMiddleware.copy()
+
+            # Iterate through each middleware defined in the route
+            for single_middleware in route['middleware']:
+
+                # Append the corresponding middleware configuration to the list
+                route_middleware.append(self.aliasesMiddleware[single_middleware])
+
+            # Remove duplicates from the list of middlewares
+            unique_data = [dict(item) for item in {frozenset(item.items()): item for item in route_middleware}.values()]
+
+            # Create Data Route
+            single_route = {
+                'controller' : {
+                    'module_path' : str(route['module']).strip(),
+                    'classname' : str(route['controller']).strip(),
+                    'method' : str(route['method']).strip()
+                },
+                'middlewares' : unique_data,
+                'uri' : str(f"{route['prefix']}{route['uri']}").replace('//','/').strip(),
+                'verb' : str(route['verb']).upper().strip(),
+                'name' : str(route['name']).strip(),
+            }
+
+            # Add Pool Routes
+            real_routes.append(single_route)
+
+        # Convert routes to string for storage or further use
+        self.dict_routes = f"routes = {real_routes}"
 
     def _cache(self):
         """Cache the configuration and routes in encrypted or plain format."""
 
         if self.encrypt:
             app_key = Env.get('APP_KEY', None)
-            config_content = Crypt.encrypt(
-                value=json.dumps(self.dict_config),
-                key=app_key
-            )
-            routes_content = Crypt.encrypt(
-                value=json.dumps(self.dict_routes),
-                key=app_key
-            )
+            config_content = Crypt.encrypt(value=self.dict_config, key=app_key)
+            routes_content = Crypt.encrypt(value=self.dict_routes, key=app_key)
         else:
-            config_content = json.dumps(self.dict_config)
-            routes_content = json.dumps(self.dict_config)
+            config_content = self.dict_config
+            routes_content = self.dict_routes
 
         all_data = [
-            {
-                'file' : self.file_config,
-                'content' : config_content
-            },{
-                'file' : self.file_routes,
-                'content' : routes_content
-            }
+            {'file' : self.file_config, 'content' : config_content},
+            {'file' : self.file_routes, 'content' : routes_content}
         ]
 
         for data in all_data:
             if os.path.exists(data['file']):
                 os.remove(data['file'])
             with open(data['file'], 'wb') as file_cache_config:
-                file_cache_config.write(data['content'].encode())
+                file_cache_config.write(str(data['content']).encode())
 
 class FlaskavelRunner():
     """Main runner for the Flaskavel application."""
