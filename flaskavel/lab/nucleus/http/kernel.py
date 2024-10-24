@@ -1,82 +1,9 @@
-import re
 import importlib
-import time
-import traceback
 import threading
-import typing as t
-from flask import Flask, request
 from flask_cors import CORS
 from flaskavel.lab.catalyst.config import Config
-from flaskavel.lab.reagents.request import Request
-from flaskavel.lab.beaker.console.output import Console
+from flaskavel.lab.nucleus.flaskavel import Flaskavel
 from flaskavel.lab.catalyst.bootstrap_cache import _BootstrapCache
-
-class Flaskavel(Flask):
-
-    def __init__(self, *args, **kwargs):
-        super(Flaskavel, self).__init__(*args, **kwargs)
-        self.register_error_handler(Exception, self.handle_global_error)
-        self.start_time = time.time()
-
-    def handle_global_error(self, e):
-        error = str(e)
-        traceback_list = traceback.format_tb(e.__traceback__)
-        last_traceback_line_string = re.sub(r'\s+', ' ', traceback_list[-1].strip().replace('\n', ', '))
-        Console.error(
-            message=f"Flaskavel HTTP Runtime Exception: {error} detail: {last_traceback_line_string}",
-            timestamp=True
-        )
-        exit(1)
-
-    def run(
-        self,
-        host: str | None = None,
-        port: int | None = None,
-        debug: bool | None = None,
-        load_dotenv: bool = True,
-        **options: t.Any,
-    ) -> None:
-
-        if debug is not None:
-            self.debug = bool(debug)
-
-        server_name = self.config.get("SERVER_NAME")
-        sn_host = sn_port = None
-
-        if server_name:
-            sn_host, _, sn_port = server_name.partition(":")
-
-        if not host:
-            if sn_host:
-                host = sn_host
-            else:
-                host = "127.0.0.1"
-
-        if port or port == 0:
-            port = int(port)
-        elif sn_port:
-            port = int(sn_port)
-        else:
-            port = 5000
-
-        options.setdefault("use_reloader", self.debug)
-        options.setdefault("use_debugger", self.debug)
-        options.setdefault("threaded", True)
-
-        execution_duration = int((time.time() - self.start_time) * 1000)
-
-        Console.clear()
-        Console.executeTimestamp(
-            command="FLASKAVEL APP STARTED 🚀 ",
-            seconds=f"{execution_duration}ms",
-            state='DONE'
-        )
-
-        from werkzeug.serving import run_simple
-        try:
-            run_simple(t.cast(str, host), port, self, **options)
-        finally:
-            self._got_first_request = False
 
 class Kernel:
 
@@ -125,35 +52,41 @@ class Kernel:
         return getattr(module, classname)
 
     def apply_middlewares(self, controller_method, middlewares):
+        # Si no hay middlewares, devolvemos el controlador directamente
         if not middlewares:
             return controller_method
 
-        def wrapped_controller(*args, **kwargs):
-            next_func = controller_method
-            for middleware in reversed(middlewares):
-                middleware_class = self.load_module(middleware['module'], middleware['classname'])
-                middleware_instance = middleware_class()
+        # Definir una función recursiva que encadene los middlewares
+        def wrap_with_middleware(index, **kwargs):
+            # Si hemos pasado por todos los middlewares, llamamos al controlador
+            if index >= len(middlewares):
+                return controller_method(**kwargs)
 
-                # Sobreescribimos next_func para que pase por cada middleware
-                def next_func_wrapper(next_func=next_func):
-                    return middleware_instance.handle(Request(request=request), next_func, *args, **kwargs)
-                next_func = next_func_wrapper
+            # Cargar el middleware actual
+            middleware_info = middlewares[index]
+            middleware_class = self.load_module(middleware_info['module'], middleware_info['classname'])
+            middleware_instance = middleware_class()
 
-            return next_func()
+            # Llamar el siguiente middleware pasando `wrap_with_middleware` con el siguiente índice
+            return middleware_instance.handle(
+                lambda: wrap_with_middleware(index + 1, **kwargs),
+                **kwargs
+            )
 
-        return wrapped_controller
+        # Empezamos con el primer middleware (índice 0)
+        return lambda **kwargs: wrap_with_middleware(0, **kwargs)
 
     def register_routes(self, routes):
         for route in routes:
             controller_info = route['controller']
             middlewares = route.get('middlewares', [])
 
-            # Cargar el método del controlador dinámicamente
+            # Cargar dinámicamente el controlador
             controller_class = self.load_module(controller_info['module_path'], controller_info['classname'])
             controller_instance = controller_class()
             controller_method = getattr(controller_instance, controller_info['method'])
 
-            # Aplicar middlewares (si los hay) a la función del controlador
+            # Aplicar los middlewares al controlador
             wrapped_view_func = self.apply_middlewares(controller_method, middlewares)
 
             # Registrar la ruta en Flask
@@ -167,3 +100,4 @@ class Kernel:
     def handle(self, *args, **kwargs):
         """Sobrescribir el método run para incluir el banner personalizado."""
         self.app.run(*args, **kwargs)
+

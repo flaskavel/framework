@@ -45,6 +45,36 @@ class Console:
         print(f"{ConsoleColor.ERROR_COLOR_BG.value}{ConsoleColor.WHITE.value} ERROR {ConsoleColor.DEFAULT.value} {str_time} {message}{ConsoleColor.DEFAULT.value}")
 
     @staticmethod
+    def textDanger(message:str=''):
+        """
+        Prints an error message in red.
+
+        Args:
+            message (str, optional): The error message to print. Defaults to an empty string.
+        """
+        print(f"{ConsoleColor.RED_BOLD.value}{message}{ConsoleColor.DEFAULT.value}")
+
+    @staticmethod
+    def textSuccess(message:str=''):
+        """
+        Prints an error message in green.
+
+        Args:
+            message (str, optional): The error message to print. Defaults to an empty string.
+        """
+        print(f"{ConsoleColor.GREEN_BOLD.value}{message}{ConsoleColor.DEFAULT.value}")
+
+    @staticmethod
+    def textWarning(message:str=''):
+        """
+        Prints an error message in green.
+
+        Args:
+            message (str, optional): The error message to print. Defaults to an empty string.
+        """
+        print(f"{ConsoleColor.YELLOW_BOLD.value}{message}{ConsoleColor.DEFAULT.value}")
+
+    @staticmethod
     def fail(message:str='', timestamp:bool = False):
         """
         Prints a failure message in red.

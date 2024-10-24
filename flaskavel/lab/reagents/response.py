@@ -147,6 +147,19 @@ class Response:
         )
 
     @staticmethod
+    def flaskavelError(errros:dict=None, message:str="Internal server error", headers=None):
+        """
+        Flaskavel HTTP Runtime Exception.
+        """
+        return Response.json(
+            errros=errros,
+            code=500,
+            message=message,
+            status="Flaskavel HTTP Runtime Exception",
+            headers=headers
+        )
+
+    @staticmethod
     def redirect(location):
         """
         Performs a redirect to a different location (similar to Laravel’s `redirect()`).

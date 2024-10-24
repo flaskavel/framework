@@ -1,4 +1,5 @@
 import threading
+import inspect
 
 class _RouteInstances:
     """
@@ -37,6 +38,11 @@ class _RouteInstances:
         :param instance: The instance to add to the route_instances list.
         :raises ValueError: If the route name or URI with the same HTTP verb already exists.
         """
+        frame_info = inspect.stack()[2]
+        origin = str(frame_info.filename).split('\\')
+        origin = origin[-1].replace('.py','').strip()
+        instance._type = origin
+
         self.route_instances.append(instance)
 
     def get_routes(self):
@@ -47,6 +53,12 @@ class _RouteInstances:
         """
         routes = []
         for route in self.route_instances:
+
+            if route._type == 'api':
+                if route._prefix:
+                    route._prefix = f"/api{route._prefix}"
+                else:
+                    route._prefix = f"/api"
 
             name = route._name if route._name else (route._prefix + route._uri).replace('/', '.')
             name = name.strip('.')

@@ -92,7 +92,7 @@ class FlaskavelBootstrap:
                 Console.info(message=f"Bootstrapping Flaskavel - {execution_duration}ms", timestamp=True)
 
             self.cache.mount()
-            return FlaskavelRunner(basePath=self.base_path)
+            return FlaskavelRunner(basePath=self.base_path, start_time=self.start_time)
 
         except Exception as e:
             Console.error(message=f"Critical Bootstrap Error in Flaskavel: {e}", timestamp=True)

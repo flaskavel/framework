@@ -3,13 +3,14 @@ from flaskavel.lab.catalyst.config import Config
 class FlaskavelRunner:
     """Main runner for the Flaskavel application."""
 
-    def __init__(self, basePath):
+    def __init__(self, basePath, start_time):
         """Initialize FlaskavelRunner with the base path.
 
         Args:
             basePath: The base path for the application.
         """
         self._basePath =basePath
+        self.start_time = start_time
 
     def handleRequest(self, debug:bool=None, port:int=5000, use_reloader:bool=False):
         """Handle an incoming request.

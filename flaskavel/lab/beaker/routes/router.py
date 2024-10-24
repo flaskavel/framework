@@ -1,5 +1,3 @@
-import os
-import threading
 from flaskavel.lab.catalyst.router_instances import _RouteInstances
 
 class Route:
@@ -225,6 +223,7 @@ class RouteHandle:
         self._method = None
         self._name = None
         self._uri = None
+        self._type = None
 
     def middleware(self, middleware: list = []):
         """Set middleware for the route."""

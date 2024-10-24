@@ -1,8 +1,12 @@
 from pathlib import Path
 from flaskavel.lab.synthesizer.bootstrap import FlaskavelBootstrap
+from flaskavel.metadata import NAME, VERSION
 
 class Application:
     """Application class to configure the Flaskavel framework."""
+
+    name = NAME
+    version = VERSION
 
     @staticmethod
     def configure(base_path:Path):

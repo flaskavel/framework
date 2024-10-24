@@ -1,5 +1,3 @@
-from flaskavel.lab.reagents.request import Request
-
 class BaseMiddleware:
 
     def __init__(self):
