@@ -1,103 +1,103 @@
 import os
-import time
+from threading import Lock
+from flaskavel.lab.catalyst.config import Config
+from flaskavel.lab.catalyst.reflection import Reflection
 from flaskavel.lab.beaker.console.reactor import reactor
 from flaskavel.lab.beaker.console.register import native_commands
 
 class Kernel:
     """
-    The Kernel class is responsible for managing command loading and execution within the framework.
+    The Kernel class is a Singleton responsible for managing command loading and execution within the framework.
     It handles the initialization of command paths and the invocation of specified commands.
     """
 
+    _instance = None
+    _lock = Lock()
+
+    def __new__(cls):
+        """Ensure only one instance of the Kernel class exists (Singleton pattern)."""
+        with cls._lock:
+            if cls._instance is None:
+                cls._instance = super(Kernel, cls).__new__(cls)
+                cls._instance._initialized = False
+        return cls._instance
+
     def __init__(self) -> None:
+        """Initialize the Kernel instance, loading commands if not already initialized."""
+        if self._initialized:
+            return
+
         self.paths = []
-        self.start_time = time.time()
+        self._load_commands()
+        self._initialized = True
 
-    def set_start_time(self, start_time):
-        """
-        Store the start time of the application.
-
-        Args:
-            start_time (float): The time at which the application starts.
-        """
-        self.start_time = start_time
-
-    def set_base_path(self, base_path):
-        """
-        Store the base path of the project.
-
-        Args:
-            base_path (str): The base directory path of the project.
-        """
-        self.base_path = base_path
-
-    def load(self, directory, route):
-        """
-        Load command paths into the kernel.
-
-        This method constructs the full path from the provided directory and route,
-        and adds it to the list of paths if it is not already included.
-
-        Args:
-            directory (str): The base directory from which to construct the full path.
-            route (str): The specific command route to append to the directory.
-        """
-        full_path = os.path.abspath(os.path.dirname(directory) + route)
-        if full_path not in self.paths:
-            self.paths.append(full_path)
-
-    def load_commands(self, base_path):
+    def _load_commands(self):
         """
         Dynamically load command modules from the specified paths.
 
-        This method walks through each path stored in `self.paths`, locates Python files,
+        This method walks through the command path, locates Python files,
         and imports them as modules for use within the application.
+        """
+        base_path = Config.bootstrap('base_path')
+        commands_path = os.path.join(base_path, 'app', 'Console', 'Commands')
+
+        # Load customer commands
+        self._import_command_modules(commands_path, base_path)
+
+        # Load native commands
+        self._import_native_commands()
+
+    def _import_command_modules(self, path: str, base_path: str):
+        """
+        Import Python files from the specified path as modules.
 
         Args:
-            base_path (str): The base path to use for determining the module's location.
+            path (str): The path to search for command modules.
+            base_path (str): The base path to normalize module paths.
         """
+        for current_directory, _, files in os.walk(path):
+            pre_module = current_directory.replace(base_path, '').replace(os.sep, '.').lstrip('.')
+            for file in files:
+                if file.endswith('.py'):
+                    module_name = file[:-3]
+                    module_path = f"{pre_module}.{module_name}"
+                    Reflection(module=module_path)
 
-        # Import Customer Commands
-        for path in self.paths:
-            for current_directory, subdirectory, files in os.walk(path):
-                pre_module = str(current_directory).replace(base_path, '').replace(os.sep, '.').lstrip('.')
-                for file in files:
-                    if file.endswith('.py'):
-                        module_name = file[:-3]  # Strip the .py extension
-                        module_path = f"{pre_module}.{module_name}"
-                        __import__(module_path)  # Import the module
-
-        # Import Native Commands
+    def _import_native_commands(self):
+        """
+        Import native command modules defined in the native_commands list.
+        """
         for command in native_commands:
-            __import__(command['module'], fromlist=command['class'])
-
+            Reflection(module=command['module'], classname=command['class'])
 
     def handle(self, *args):
         """
         Handle the execution of a command based on the provided arguments.
 
-        This method retrieves the command name and its associated arguments from the input,
-        loads the necessary command modules, and invokes the specified command.
+        This method retrieves the command name and its associated arguments,
+        and invokes the specified command using the reactor.
 
         Args:
-            *args: The command-line arguments passed to the application, where
-                    the first element contains the command name and subsequent
-                    elements are treated as command arguments.
+            *args: The command-line arguments passed to the application.
         """
-        # Retrieve the command to execute.
+        if len(args) == 0 or len(args[0]) < 2:
+            raise ValueError("Invalid command arguments.")
+
         command = args[0][1]
-        args = str('=').join(args[0][2:]).split('=')
-
-        # If the resulting list contains only an empty string, set args to an empty list
-        if args == ['']:
-            args = []
-
-        # Load commands from the defined path.
-        self.commands()
-
-        # Load modules to call commands.
-        self.load_commands(self.base_path)
+        command_args = self._parse_command_args(args[0][2:])
 
         # Call the specified command using the reactor.
-        reactor.set_start_time(time=self.start_time)
-        reactor.call(command, args)
+        reactor.call(command, command_args)
+
+    def _parse_command_args(self, args):
+        """
+        Parse command arguments from the input list.
+
+        Args:
+            args (list): The list of command arguments.
+
+        Returns:
+            list: The parsed command arguments.
+        """
+        parsed_args = str('=').join(args).split('=')
+        return [] if parsed_args == [''] else parsed_args

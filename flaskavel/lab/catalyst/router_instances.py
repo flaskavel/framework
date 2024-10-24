@@ -47,6 +47,10 @@ class _RouteInstances:
         """
         routes = []
         for route in self.route_instances:
+
+            name = route._name if route._name else (route._prefix + route._uri).replace('/', '.')
+            name = name.strip('.')
+
             routes.append({
                 'middleware': route._middleware,
                 'prefix': route._prefix,
@@ -54,7 +58,7 @@ class _RouteInstances:
                 'module': f"app.Http.Controllers.{route._module if route._module else route._controller}",
                 'verb': route._verb,
                 'method': route._method,
-                'name': route._name,
+                'name': name,
                 'uri': route._uri
             })
 

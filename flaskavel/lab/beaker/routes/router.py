@@ -351,8 +351,8 @@ class RouteHandle:
         prefix = prefix.replace('//', '/')
 
         # Remove the leading slash if it exists
-        if prefix.startswith('/'):
-            prefix = prefix[1:]
+        if not prefix.startswith('/'):
+            prefix = f"/{prefix}"
 
         # Remove the trailing slash if it exists and the length is greater than 1
         if prefix.endswith('/') and len(prefix) > 1:

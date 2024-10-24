@@ -14,11 +14,6 @@ class Reactor:
         self.commands = {}
         self.start_time = time.time()
 
-    def set_start_time(self, time):
-
-        if isinstance(time, float):
-            self.start_time = time
-
     def register(self, command_class):
         """
         Registers a command class, extracting its signature and description.
@@ -84,10 +79,13 @@ class Reactor:
 
         except Exception as e:
 
+            message = f"Command '{signature}' execution failed. Error: {e}"
+
             if print_console:
                 Console.executeTimestamp(command=signature, state='FAIL')
+                Console.error(message)
 
-            Log.error(f"Command '{signature}' execution failed. Error: {e}")
+            Log.error(message)
 
 # Create a global instance of the Reactor
 reactor = Reactor()

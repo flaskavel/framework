@@ -15,5 +15,13 @@ native_commands = [
     {
         'module': 'flaskavel.lab.beaker.console.commands.key_generate',
         'class': 'KeyGenerate'
+    },
+    {
+        'module': 'flaskavel.lab.beaker.console.commands.cache_clear',
+        'class': 'CacheClear'
+    },
+    {
+        'module': 'flaskavel.lab.beaker.console.commands.serve',
+        'class': 'Serve'
     }
 ]

@@ -1,4 +1,4 @@
-import time
+from flaskavel.lab.catalyst.config import Config
 
 class FlaskavelRunner:
     """Main runner for the Flaskavel application."""
@@ -11,7 +11,7 @@ class FlaskavelRunner:
         """
         self._basePath =basePath
 
-    def handleRequest(self, *args, **kwargs):
+    def handleRequest(self, debug:bool=None, port:int=5000, use_reloader:bool=False):
         """Handle an incoming request.
 
         Args:
@@ -21,7 +21,13 @@ class FlaskavelRunner:
         Returns:
             bool: Returns True indicating the request has been handled.
         """
-        return True
+        from flaskavel.lab.nucleus.http.kernel import Kernel
+        return Kernel().handle(
+            debug = debug or Config.app('debug'),
+            port = port,
+            use_reloader = use_reloader,
+            load_dotenv = False
+        )
 
     def handleCommand(self, *args, **kwargs):
         """Handle a command execution within the application.
@@ -34,7 +40,4 @@ class FlaskavelRunner:
             **kwargs: Arbitrary keyword arguments.
         """
         from app.Console.Kernel import Kernel # type: ignore
-        kernel = Kernel()
-        kernel.set_start_time(time.time())
-        kernel.set_base_path(str(self._basePath))
-        kernel.handle(*args, **kwargs)
+        Kernel().handle(*args, **kwargs)

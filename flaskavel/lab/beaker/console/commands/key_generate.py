@@ -2,22 +2,21 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from flaskavel.lab.beaker.console.reactor import reactor
 from flaskavel.lab.beaker.console.command import Command
 from flaskavel.lab.atomic.environment import Env
+from flaskavel.lab.catalyst.config import Config
 
 @reactor.register
 class KeyGenerate(Command):
-    """
-    This command is responsible for initiating the execution of the loops.
-    """
 
     # The command signature used to execute this command.
     signature = 'key:generate'
 
     # A brief description of the command.
-    description = 'Start the execution of the loops loaded in the command Kernel.'
+    description = 'Generates a new key in the environment file.'
 
     def handle(self) -> None:
+
         # Set the desired cipher for key generation
-        cipher = 'AES-256-G9M'
+        cipher = Config.app('cipher')
 
         # Determine the key length based on the specified cipher
         if '128' in cipher and 'AES' in cipher and 'GCM' in cipher:
@@ -45,4 +44,3 @@ class KeyGenerate(Command):
 
         # Log the message with a timestamp
         self.info(message=message[:68], timestamp=True)
-

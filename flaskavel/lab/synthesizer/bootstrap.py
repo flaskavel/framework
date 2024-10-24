@@ -1,10 +1,10 @@
 import os
 import sys
+import time
 import importlib
 from pathlib import Path
 from flaskavel.lab.reagents.crypt import Crypt
 from flaskavel.lab.catalyst.paths import _Paths
-from flaskavel.lab.atomic.environment import Env
 from flaskavel.lab.beaker.console.output import Console
 from flaskavel.lab.synthesizer.cache import FlaskavelCache
 from flaskavel.lab.catalyst.environment import _Environment
@@ -20,15 +20,16 @@ class FlaskavelBootstrap:
         Args:
             basePath: The base path for the application.
         """
+        self.start_time = time.time()
         self.base_path = basePath
 
         self.cache = FlaskavelCache(basePath=self.base_path)
         self.started = self.cache.validate()
 
         self.dict_config = {}
-        self.file_config = {}
+        self.file_config = None
         self.dict_routes = {}
-        self.file_routes = {}
+        self.file_routes = None
         self.encrypt = False
 
     def withRouting(self, api: list = [], web: list = []):
@@ -70,25 +71,32 @@ class FlaskavelBootstrap:
         """
         try:
             if not self.started:
+
                 self.cache.clearStart()
                 _Environment(path=os.path.join(self.base_path, '.env'))
-                _Paths(path=os.path.join(self.base_path))
+                _Paths(path=self.base_path)
                 self._update_path()
+                self._files()
                 self._config()
                 self._middlewares()
                 self._routes()
                 self._cache()
-                self.cache.register()
+                self.cache.register(
+                    path_cache_config=self.file_config,
+                    path_cache_routes=self.file_routes,
+                    encrypt=self.encrypt,
+                    key=self.app_key
+                )
 
+                execution_duration = int((time.time() - self.start_time) * 1000)
+                Console.info(message=f"Bootstrapping Flaskavel - {execution_duration}ms", timestamp=True)
+
+            self.cache.mount()
             return FlaskavelRunner(basePath=self.base_path)
 
         except Exception as e:
-
-            Console.error(
-                message=f"Critical Bootstrap Error in Flaskavel: {e}",
-                timestamp=True
-            )
-            exit(1)
+            Console.error(message=f"Critical Bootstrap Error in Flaskavel: {e}", timestamp=True)
+            raise ValueError(e)
 
     def _middlewares(self):
         """Load and validate middlewares for aliases and used middleware."""
@@ -192,12 +200,12 @@ class FlaskavelBootstrap:
                 if os.path.isdir(root) and root not in sys.path:
                     sys.path.append(root)
 
-    def _config(self):
+    def _files(self):
         """Load application configuration from config files."""
         from config.cache import cache # type: ignore
 
         # Determina si se debe encriptar.
-        self.encrypt = bool(cache['encrypt'])
+        self.encrypt = cache['encrypt']
 
         # Determina el almacenamiento del cache (por el momento file)
         store = cache['default']
@@ -206,6 +214,9 @@ class FlaskavelBootstrap:
         self.file_config = cache['store'][store]['config']
         self.file_routes = cache['store'][store]['routes']
 
+    def _config(self):
+
+        # Modules
         from config.app import app # type: ignore
         from config.auth import auth # type: ignore
         from config.cors import cors # type: ignore
@@ -216,7 +227,21 @@ class FlaskavelBootstrap:
         from config.queue import queue # type: ignore
         from config.session import session # type: ignore
 
-        self.dict_config = f"config = {{'app':{app},'auth':{auth},'cors':{cors},'database':{database},'filesystems':{filesystems},'logging':{logging},'mail':{mail},'queue': {queue},'session':{session}}}"
+        # Get App Key
+        self.app_key = app['key']
+
+        # Data Bootstrap
+        bootstrap = {
+            'time' : str(time.time()),
+            'base_path' : str(self.base_path),
+            'cache' : {
+                'config' : self.file_config,
+                'routes' : self.file_routes,
+            }
+        }
+
+        # String Configuration
+        self.dict_config = f"{{'app':{app},'auth':{auth},'cors':{cors},'database':{database},'filesystems':{filesystems},'logging':{logging},'mail':{mail},'queue': {queue},'session':{session},'bootstrap':{bootstrap}}}"
 
     def _routes(self):
         """Load and validate application routes."""
@@ -311,18 +336,17 @@ class FlaskavelBootstrap:
             real_routes.append(single_route)
 
         # Convert routes to string for storage or further use
-        self.dict_routes = f"routes = {real_routes}"
+        self.dict_routes = real_routes
 
     def _cache(self):
         """Cache the configuration and routes in encrypted or plain format."""
 
         if self.encrypt:
-            app_key = Env.get('APP_KEY', None)
-            config_content = Crypt.encrypt(value=self.dict_config, key=app_key)
-            routes_content = Crypt.encrypt(value=self.dict_routes, key=app_key)
+            config_content = Crypt.encrypt(value=str(self.dict_config), key=self.app_key)
+            routes_content = Crypt.encrypt(value=str(self.dict_routes), key=self.app_key)
         else:
-            config_content = self.dict_config
-            routes_content = self.dict_routes
+            config_content = str(self.dict_config)
+            routes_content = str(self.dict_routes)
 
         all_data = [
             {'file' : self.file_config, 'content' : config_content},

@@ -1,8 +1,10 @@
 import os
+import json
 import time
 import tempfile
 from pathlib import Path
 from flaskavel.lab.reagents.crypt import Crypt
+from flaskavel.lab.catalyst.bootstrap_cache import _BootstrapCache
 
 class FlaskavelCache:
     """Handles caching mechanisms for the Flaskavel application."""
@@ -28,40 +30,72 @@ class FlaskavelCache:
         Returns:
             bool: True if the cache is valid, False otherwise.
         """
-        started_file = os.path.join(tempfile.gettempdir(), self.started_file)
-        if not os.path.exists(started_file):
+        started_file_path = os.path.join(tempfile.gettempdir(), self.started_file)
+
+        # Check if the started file exists
+        if not os.path.isfile(started_file_path):
             return False
 
-        with open(started_file, 'r') as file:
-            data_file = file.read()
-        start_time = Crypt.decrypt(value=data_file)
+        # Read and decrypt start time
+        with open(started_file_path, 'r') as file:
+            text = Crypt.decrypt(value=file.read())
 
+        data_list = json.loads(text)
+        self.time = float(data_list['time'])
+        self.path_cache_config = data_list['path_cache_config']
+        self.path_cache_routes = data_list['path_cache_routes']
+        self.encrypt = data_list['encrypt']
+        self.key = data_list['key']
+
+        # Get last modification time of the .env file
         env_path = os.path.join(self.basePath, '.env')
-        last_edit = os.path.getmtime(env_path)
-        if float(last_edit) >= float(start_time):
+        if os.path.getmtime(env_path) >= self.time:
             return False
 
+        # Get last modification time of app.py
         app_path = os.path.join(self.basePath, 'bootstrap', 'app.py')
-        last_edit = os.path.getmtime(app_path)
-        if float(last_edit) >= float(start_time):
+        if os.path.getmtime(app_path) >= self.time:
             return False
 
-        list_files = os.listdir(os.path.join(self.basePath, 'config'))
-        for file in list_files:
-            full_path = os.path.abspath(os.path.join(self.basePath, 'config', file))
-            if os.path.isfile(full_path):
-                if float(os.path.getmtime(full_path)) >= float(start_time):
-                    return False
+        # Check last modification times of all files in the config directory
+        config_path = os.path.join(self.basePath, 'config')
+        for file_name in os.listdir(config_path):
+            full_path = os.path.join(config_path, file_name)
+            if os.path.isfile(full_path) and os.path.getmtime(full_path) >= self.time:
+                return False
 
         return True
 
-    def register(self, started_file: str = 'started.lab'):
+    def register(self, path_cache_config, path_cache_routes, encrypt, key, started_file: str = 'started.lab'):
         """Register the start time in the cache.
 
         Args:
             started_file (str): The name of the started file to create.
         """
+        self.time = str(time.time())
+        self.path_cache_config = path_cache_config
+        self.path_cache_routes = path_cache_routes
+        self.encrypt = 'Y' if encrypt else 'N'
+        self.key = key
+
+        text_init = {
+            'time': self.time,
+            'path_cache_config': self.path_cache_config,
+            'path_cache_routes': self.path_cache_routes,
+            'encrypt': self.encrypt,
+            'key': self.key
+        }
+
         started_file = os.path.join(tempfile.gettempdir(), started_file)
-        start_time = Crypt.encrypt(value=str(time.time()))
+        text = Crypt.encrypt(value=json.dumps(text_init))
         with open(started_file, 'wb') as file:
-            file.write(start_time.encode())
+            file.write(text.encode())
+
+    def mount(self):
+        """Mount cache from files"""
+        _BootstrapCache(
+            path_cache_routes=self.path_cache_routes,
+            path_cache_config=self.path_cache_config,
+            encrypt=self.encrypt,
+            key=self.key
+        )

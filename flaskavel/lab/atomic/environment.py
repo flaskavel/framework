@@ -1,7 +1,10 @@
 from flaskavel.lab.catalyst.environment import _Environment
 
 def env(key:str, default=None):
-    return Env.get(key, default)
+    value = Env.get(key, default)
+    if value in ['False', 'false', 'True', 'true']:
+        value = eval(value)
+    return value
 
 class Env:
 
