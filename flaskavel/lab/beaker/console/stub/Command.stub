@@ -1,0 +1,9 @@
+from flaskavel.lab.beaker.console.reactor import reactor
+from flaskavel.lab.beaker.console.command import Command
+
+@reactor.register
+class {{name-command}}(Command):
+    
+    def handle(self) -> None:
+        #Here your code
+        return 
