@@ -80,7 +80,7 @@ class MakeController(Command):
             self.info(f"Controller '{controller_name}' created successfully in {sub_path}")
 
         except ValueError as e:
-            raise ValueError(f"Error: {e}")
+            self.error(f"Error: {e}")
 
         except Exception as e:
-            raise ValueError(f"An unexpected error occurred: {e}")
+            self.error(f"An unexpected error occurred: {e}")
