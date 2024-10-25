@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import time
 import tempfile
@@ -16,8 +17,8 @@ class FlaskavelCache:
             basePath (Path): The base path for the application.
         """
         self.basePath = basePath
-        self.root_project = str(basePath).replace(os.sep, '_').replace(':','').lower()
-        self.started_file = self.root_project + 'started.lab'
+        self.root_project = re.sub(r'[^a-zA-Z0-9_.-]', '', str(basePath).replace(os.sep, '_')).lower()
+        self.started_file = self.root_project + '_started.lab'
 
     def clearStart(self):
         """Clear the cache for the started file, if it exists."""
