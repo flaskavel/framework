@@ -1,5 +1,6 @@
 import os
 import re
+import shutil
 import sys
 import argparse
 import subprocess
@@ -73,6 +74,15 @@ class FlaskavelInit:
                     message="Dependencies successfully installed.",
                     timestamp=True
                 )
+
+                # Create .env
+                example_env_path = os.path.join(project_path,'.env.example')
+                env_path = os.path.join(project_path,'.env')
+                shutil.copy(example_env_path, env_path)
+
+                # Create ApiKey
+                os.chdir(project_path)
+                subprocess.run(['python', '-B', 'reactor', 'key:generate'], capture_output=True, text=True)
 
             Console.info(
                 message=f"Project '{self.name_app}' successfully created at '{os.path.abspath(project_path)}'.",
