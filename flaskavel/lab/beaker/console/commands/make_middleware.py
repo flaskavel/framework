@@ -19,7 +19,7 @@ class MakeMiddleware(Command):
         Defines the command-line arguments for the 'make:middleware' command.
         """
         return [
-            ('--name', {'type': str, 'required': True, 'help': 'Create a middleware into "app/Http/Middleware/" folder.'})
+            ('--name', {'type': str, 'required': True, 'help': 'Create a middleware into "app/Http/Middlewares/" folder.'})
         ]
 
     def handle(self) -> None:
@@ -32,7 +32,7 @@ class MakeMiddleware(Command):
 
             # Retrieve the argument
             name: str = self.argument('name')
-            middlewares_base_path = app_path('Http/Middleware')
+            middlewares_base_path = app_path('Http/Middlewares')
 
             # Separate route and filename
             if '/' in name:
@@ -70,7 +70,7 @@ class MakeMiddleware(Command):
                 template_content = template_file.read()
 
             # Replace var with the name
-            middleware_content = template_content.replace('{{name-command}}', middleware_name)
+            middleware_content = template_content.replace('{{name-middleware}}', middleware_name)
 
             # Create and save the new file
             new_middleware_path = os.path.join(sub_path, middleware_filename)
