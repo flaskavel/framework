@@ -103,12 +103,16 @@ class Request:
     @classmethod
     def all(cls) -> Dict[str, Any]:
         """Devuelve todos los datos enviados, tanto en la query como en el cuerpo (POST)."""
-        return request.values.to_dict()
+        data = request.get_json(silent=True) or {}
+        if request.form:
+            data.update(request.form.to_dict())
+        data.update(request.args.to_dict())
+        return data
 
     @classmethod
     def collect(cls) -> Dict[str, Any]:
         """Devuelve todos los datos enviados, utilizando `.to_dict()` para asegurar compatibilidad."""
-        return request.values.to_dict()
+        return cls.all()
 
     @classmethod
     def query(cls, key: str = None, default: Any = None) -> Any:
@@ -120,22 +124,24 @@ class Request:
     @classmethod
     def only(cls, keys: List[str]) -> Dict[str, Any]:
         """Devuelve solo los campos especificados en el cuerpo o la query string."""
-        return {key: request.values.get(key) for key in keys if key in request.values}
+        data = cls.all()
+        return {key: data[key] for key in keys if key in data}
 
     @classmethod
     def exclude(cls, keys: List[str]) -> Dict[str, Any]:
         """Devuelve todos los campos excepto los especificados."""
-        return {key: request.values.get(key) for key in request.values if key not in keys}
+        data = cls.all()
+        return {key: value for key, value in data.items() if key not in keys}
 
     @classmethod
     def has(cls, key: str) -> bool:
         """Verifica si un campo está presente en la query string o en el cuerpo de la solicitud."""
-        return key in request.values
+        return key in cls.all()
 
     @classmethod
     def hasAny(cls, keys: List[str]) -> bool:
         """Verifica si al menos uno de los campos especificados está presente en la solicitud."""
-        return any(key in request.values for key in keys)
+        return any(key in cls.all() for key in keys)
 
     @classmethod
     def file(cls, key: str) -> Any:

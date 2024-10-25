@@ -1,5 +1,52 @@
-from flask import jsonify, send_file, redirect
 from flaskavel.lab.catalyst.http_status_code import HttpStatusCode
+from flask import jsonify, send_file, redirect
+
+class DumpExecution(Exception):
+    def __init__(self, response):
+        self.response = response
+
+def dd(*args, **kwargs):
+    from flaskavel.lab.beaker.console.output import Console
+    import inspect
+    import sys
+
+    trace = inspect.stack()[1]
+
+    response = {
+        'filename': trace.filename,
+        'function': trace.function,
+        'line': trace.lineno,
+        'values': args,
+        'values_key': kwargs
+    }
+
+    filename = f"Filename: {trace.filename}"
+
+    Console.newLine()
+    Console.line("-" * len(filename))
+    Console.textSuccess("Flaskavel Debugger")
+    Console.line("-" * len(filename))
+    Console.textDanger(filename)
+    Console.textDanger(f"Function: {trace.function}")
+    Console.textDanger(f"Line: {trace.lineno}")
+
+    if args:
+        Console.newLine()
+        Console.info("VALUES:")
+        for value in args:
+            Console.line(value)
+
+    if kwargs:
+        Console.newLine()
+        Console.info("KEY-VALUE PAIRS:")
+        for key, value in kwargs.items():
+            Console.line(f"{key}: {value}")
+
+    Console.line("-" * len(filename))
+    Console.newLine()
+
+    sys.stdout.flush()
+    raise DumpExecution(response)
 
 class Response:
     """
@@ -158,6 +205,13 @@ class Response:
             status="Flaskavel HTTP Runtime Exception",
             headers=headers
         )
+
+    @staticmethod
+    def dd(data:dict=None):
+        """
+        Flaskavel Dump  Exception.
+        """
+        dd(data)
 
     @staticmethod
     def redirect(location):
