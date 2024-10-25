@@ -106,7 +106,7 @@ class FlaskavelBootstrap:
 
         # Iterate over the alias-based middlewares
         for alias, details in self.aliasesMiddleware.items():
-            module_path = f"app.Http.Middleware.{details['module']}"
+            module_path = f"app.Http.Middlewares.{details['module']}"
 
             # Import the module and validate the middleware class and method
             try:
@@ -144,7 +144,7 @@ class FlaskavelBootstrap:
 
         # Iterate over the globally used middlewares
         for middleware in self.useMiddleware:
-            module_path = f"app.Http.Middleware.{middleware['module']}"
+            module_path = f"app.Http.Middlewares.{middleware['module']}"
 
             # Import the module and validate the middleware class and method
             try:

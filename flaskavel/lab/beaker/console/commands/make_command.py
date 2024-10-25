@@ -6,9 +6,9 @@ from flaskavel.lab.beaker.console.command import Command
 from flaskavel.lab.beaker.paths.helpers import app_path
 
 @reactor.register
-class MakeController(Command):
+class MakeCommand(Command):
     """
-    Command to create a new controller.
+    Command to create a new Command.
     """
 
     signature: str = 'make:command'
@@ -44,13 +44,13 @@ class MakeController(Command):
                 sub_path = controllers_base_path
                 command_name = name
 
-            # Clean spaces only in the controller file name
+            # Clean spaces only in the file name
             command_name = command_name.replace(" ", "")
 
             # Regex pattern that allows only alphabetic characters and underscores
             pattern = r'^[a-zA-Z_]+$'
 
-            # Validate controller name against the pattern
+            # Validate name against the pattern
             if not re.match(pattern, command_name):
                 raise ValueError("Command name must only contain alphabetic characters and underscores (_), no numbers or special characters are allowed.")
 
@@ -64,18 +64,18 @@ class MakeController(Command):
             if command_filename.lower() in existing_files:
                 raise ValueError(f"A command with the name '{command_name}' already exists in the directory: {sub_path}")
 
-            # Read the stub, replace {{name-Controller}}, and create a new controller file
+            # Read the stub, replace var, and create a new file
             template_path = os.path.join(f'{Path(__file__).resolve().parent.parent}/stub/Command.stub')
             with open(template_path, 'r') as template_file:
                 template_content = template_file.read()
 
-            # Replace {{name-Controller}} with the controller name
-            controller_content = template_content.replace('{{name-command}}', command_name).replace('{{signature-name-command}}', command_name.lower().replace('command',''))
+            # Replace var with the name
+            command_content = template_content.replace('{{name-command}}', command_name).replace('{{signature-name-command}}', command_name.lower().replace('command',''))
 
-            # Create and save the new controller file
-            new_controller_path = os.path.join(sub_path, command_filename)
-            with open(new_controller_path, 'w') as new_file:
-                new_file.write(controller_content)
+            # Create and save the new file
+            new_command_path = os.path.join(sub_path, command_filename)
+            with open(new_command_path, 'w') as new_file:
+                new_file.write(command_content)
 
             self.info(f"Command '{command_name}' created successfully in {sub_path}")
 

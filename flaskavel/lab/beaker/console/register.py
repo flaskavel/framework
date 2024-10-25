@@ -27,5 +27,13 @@ native_commands = [
     {
         'module': 'flaskavel.lab.beaker.console.commands.make_controller',
         'class': 'MakeController'
+    },
+    {
+        'module': 'flaskavel.lab.beaker.console.commands.make_command',
+        'class': 'MakeCommand'
+    },
+    {
+        'module': 'flaskavel.lab.beaker.console.commands.make_middleware',
+        'class': 'MakeMiddleware'
     }
 ]

@@ -1,0 +1,13 @@
+from flaskavel.lab.alchemist.http.base_middleware import BaseMiddleware
+from flaskavel.lab.reagents.response import Response
+from flaskavel.lab.reagents.request import Request
+
+class {{name-middleware}}(BaseMiddleware):
+
+    def handle(self, next):
+
+        """
+        Define the logic of your middleware.
+        """
+
+        return next()
