@@ -1,6 +1,5 @@
 from flaskavel.lab.beaker.console.reactor import reactor
 from flaskavel.lab.beaker.console.command import Command
-import time
 
 @reactor.register
 class {{name-command}}(Command):
