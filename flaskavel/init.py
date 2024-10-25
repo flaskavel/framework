@@ -4,6 +4,7 @@ import shutil
 import sys
 import argparse
 import subprocess
+import tempfile
 from flaskavel.lab.beaker.console.output import Console
 
 class FlaskavelInit:
@@ -83,6 +84,13 @@ class FlaskavelInit:
                 # Create ApiKey
                 os.chdir(project_path)
                 subprocess.run(['python', '-B', 'reactor', 'key:generate'], capture_output=True, text=True)
+
+                # Invalidate Cache
+                temp_dir = tempfile.gettempdir()
+                for filename in os.listdir(temp_dir):
+                    if filename.endswith('started.lab'):
+                        file_path = os.path.join(temp_dir, filename)
+                        os.remove(file_path)
 
             Console.info(
                 message=f"Project '{self.name_app}' successfully created at '{os.path.abspath(project_path)}'.",

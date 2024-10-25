@@ -16,7 +16,7 @@ class FlaskavelCache:
             basePath (Path): The base path for the application.
         """
         self.basePath = basePath
-        self.root_project = str(os.path.abspath(__file__)).replace(os.sep, '_').replace('venv_Lib_site-packages_flaskavel_lab_synthesizer','').replace(':','').lower()
+        self.root_project = str(basePath).replace(os.sep, '_').replace(':','').lower()
         self.started_file = self.root_project + 'started.lab'
 
     def clearStart(self):
