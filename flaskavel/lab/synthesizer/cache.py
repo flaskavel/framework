@@ -16,7 +16,7 @@ class FlaskavelCache:
             basePath (Path): The base path for the application.
         """
         self.basePath = basePath
-        self.root_project = str(os.path.dirname(__file__)).replace(os.sep, '_').lower()
+        self.root_project = str(basePath).replace(os.sep, '_').lower()
         self.started_file = self.root_project + 'started.lab'
 
     def clearStart(self):
@@ -67,11 +67,9 @@ class FlaskavelCache:
 
         return True
 
-    def register(self, path_cache_config, path_cache_routes, encrypt, key, started_file: str = 'started.lab'):
-        """Register the start time in the cache.
-
-        Args:
-            started_file (str): The name of the started file to create.
+    def register(self, path_cache_config, path_cache_routes, encrypt, key):
+        """
+        Register the start time in the cache.
         """
         self.time = str(time.time())
         self.path_cache_config = path_cache_config
@@ -87,7 +85,7 @@ class FlaskavelCache:
             'key': self.key
         }
 
-        started_file = os.path.join(tempfile.gettempdir(), started_file)
+        started_file = os.path.join(tempfile.gettempdir(), self.started_file)
         text = Crypt.encrypt(value=json.dumps(text_init))
         with open(started_file, 'wb') as file:
             file.write(text.encode())
