@@ -2,7 +2,7 @@ import re
 import time
 import traceback
 import typing as t
-from flask import Flask, jsonify
+from flask import Flask
 from flaskavel.lab.reagents.response import Response, DumpExecution
 from flaskavel.lab.beaker.console.output import Console
 
@@ -17,7 +17,7 @@ class Flaskavel(Flask):
     def handle_global_error(self, e):
 
         if isinstance(e, DumpExecution):
-            return jsonify(e.response), 500
+            return Response.dd(e.response)
 
         error = str(e)
         traceback_list = traceback.format_tb(e.__traceback__)

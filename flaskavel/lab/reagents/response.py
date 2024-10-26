@@ -6,22 +6,41 @@ class DumpExecution(Exception):
         self.response = response
 
 def dd(*args, **kwargs):
+
     from flaskavel.lab.beaker.console.output import Console
     import inspect
     import sys
 
+    # Obtener el lugar donde se llamó a la función dd()
     trace = inspect.stack()[1]
 
+    # Convertir los valores de args a cadenas válidas para jsonify
+    sanitized_args = []
+    for arg in args:
+        if not isinstance(arg, (dict, list, str, int, float, bool)):
+            sanitized_args.append(str(arg))
+        else:
+            sanitized_args.append(arg)
+
+    # Convertir los key-value pairs de kwargs a cadenas válidas para jsonify
+    sanitized_kwargs = {}
+    for key, value in kwargs.items():
+        if not isinstance(value, (dict, list, str, int, float, bool)):
+            sanitized_kwargs[str(key)] = str(value)
+        else:
+            sanitized_kwargs[str(key)] = value
+
+    # Estructurar la respuesta
     response = {
         'filename': trace.filename,
         'function': trace.function,
         'line': trace.lineno,
-        'values': args,
-        'values_key': kwargs
+        'values': sanitized_args,
+        'values_key': sanitized_kwargs
     }
 
+    # Mostrar información en la consola
     filename = f"Filename: {trace.filename}"
-
     Console.newLine()
     Console.line("-" * len(filename))
     Console.textSuccess("Flaskavel Debugger")
@@ -30,22 +49,23 @@ def dd(*args, **kwargs):
     Console.textDanger(f"Function: {trace.function}")
     Console.textDanger(f"Line: {trace.lineno}")
 
-    if args:
+    if sanitized_args:
         Console.newLine()
         Console.info("VALUES:")
-        for value in args:
+        for value in sanitized_args:
             Console.line(value)
 
-    if kwargs:
+    if sanitized_kwargs:
         Console.newLine()
         Console.info("KEY-VALUE PAIRS:")
-        for key, value in kwargs.items():
-            Console.line(f"{key}: {value}")
+        for key, value in sanitized_kwargs.items():
+            Console.line(f"{str(key)}: {str(value)}")
 
     Console.line("-" * len(filename))
     Console.newLine()
 
     sys.stdout.flush()
+
     raise DumpExecution(response)
 
 class Response:
@@ -194,24 +214,30 @@ class Response:
         )
 
     @staticmethod
-    def flaskavelError(errros:dict=None, message:str="Internal server error", headers=None):
+    def flaskavelError(errros:dict=None, message:str="Flaskavel HTTP Runtime Exception", headers=None):
         """
         Flaskavel HTTP Runtime Exception.
         """
         return Response.json(
             errros=errros,
-            code=500,
+            code=HttpStatusCode.INTERNAL_SERVER_ERROR.code,
             message=message,
-            status="Flaskavel HTTP Runtime Exception",
+            status=HttpStatusCode.INTERNAL_SERVER_ERROR.description,
             headers=headers
         )
 
     @staticmethod
     def dd(data:dict=None):
         """
-        Flaskavel Dump  Exception.
+        Flaskavel Dump Exception.
         """
-        dd(data)
+        return Response.json(
+            data=data,
+            code=HttpStatusCode.INTERNAL_SERVER_ERROR.code,
+            message="Flaskavel Dump and Die: Exception Encountered",
+            status=HttpStatusCode.INTERNAL_SERVER_ERROR.description,
+            headers=None
+        )
 
     @staticmethod
     def redirect(location):

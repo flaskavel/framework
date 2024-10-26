@@ -1,10 +1,10 @@
 import os
 import re
-import shutil
 import sys
+import shutil
+import tempfile
 import argparse
 import subprocess
-import tempfile
 from flaskavel.lab.beaker.console.output import Console
 
 class FlaskavelInit:
@@ -84,6 +84,9 @@ class FlaskavelInit:
                 # Create ApiKey
                 os.chdir(project_path)
                 subprocess.run(['python', '-B', 'reactor', 'key:generate'], capture_output=True, text=True)
+
+                # remove .git origin
+                subprocess.run(["git", "remote", "remove", "origin"], check=True)
 
                 # Invalidate Cache
                 temp_dir = tempfile.gettempdir()
