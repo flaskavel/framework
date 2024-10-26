@@ -110,9 +110,12 @@ class Request:
         return data
 
     @classmethod
-    def collect(cls) -> Dict[str, Any]:
+    def input(cls, key:str) -> Any:
         """Devuelve todos los datos enviados, utilizando `.to_dict()` para asegurar compatibilidad."""
-        return cls.all()
+        data = cls.all()
+        if key in data:
+            return data.get(key)
+        raise ValueError(f"The key '{key}' is not present in the request.")
 
     @classmethod
     def query(cls, key: str = None, default: Any = None) -> Any:
