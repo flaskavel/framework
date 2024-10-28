@@ -75,7 +75,7 @@ class Response:
     """
 
     @staticmethod
-    def json(data:dict=None, errros:dict=None, code:int=200, message:str="Operation successful", status:str="Ok", headers:dict={}):
+    def json(data:dict=None, errors:dict=None, code:int=200, message:str="Operation successful", status:str="Ok", headers:dict={}):
         """
         General method for sending a standard JSON response.
 
@@ -94,7 +94,7 @@ class Response:
             "status": status,
             "message": message,
             "data": data or {},
-            "errros": errros or {}
+            "errors": errors or {}
         }
 
         return jsonify(response), code, headers or {}
@@ -139,12 +139,12 @@ class Response:
         )
 
     @staticmethod
-    def badRequest(errros:dict=None, message:str="Bad request", headers:dict=None):
+    def badRequest(errors:dict=None, message:str="Bad request", headers:dict=None):
         """
         Responds with a 400 Bad Request when the request is invalid.
         """
         return Response.json(
-            errros=errros,
+            errors=errors,
             code=HttpStatusCode.BAD_REQUEST.code,
             message=message,
             status=HttpStatusCode.BAD_REQUEST.description,
@@ -176,12 +176,12 @@ class Response:
         )
 
     @staticmethod
-    def notFound(errros:dict=None, message:str="Resource not found", headers:dict=None):
+    def notFound(errors:dict=None, message:str="Resource not found", headers:dict=None):
         """
         Responds with a 404 Not Found when a resource is not found.
         """
         return Response.json(
-            errros=errros,
+            errors=errors,
             code=HttpStatusCode.NOT_FOUND.code,
             message=message,
             status=HttpStatusCode.NOT_FOUND.description,
@@ -201,12 +201,12 @@ class Response:
         )
 
     @staticmethod
-    def serverError(errros:dict=None, message:str="Internal server error", headers=None):
+    def serverError(errors:dict=None, message:str="Internal server error", headers=None):
         """
         Responds with a 500 Internal Server Error for unexpected server issues.
         """
         return Response.json(
-            errros=errros,
+            errors=errors,
             code=HttpStatusCode.INTERNAL_SERVER_ERROR.code,
             message=message,
             status=HttpStatusCode.INTERNAL_SERVER_ERROR.description,
@@ -214,12 +214,12 @@ class Response:
         )
 
     @staticmethod
-    def flaskavelError(errros:dict=None, message:str="Flaskavel HTTP Runtime Exception", headers=None):
+    def flaskavelError(errors:dict=None, message:str="Flaskavel HTTP Runtime Exception", headers=None):
         """
         Flaskavel HTTP Runtime Exception.
         """
         return Response.json(
-            errros=errros,
+            errors=errors,
             code=HttpStatusCode.INTERNAL_SERVER_ERROR.code,
             message=message,
             status=HttpStatusCode.INTERNAL_SERVER_ERROR.description,
