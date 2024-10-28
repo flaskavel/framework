@@ -1,5 +1,5 @@
 import sys
-from bootstrap.app import app # type: ignore
+from bootstrap.app import app  # type: ignore
 from flaskavel.lab.beaker.console.reactor import reactor
 from flaskavel.lab.beaker.console.command import Command
 
@@ -71,7 +71,7 @@ class Serve(Command):
             sys.exit(status)
 
         except ValueError as e:
-            raise ValueError(f"Error: {e}")
+            self.error(f"Error: {e}")
 
         except Exception as e:
-            raise ValueError(f"An unexpected error occurred: {e}")
+            self.error(f"An unexpected error occurred: {e}")

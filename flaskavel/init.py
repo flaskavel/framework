@@ -22,15 +22,18 @@ class FlaskavelInit:
         try:
 
             # Validate the application name with regex
-            if not re.match(r'^[a-zA-Z0-9_]+$', self.name_app):
-                raise ValueError("The application name can only contain letters, numbers, and underscores. Special characters and accents are not allowed.")
+            if not re.match(r'^[a-zA-Z0-9_-]+$', self.name_app):
+                raise ValueError("The application name can only contain letters, numbers, underscores, and hyphens. Special characters and accents are not allowed.")
+
 
             # Clone the repository
             Console.info(
                 message=f"Cloning the repository into '{self.name_app}'...",
                 timestamp=True
             )
+
             subprocess.run(["git", "clone", self.skeleton_repo, self.name_app], check=True)
+
             Console.info(
                 message=f"Repository successfully cloned into '{self.name_app}'.",
                 timestamp=True
@@ -49,7 +52,9 @@ class FlaskavelInit:
                 message="Creating virtual environment...",
                 timestamp=True
             )
+
             subprocess.run([sys.executable, "-m", "venv", "venv"], check=True)
+
             Console.info(
                 message="Virtual environment successfully created.",
                 timestamp=True
@@ -64,13 +69,17 @@ class FlaskavelInit:
                     message=f"'requirements.txt' not found. Please visit the Flaskavel repository for more details: {self.skeleton_repo}",
                     timestamp=True
                 )
+
             else:
+
                 # Install dependencies from requirements.txt
                 Console.info(
                     message="Installing dependencies from 'requirements.txt'...",
                     timestamp=True
                 )
+
                 subprocess.run([os.path.join(venv_path, "pip"), "install", "-r", "requirements.txt"], check=True)
+
                 Console.info(
                     message="Dependencies successfully installed.",
                     timestamp=True

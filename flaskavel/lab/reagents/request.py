@@ -2,80 +2,81 @@ from flask import request
 from typing import Any, List, Dict
 
 class Request:
+    """A class to handle HTTP request data in a Flask application."""
 
     @classmethod
     @property
     def path(cls) -> str:
-        """Devuelve el path actual de la URL."""
+        """Returns the current path of the URL."""
         return request.path if request.path else None
 
     @classmethod
     @property
     def fullUrl(cls) -> str:
-        """Devuelve la URL completa incluyendo los parámetros de query."""
+        """Returns the complete URL including query parameters."""
         return request.url
 
     @classmethod
     @property
     def fullUrlWithoutQuery(cls) -> str:
-        """Devuelve la URL completa pero sin los parámetros de query."""
+        """Returns the complete URL without query parameters."""
         return request.base_url
 
     @classmethod
     @property
     def fullUrlWithQuery(cls) -> str:
-        """Devuelve la URL completa junto con todos los parámetros de query."""
+        """Returns the complete URL along with all query parameters."""
         return request.url
 
     @classmethod
     @property
     def host(cls) -> str:
-        """Devuelve el host."""
+        """Returns the host."""
         return request.host
 
     @classmethod
     @property
     def httpHost(cls) -> str:
-        """Devuelve el HTTP host completo, incluyendo el puerto."""
+        """Returns the complete HTTP host, including the port."""
         return request.host_url
 
     @classmethod
     @property
     def scheme(cls) -> str:
-        """Devuelve el esquema de la URL (http, https)."""
+        """Returns the scheme of the URL (http or https)."""
         return request.scheme
 
     @classmethod
     @property
     def schemeAndHttpHost(cls) -> str:
-        """Devuelve el esquema y el host completo."""
+        """Returns the scheme and the complete host."""
         return f"{request.scheme}://{request.host}"
 
     @classmethod
     def isMethod(cls, method: str) -> bool:
-        """Verifica si el método HTTP coincide con el pasado como argumento."""
+        """Checks if the HTTP method matches the one provided as an argument."""
         return request.method.upper() == method.upper()
 
     @classmethod
     def header(cls, header: str) -> Any:
-        """Obtiene un valor del encabezado."""
+        """Retrieves a value from the request header."""
         return request.headers.get(header, None)
 
     @classmethod
     def hasHeader(cls, header: str) -> bool:
-        """Verifica si un encabezado específico está presente."""
+        """Checks if a specific header is present in the request."""
         return header in request.headers
 
     @classmethod
     @property
     def ip(cls) -> str:
-        """Devuelve la IP del cliente que realiza la solicitud."""
+        """Returns the IP address of the client making the request."""
         return request.remote_addr if request.remote_addr else None
 
     @classmethod
     @property
     def bearerToken(cls) -> str:
-        """Devuelve el token Bearer del encabezado de Autorización si está presente."""
+        """Returns the Bearer token from the Authorization header if present."""
         auth_header = request.headers.get('Authorization', None)
         if auth_header and auth_header.startswith('Bearer '):
             return auth_header.split(' ')[1]
@@ -84,7 +85,7 @@ class Request:
     @classmethod
     @property
     def ips(cls) -> List[str]:
-        """Devuelve una lista de todas las IPs (cliente y proxies) que han enviado la solicitud."""
+        """Returns a list of all IPs (client and proxies) that have sent the request."""
         if 'X-Forwarded-For' in request.headers:
             return [ip.strip() for ip in request.headers['X-Forwarded-For'].split(',')]
         return [request.remote_addr]
@@ -92,17 +93,17 @@ class Request:
     @classmethod
     @property
     def getAcceptableContentTypes(cls) -> List[str]:
-        """Devuelve una lista de los tipos de contenido aceptables especificados en el encabezado `Accept`."""
+        """Returns a list of acceptable content types specified in the `Accept` header."""
         return list(request.accept_mimetypes.values())
 
     @classmethod
     def accepts(cls, content_types: List[str]) -> bool:
-        """Verifica si alguno de los tipos de contenido en la lista es aceptado por el cliente."""
+        """Checks if any of the content types in the list are accepted by the client."""
         return any(content_type in request.accept_mimetypes for content_type in content_types)
 
     @classmethod
     def all(cls) -> Dict[str, Any]:
-        """Devuelve todos los datos enviados, tanto en la query como en el cuerpo (POST)."""
+        """Returns all the data sent, both in the query and in the body (POST)."""
         data = request.get_json(silent=True) or {}
         if request.form:
             data.update(request.form.to_dict())
@@ -110,8 +111,8 @@ class Request:
         return data
 
     @classmethod
-    def input(cls, key:str) -> Any:
-        """Devuelve todos los datos enviados, utilizando `.to_dict()` para asegurar compatibilidad."""
+    def input(cls, key: str) -> Any:
+        """Returns all the data sent, using `.to_dict()` to ensure compatibility."""
         data = cls.all()
         if key in data:
             return data.get(key)
@@ -119,39 +120,39 @@ class Request:
 
     @classmethod
     def query(cls, key: str = None, default: Any = None) -> Any:
-        """Obtiene un valor específico de la query string o todos los parámetros si no se especifica."""
+        """Gets a specific value from the query string or all parameters if none is specified."""
         if key:
             return request.args.get(key, default)
         return request.args.to_dict()
 
     @classmethod
     def only(cls, keys: List[str]) -> Dict[str, Any]:
-        """Devuelve solo los campos especificados en el cuerpo o la query string."""
+        """Returns only the specified fields from the body or query string."""
         data = cls.all()
         return {key: data[key] for key in keys if key in data}
 
     @classmethod
     def exclude(cls, keys: List[str]) -> Dict[str, Any]:
-        """Devuelve todos los campos excepto los especificados."""
+        """Returns all fields except the specified ones."""
         data = cls.all()
         return {key: value for key, value in data.items() if key not in keys}
 
     @classmethod
     def has(cls, key: str) -> bool:
-        """Verifica si un campo está presente en la query string o en el cuerpo de la solicitud."""
+        """Checks if a field is present in the query string or in the request body."""
         return key in cls.all()
 
     @classmethod
     def hasAny(cls, keys: List[str]) -> bool:
-        """Verifica si al menos uno de los campos especificados está presente en la solicitud."""
+        """Checks if at least one of the specified fields is present in the request."""
         return any(key in cls.all() for key in keys)
 
     @classmethod
     def file(cls, key: str) -> Any:
-        """Devuelve un archivo subido, si existe."""
+        """Returns an uploaded file if it exists."""
         return request.files.get(key)
 
     @classmethod
     def hasFile(cls, key: str) -> bool:
-        """Verifica si se ha subido un archivo con el nombre especificado."""
+        """Checks if a file has been uploaded with the specified name."""
         return key in request.files

@@ -1,75 +1,96 @@
 from flaskavel.lab.catalyst.environment import _Environment
 
-def env(key:str, default=None):
+def env(key: str, default=None):
+    """
+    Retrieves the value of an environment variable and converts it to a boolean
+    if it represents 'true' or 'false' (case-insensitive).
+
+    Args:
+        key (str): The key for the environment variable.
+        default: The default value if the environment variable is not found.
+
+    Returns:
+        The processed value of the environment variable or the default value.
+        If the value is 'True'/'true' or 'False'/'false', it is converted to a boolean.
+    """
     value = Env.get(key, default)
-    if value in ['False', 'false', 'True', 'true']:
-        value = eval(value)
+
+    if isinstance(value, str) and value.lower() == 'true':
+        return True
+    elif isinstance(value, str) and value.lower() == 'false':
+        return False
+
     return value
 
 class Env:
+    """
+    The Env class provides static methods to manage environment variables,
+    allowing for setting, retrieving, and removing them, along with accessing
+    all environment variable values and the .env file path.
+    """
 
     @staticmethod
     def get(key: str, default=None):
         """
-        Método estático para obtener el valor de una variable de entorno.
+        Static method to retrieve the value of an environment variable.
 
         Args:
-            key (str): La clave de la variable de entorno.
-            default: Valor predeterminado si la clave no existe.
+            key (str): The key of the environment variable.
+            default: The default value if the key does not exist.
 
         Returns:
-            El valor de la variable de entorno o el valor predeterminado.
+            The value of the environment variable or the default value if not found.
         """
-        environment = _Environment()  # Obtiene la instancia Singleton
+        environment = _Environment()  # Retrieves the Singleton instance
         return environment.get(key=key, default=default)
 
     @staticmethod
     def set(key: str, value: str):
         """
-        Método estático para establecer el valor de una variable de entorno.
+        Static method to set the value of an environment variable.
 
         Args:
-            key (str): La clave de la variable de entorno.
-            value (str): El valor a establecer.
+            key (str): The key of the environment variable.
+            value (str): The value to assign.
 
         Returns:
             None
         """
-        environment = _Environment()  # Obtiene la instancia Singleton
+        environment = _Environment()  # Retrieves the Singleton instance
         environment.set(key=key, value=value)
 
     @staticmethod
     def unset(key: str):
         """
-        Método estático para eliminar una variable de entorno.
+        Static method to remove an environment variable.
 
         Args:
-            key (str): La clave de la variable de entorno a eliminar.
+            key (str): The key of the environment variable to remove.
 
         Returns:
             None
         """
-        environment = _Environment()  # Obtiene la instancia Singleton
+        environment = _Environment()  # Retrieves the Singleton instance
         environment.unset(key=key)
 
     @staticmethod
     def get_values():
         """
-        Método estático para obtener todos los valores de las variables de entorno.
+        Static method to retrieve all environment variable values.
 
         Returns:
-            dict: Un diccionario con todas las variables de entorno.
+            dict: A dictionary containing all environment variables and their values.
         """
-        environment = _Environment()  # Obtiene la instancia Singleton
+        environment = _Environment()  # Retrieves the Singleton instance
         return environment.get_values()
 
     @staticmethod
     def get_path():
         """
-        Método estático para obtener la ruta del archivo .env.
+        Static method to retrieve the path of the .env file.
 
         Returns:
-            str: La ruta del archivo .env.
+            str: The path to the .env file.
         """
-        environment = _Environment()  # Obtiene la instancia Singleton
+        environment = _Environment()  # Retrieves the Singleton instance
         return environment.get_path()

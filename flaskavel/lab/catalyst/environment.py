@@ -3,11 +3,26 @@ import threading
 from dotenv import get_key, set_key, unset_key, dotenv_values
 
 class _Environment:
+    """
+    Singleton class to manage environment variables from a .env file.
+    Ensures a single instance handles environment variable access,
+    modification, and deletion.
+    """
 
-    _instance = None
-    _lock = threading.Lock()
+    _instance = None  # Singleton instance
+    _lock = threading.Lock()  # Thread lock to control instance creation
 
     def __new__(cls, path: str = None):
+        """
+        Creates or returns the singleton instance. Uses a thread lock to ensure
+        thread-safe initialization of the instance.
+
+        Args:
+            path (str, optional): Path to the .env file. Defaults to None.
+
+        Returns:
+            _Environment: The singleton instance of _Environment.
+        """
         with cls._lock:
             if cls._instance is None:
                 cls._instance = super(_Environment, cls).__new__(cls)
@@ -15,36 +30,40 @@ class _Environment:
         return cls._instance
 
     def _initialize(self, path: str = None):
+        """
+        Initializes the instance by setting the path to the .env file.
+
+        Args:
+            path (str, optional): Path to the .env file. If not provided,
+                                  defaults to a relative path to locate .env.
+        """
         self.path = path
         if not self.path:
-            self.path = os.path.join(__file__, '../../../../../../../.env')
-
+            self.path = os.path.join(__file__, '../../../../../../../.env')  # Default .env path
 
     def get(self, key: str, default=None):
         """
-        Obtiene el valor de una variable de entorno.
+        Retrieves the value of an environment variable.
 
         Args:
-            key (str): La clave de la variable de entorno.
-            default: Valor predeterminado si la clave no existe.
+            key (str): The key of the environment variable.
+            default: Default value if the key does not exist.
 
         Returns:
-            El valor de la variable de entorno o el valor predeterminado.
+            str: The value of the environment variable or the default value.
         """
-
         if key not in dotenv_values(dotenv_path=self.path):
             return default
 
         return get_key(dotenv_path=self.path, key_to_get=key)
 
-
     def set(self, key: str, value: str):
         """
-        Establece el valor de una variable de entorno.
+        Sets the value of an environment variable in the .env file.
 
         Args:
-            key (str): La clave de la variable de entorno.
-            value (str): El valor a establecer.
+            key (str): The key of the environment variable.
+            value (str): The value to set.
 
         Returns:
             None
@@ -53,10 +72,10 @@ class _Environment:
 
     def unset(self, key: str):
         """
-        Elimina una variable de entorno.
+        Removes an environment variable from the .env file.
 
         Args:
-            key (str): La clave de la variable de entorno a eliminar.
+            key (str): The key of the environment variable to remove.
 
         Returns:
             None
@@ -65,18 +84,18 @@ class _Environment:
 
     def get_values(self):
         """
-        Obtiene todos los valores de las variables de entorno.
+        Retrieves all environment variable values from the .env file.
 
         Returns:
-            dict: Un diccionario con todas las variables de entorno.
+            dict: A dictionary of all environment variables and their values.
         """
         return dotenv_values(dotenv_path=self.path)
 
     def get_path(self):
         """
-        Obtiene la ruta del archivo .env.
+        Retrieves the path of the .env file.
 
         Returns:
-            str: La ruta del archivo .env.
+            str: The path of the .env file.
         """
         return self.path

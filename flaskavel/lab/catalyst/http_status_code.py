@@ -1,14 +1,19 @@
 from enum import Enum
 
 class HttpStatusCode(Enum):
+    """
+    Enum class for HTTP status codes and their associated descriptions.
+    Organized by categories: informational, success, redirection, client errors, and server errors.
+    Each status code is represented with a numeric code and a descriptive message.
+    """
 
-    # 1xx Informational
+    # 1xx Informational - Request received, continuing process.
     CONTINUE = (100, "Continue")
     SWITCHING_PROTOCOLS = (101, "Switching Protocols")
     PROCESSING = (102, "Processing (WebDAV)")
     EARLY_HINTS = (103, "Early Hints")
 
-    # 2xx Success
+    # 2xx Success - Request successfully received, understood, and accepted.
     OK = (200, "OK")
     CREATED = (201, "Created")
     ACCEPTED = (202, "Accepted")
@@ -20,7 +25,7 @@ class HttpStatusCode(Enum):
     ALREADY_REPORTED = (208, "Already Reported (WebDAV)")
     IM_USED = (226, "IM Used")
 
-    # 3xx Redirection
+    # 3xx Redirection - Further action needs to be taken to complete the request.
     MULTIPLE_CHOICES = (300, "Multiple Choices")
     MOVED_PERMANENTLY = (301, "Moved Permanently")
     FOUND = (302, "Found")
@@ -30,7 +35,7 @@ class HttpStatusCode(Enum):
     TEMPORARY_REDIRECT = (307, "Temporary Redirect")
     PERMANENT_REDIRECT = (308, "Permanent Redirect")
 
-    # 4xx Client Errors
+    # 4xx Client Errors - Request contains bad syntax or cannot be fulfilled.
     BAD_REQUEST = (400, "Bad Request")
     UNAUTHORIZED = (401, "Unauthorized")
     PAYMENT_REQUIRED = (402, "Payment Required")
@@ -49,7 +54,7 @@ class HttpStatusCode(Enum):
     UNSUPPORTED_MEDIA_TYPE = (415, "Unsupported Media Type")
     RANGE_NOT_SATISFIABLE = (416, "Range Not Satisfiable")
     EXPECTATION_FAILED = (417, "Expectation Failed")
-    IM_A_TEAPOT = (418, "I'm a teapot")
+    IM_A_TEAPOT = (418, "I'm a teapot")  # Easter egg status code
     MISDIRECTED_REQUEST = (421, "Misdirected Request")
     UNPROCESSABLE_ENTITY = (422, "Unprocessable Entity (WebDAV)")
     LOCKED = (423, "Locked (WebDAV)")
@@ -61,7 +66,7 @@ class HttpStatusCode(Enum):
     REQUEST_HEADER_FIELDS_TOO_LARGE = (431, "Request Header Fields Too Large")
     UNAVAILABLE_FOR_LEGAL_REASONS = (451, "Unavailable For Legal Reasons")
 
-    # 5xx Server Errors
+    # 5xx Server Errors - Server failed to fulfill a valid request.
     INTERNAL_SERVER_ERROR = (500, "Internal Server Error")
     NOT_IMPLEMENTED = (501, "Not Implemented")
     BAD_GATEWAY = (502, "Bad Gateway")
@@ -75,8 +80,21 @@ class HttpStatusCode(Enum):
     NETWORK_AUTHENTICATION_REQUIRED = (511, "Network Authentication Required")
 
     def __init__(self, code, description):
+        """
+        Initializes each enum member with a status code and description.
+
+        Args:
+            code (int): The numeric HTTP status code.
+            description (str): A brief message describing the status.
+        """
         self.code = code
         self.description = description
 
     def __str__(self):
+        """
+        Returns a string representation of the HTTP status code and description.
+
+        Returns:
+            str: The HTTP status code followed by its description.
+        """
         return f"{self.code} {self.description}"

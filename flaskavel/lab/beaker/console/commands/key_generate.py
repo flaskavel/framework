@@ -1,11 +1,15 @@
-from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+from flaskavel.lab.catalyst.config import Config
+from flaskavel.lab.atomic.environment import Env
 from flaskavel.lab.beaker.console.reactor import reactor
 from flaskavel.lab.beaker.console.command import Command
-from flaskavel.lab.atomic.environment import Env
-from flaskavel.lab.catalyst.config import Config
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 @reactor.register
 class KeyGenerate(Command):
+    """
+    The KeyGenerate command is responsible for generating a new cryptographic key
+    according to the configured cipher specifications and saving it in the environment file.
+    """
 
     # The command signature used to execute this command.
     signature = 'key:generate'
@@ -14,6 +18,16 @@ class KeyGenerate(Command):
     description = 'Generates a new key in the environment file.'
 
     def handle(self) -> None:
+        """
+        Executes the command to generate and store a new application key by performing the following steps:
+        1. Determines the cipher and key length based on application configuration.
+        2. Generates an AES-GCM key of the specified length.
+        3. Saves the generated key in the environment file under the key 'APP_KEY'.
+        4. Logs a masked version of the key for security purposes.
+
+        Returns:
+            None
+        """
 
         # Set the desired cipher for key generation
         cipher = Config.app('cipher')
@@ -36,11 +50,11 @@ class KeyGenerate(Command):
         # Store the generated key in the environment under 'APP_KEY'
         Env.set('APP_KEY', new_key)
 
-        # Limit the message to 68 characters, showing the first 4 and last 4 characters of the key
+        # Mask the key for logging, showing only the first and last 4 characters
         masked_key = f"{new_key[:4]}{'•' * (len(new_key) - 8)}{new_key[-4:]}"
 
         # Prepare the final message ensuring it stays within the 68 character limit
         message = f"New AES-{length}-GCM App Key Generated: APP_KEY = {masked_key}"
 
-        # Log the message with a timestamp
+        # Log the masked key with a timestamp
         self.info(message=message[:68], timestamp=True)

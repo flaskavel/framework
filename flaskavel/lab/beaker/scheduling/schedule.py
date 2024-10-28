@@ -1,7 +1,7 @@
 import time
 import schedule
 from flaskavel.lab.beaker.console.reactor import reactor
-from flaskavel.lab.beaker.console.threaded import ConsoleThread
+from flaskavel.lab.catalyst.threaded import ConsoleThread
 
 class Schedule:
 

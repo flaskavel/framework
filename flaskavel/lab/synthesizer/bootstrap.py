@@ -8,8 +8,8 @@ from flaskavel.lab.catalyst.paths import _Paths
 from flaskavel.lab.beaker.console.output import Console
 from flaskavel.lab.synthesizer.cache import FlaskavelCache
 from flaskavel.lab.catalyst.environment import _Environment
-from flaskavel.lab.catalyst.router_instances import _RouteInstances
 from flaskavel.lab.synthesizer.runner import FlaskavelRunner
+from flaskavel.lab.catalyst.router_instances import _RouteInstances
 
 class FlaskavelBootstrap:
     """Handles the bootstrapping of the Flaskavel application."""

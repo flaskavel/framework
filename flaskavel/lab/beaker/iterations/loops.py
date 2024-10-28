@@ -1,7 +1,7 @@
 import gc
 import time
 from flaskavel.lab.beaker.console.reactor import reactor
-from flaskavel.lab.beaker.console.threaded import ConsoleThread
+from flaskavel.lab.catalyst.threaded import ConsoleThread
 
 class Loops:
     """
@@ -14,7 +14,7 @@ class Loops:
         self.args = []
         self.sleep = 1
         self.timer = None
-        self.isDaemon = False  # By default, the threads are not daemon threads.
+        self.isDaemon = False
 
     def daemon(self, isDaemon: bool = True):
         """

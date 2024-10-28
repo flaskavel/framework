@@ -15,7 +15,6 @@ class Command:
     description = "Custom Command Application"
 
     def __init__(self) -> None:
-
         # Initialize the argparse parser
         self.argparse = argparse.ArgumentParser(description='Flaskavel Argument Parser')
 
@@ -23,7 +22,7 @@ class Command:
         self.args = []
         self.registered_arguments = set()
 
-    def info(self, message:str, timestamp:bool = False):
+    def info(self, message: str, timestamp: bool = False):
         """
         Outputs an informational message to the console.
 
@@ -32,7 +31,7 @@ class Command:
         """
         Console.info(message, timestamp)
 
-    def error(self, message:str, timestamp:bool = False):
+    def error(self, message: str, timestamp: bool = False):
         """
         Outputs an error message to the console.
 
@@ -41,7 +40,7 @@ class Command:
         """
         Console.error(message, timestamp)
 
-    def fail(self, message:str, timestamp:bool = False):
+    def fail(self, message: str, timestamp: bool = False):
         """
         Outputs a failure message to the console.
 
@@ -50,7 +49,7 @@ class Command:
         """
         Console.fail(message, timestamp)
 
-    def ask(self, question:str):
+    def ask(self, question: str):
         """
         Prompts the user with a question and returns their input.
 
@@ -62,7 +61,7 @@ class Command:
         """
         return Console.ask(question)
 
-    def confirm(self, question:str):
+    def confirm(self, question: str):
         """
         Asks the user a yes/no question and returns their confirmation.
 
@@ -74,7 +73,7 @@ class Command:
         """
         return Console.confirm(question)
 
-    def secret(self, question:str):
+    def secret(self, question: str):
         """
         Asks the user for input in a hidden format (e.g., password).
 
@@ -86,7 +85,7 @@ class Command:
         """
         return Console.secret(question)
 
-    def anticipate(self, question:str, options:list, default=None):
+    def anticipate(self, question: str, options: list, default=None):
         """
         Prompts the user with a question and provides autocomplete options.
 
@@ -100,7 +99,7 @@ class Command:
         """
         return Console.anticipate(question, options, default)
 
-    def choice(self, question:str, choices:list, default_index=0):
+    def choice(self, question: str, choices: list, default_index=0):
         """
         Prompts the user with a question and provides a list of choices.
 
@@ -114,7 +113,7 @@ class Command:
         """
         return Console.choice(question, choices, default_index)
 
-    def line(self, message:str=''):
+    def line(self, message: str = ''):
         """
         Outputs a line of text to the console.
 
@@ -123,7 +122,7 @@ class Command:
         """
         Console.line(message)
 
-    def uniqueLine(self, message:str=''):
+    def uniqueLine(self, message: str = ''):
         """
         Sends a line of text to the console always erasing any previous content.
 
@@ -133,7 +132,7 @@ class Command:
         Console.clear()
         Console.line(message)
 
-    def newLine(self, count:int=1):
+    def newLine(self, count: int = 1):
         """
         Outputs a specified number of new lines to the console.
 
@@ -142,7 +141,7 @@ class Command:
         """
         Console.newLine(count)
 
-    def table(self, headers:list, rows:list):
+    def table(self, headers: list, rows: list):
         """
         Outputs a table to the console.
 
@@ -152,7 +151,7 @@ class Command:
         """
         Console.table(headers, rows)
 
-    def createProgressBar(self, total:int=100, width:int=50, inline:bool=False):
+    def createProgressBar(self, total: int = 100, width: int = 50, inline: bool = False):
         """
         Creates a progress bar instance.
 
@@ -174,6 +173,9 @@ class Command:
         return []
 
     def _setArguments(self):
+        """
+        Registers the command-line arguments defined in child classes.
+        """
         for arg, options in self.arguments():
             if arg not in self.registered_arguments:
                 self.argparse.add_argument(arg, **options)
@@ -234,7 +236,7 @@ class Command:
         """
         pass
 
-    def exit(self, code:int=1):
+    def exit(self, code: int = 1):
         """
         Exit Command
         """

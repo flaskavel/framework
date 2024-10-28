@@ -1,8 +1,8 @@
 NAME="flaskavel"
-VERSION="1.7.0"
+VERSION="1.7.1"
 AUTHOR="Raul Mauricio Uñate Castro"
 AUTHOR_EMAIL="raulmauriciounate@gmail.com"
-DESCRIPTION="Like in Laravel but with Python"
+DESCRIPTION="Your Laboratory for Elegant Web Development"
 SKELETON="https://github.com/flaskavel/skeleton"
 FRAMEWORK="https://github.com/flaskavel/framework"
 PYTHON_REQUIRES='>=3.12'

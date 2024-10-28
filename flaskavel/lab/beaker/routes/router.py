@@ -207,7 +207,6 @@ class Route:
         routes.add_instance(RouteHandle().action(action=action))
         return routes.route_instances[-1]
 
-
 class RouteHandle:
     """
     A class that handles individual route configurations, including HTTP methods, URIs,

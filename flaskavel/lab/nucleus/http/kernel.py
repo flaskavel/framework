@@ -11,6 +11,7 @@ class Kernel:
     _lock = threading.Lock()
 
     def __new__(cls):
+        """Ensure that only one instance of Kernel is created (Singleton pattern)."""
         with cls._lock:
             if cls._instance is None:
                 cls._instance = super(Kernel, cls).__new__(cls)
@@ -19,7 +20,9 @@ class Kernel:
         return cls._instance
 
     def configure_app(self):
+        """Configure the Flaskavel application with session, CORS, and route settings."""
         app_config = Config.session()
+        # Set session configurations based on Config values
         self.app.config.update({
             'PERMANENT_SESSION_LIFETIME': app_config['lifetime'],
             'SESSION_PERMANENT': app_config['expire_on_close'],
@@ -33,6 +36,7 @@ class Kernel:
             'SECRET_KEY': Config.app('key')
         })
 
+        # Configure CORS for the application
         app_cors = Config.cors()
         CORS(
             app=self.app,
@@ -43,53 +47,57 @@ class Kernel:
             max_age=app_cors['max_age']
         )
 
+        # Register application routes
         routes = _BootstrapCache().get_routes()
         self.register_routes(routes)
 
     @staticmethod
     def load_module(module_path, classname):
+        """Dynamically import a module and retrieve the specified class."""
         module = importlib.import_module(module_path)
         return getattr(module, classname)
 
     def apply_middlewares(self, controller_method, middlewares):
-        # Si no hay middlewares, devolvemos el controlador directamente
+        """Apply middleware to a controller method, if any middlewares are provided."""
+        # Return the controller method directly if no middlewares exist
         if not middlewares:
             return controller_method
 
-        # Definir una función recursiva que encadene los middlewares
+        # Define a recursive function to wrap each middleware
         def wrap_with_middleware(index, **kwargs):
-            # Si hemos pasado por todos los middlewares, llamamos al controlador
+            # If all middlewares have been applied, call the controller method
             if index >= len(middlewares):
                 return controller_method(**kwargs)
 
-            # Cargar el middleware actual
+            # Load the current middleware
             middleware_info = middlewares[index]
             middleware_class = self.load_module(middleware_info['module'], middleware_info['classname'])
             middleware_instance = middleware_class()
 
-            # Llamar el siguiente middleware pasando `wrap_with_middleware` con el siguiente índice
+            # Call the next middleware by wrapping it with `wrap_with_middleware`
             return middleware_instance.handle(
                 lambda: wrap_with_middleware(index + 1, **kwargs),
                 **kwargs
             )
 
-        # Empezamos con el primer middleware (índice 0)
+        # Start with the first middleware (index 0)
         return lambda **kwargs: wrap_with_middleware(0, **kwargs)
 
     def register_routes(self, routes):
+        """Register routes dynamically using specified controllers and middlewares."""
         for route in routes:
             controller_info = route['controller']
             middlewares = route.get('middlewares', [])
 
-            # Cargar dinámicamente el controlador
+            # Dynamically load the controller
             controller_class = self.load_module(controller_info['module_path'], controller_info['classname'])
             controller_instance = controller_class()
             controller_method = getattr(controller_instance, controller_info['method'])
 
-            # Aplicar los middlewares al controlador
+            # Apply middlewares to the controller method
             wrapped_view_func = self.apply_middlewares(controller_method, middlewares)
 
-            # Registrar la ruta en Flask
+            # Register the route in Flask
             self.app.add_url_rule(
                 rule=route['uri'],
                 endpoint=route['name'],
@@ -98,6 +106,5 @@ class Kernel:
             )
 
     def handle(self, *args, **kwargs):
-        """Sobrescribir el método run para incluir el banner personalizado."""
+        """Override the run method to include a custom banner when starting the app."""
         self.app.run(*args, **kwargs)
-
