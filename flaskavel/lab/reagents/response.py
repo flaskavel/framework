@@ -1,9 +1,6 @@
+from flaskavel.lab.catalyst.exceptions import DumpFlaskavelExecution
 from flaskavel.lab.catalyst.http_status_code import HttpStatusCode
 from flask import jsonify, send_file, redirect
-
-class DumpExecution(Exception):
-    def __init__(self, response):
-        self.response = response
 
 def dd(*args, **kwargs):
 
@@ -66,7 +63,7 @@ def dd(*args, **kwargs):
 
     sys.stdout.flush()
 
-    raise DumpExecution(response)
+    raise DumpFlaskavelExecution(response)
 
 class Response:
     """
@@ -189,11 +186,12 @@ class Response:
         )
 
     @staticmethod
-    def unprocessableEntity(message:str="Unprocessable Entity", headers:dict=None):
+    def unprocessableEntity(errors:dict=None, message:str="Unprocessable Entity", headers:dict=None):
         """
         Responds with a 422 Unprocessable Entity for validation errors.
         """
         return Response.json(
+            errors=errors,
             code=HttpStatusCode.UNPROCESSABLE_ENTITY.code,
             message=message,
             status=HttpStatusCode.UNPROCESSABLE_ENTITY.description,
@@ -234,7 +232,7 @@ class Response:
         return Response.json(
             data=data,
             code=HttpStatusCode.INTERNAL_SERVER_ERROR.code,
-            message="Flaskavel Dump and Die",
+            message="Flaskavel Dump And Die",
             status=HttpStatusCode.INTERNAL_SERVER_ERROR.description,
             headers=None
         )

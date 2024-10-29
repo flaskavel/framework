@@ -3,8 +3,9 @@ import time
 import traceback
 import typing as t
 from flask import Flask
+from flaskavel.lab.reagents.response import Response
 from flaskavel.lab.beaker.console.output import Console
-from flaskavel.lab.reagents.response import Response, DumpExecution
+from flaskavel.lab.catalyst.exceptions import DumpFlaskavelExecution
 
 class Flaskavel(Flask):
     """A Flaskavel class that extends the Flask application to add custom error handling and console output."""
@@ -27,7 +28,7 @@ class Flaskavel(Flask):
             Response: Custom response object with error details.
         """
         # If the exception is a DumpExecution, return a response with execution data.
-        if isinstance(e, DumpExecution):
+        if isinstance(e, DumpFlaskavelExecution):
             return Response.dd(e.response)
 
         # Convert the exception to a string and capture the traceback.
