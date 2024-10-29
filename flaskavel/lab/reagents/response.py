@@ -234,7 +234,7 @@ class Response:
         return Response.json(
             data=data,
             code=HttpStatusCode.INTERNAL_SERVER_ERROR.code,
-            message="Flaskavel Dump and Die: Exception Encountered",
+            message="Flaskavel Dump and Die",
             status=HttpStatusCode.INTERNAL_SERVER_ERROR.description,
             headers=None
         )
