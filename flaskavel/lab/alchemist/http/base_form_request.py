@@ -1,14 +1,17 @@
 import re
+import ast
 import uuid
 import socket
 from datetime import datetime
+from urllib.parse import urlparse
 from flaskavel.lab.catalyst.exceptions import *
+from flaskavel.lab.reagents.request import Request
 
 class FormRequest:
 
     def __init__(self, data: dict = None):
         # Store the Request data in this variable.
-        self.data = data
+        self.data = data or Request.all()
         # Store the first generated error in this variable.
         self.first_error = None
         # Collect generated errors in this dictionary.
@@ -26,7 +29,7 @@ class FormRequest:
         # Define custom error messages. Can be overridden in subclasses.
         return {}
 
-    def validate(self):
+    def validated(self):
         """
         Validate the request data against defined rules and messages.
 
@@ -128,6 +131,9 @@ class FormRequest:
         Returns:
             bool: True if the value is one of the accepted values, False otherwise.
         """
+        if isinstance(value, str):
+            value = value.strip()
+
         accepted_values = {"yes", "on", 1, "1", True, "True", "true"}
         return value in accepted_values
 
@@ -145,9 +151,6 @@ class FormRequest:
         """
         if not 'http' in value:
             return False
-
-        import socket
-        from urllib.parse import urlparse
 
         try:
             # Parse URL to get hostname
@@ -178,7 +181,7 @@ class FormRequest:
             value_date = datetime.strptime(value, "%Y-%m-%d")
             comparison_date = datetime.strptime(date, "%Y-%m-%d")
             return value_date > comparison_date
-        except ValueError:
+        except Exception as e:
             return False
 
     def after_or_equal(self, value, date):
@@ -197,7 +200,7 @@ class FormRequest:
             value_date = datetime.strptime(value, "%Y-%m-%d")
             comparison_date = datetime.strptime(date, "%Y-%m-%d")
             return value_date >= comparison_date
-        except ValueError:
+        except Exception as e:
             return False
 
     def before(self, value, date):
@@ -218,7 +221,7 @@ class FormRequest:
             value_date = datetime.strptime(value, '%Y-%m-%d')
             compare_date = datetime.strptime(date, '%Y-%m-%d')
             return value_date < compare_date
-        except ValueError:
+        except Exception as e:
             return False
 
     def before_or_equal(self, value, date):
@@ -239,7 +242,7 @@ class FormRequest:
             value_date = datetime.strptime(value, '%Y-%m-%d')
             compare_date = datetime.strptime(date, '%Y-%m-%d')
             return value_date <= compare_date
-        except ValueError:
+        except Exception as e:
             return False
 
     def between(self, value, min_value, max_value):
@@ -309,7 +312,7 @@ class FormRequest:
             # Attempt to parse the date string using a common format
             datetime.strptime(value, '%Y-%m-%d')
             return True
-        except ValueError:
+        except Exception as e:
             return False
 
     def date_equals(self, value, target_date):
@@ -328,7 +331,7 @@ class FormRequest:
             value_date = datetime.strptime(value, '%Y-%m-%d')
             target_date_obj = datetime.strptime(target_date, '%Y-%m-%d')
             return value_date == target_date_obj
-        except ValueError:
+        except Exception as e:
             return False
 
     def decimal(self, value, min_decimals, max_decimals=None):
@@ -367,8 +370,8 @@ class FormRequest:
 
         # Validate against min and max decimal places
         if max_decimals is not None:
-            return min_decimals <= decimal_length <= max_decimals
-        return decimal_length == min_decimals
+            return int(min_decimals) <= decimal_length <= int(max_decimals)
+        return decimal_length == int(min_decimals)
 
     def declined(self, value):
         """
@@ -445,7 +448,7 @@ class FormRequest:
         email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
 
         # Use re.match to check if the value matches the email pattern
-        return bool(re.match(email_pattern, value))
+        return bool(re.match(email_pattern, str(value)))
 
     def integer(self, value):
         # Ensures the value is a valid integer.
@@ -520,6 +523,21 @@ class FormRequest:
 
         return value.islower()
 
+    def uppercase(self, value):
+        """
+        Validates that the field value is in lowercase.
+
+        Args:
+            value (str): The value to validate.
+
+        Returns:
+            bool: True if the value is lowercase, False otherwise.
+        """
+        if not isinstance(value, str):
+            return False
+
+        return value.isupper()
+
     def mac_address(self, value):
         """
         Validates that the field value is a valid MAC address.
@@ -553,8 +571,7 @@ class FormRequest:
         if not isinstance(max_val, (int, float)):
             raise ValueError("The max value for validation should be an int or float.")
 
-        if not str(value).isnumeric() or not isinstance(value, (int, float)):
-            return False
+        return int(value) <= max_val
 
     def max_digits(self, value, max_value):
         """
@@ -567,11 +584,8 @@ class FormRequest:
         Returns:
             bool: True if the integer has a length less than or equal to max_value, False otherwise.
         """
-        if not isinstance(value, int):
-            return False
-
-        # Convert the integer to string to check its length
-        value_length = len(str(abs(value)))  # Use abs to handle negative numbers
+        str_value = str(value)
+        value_length = len(str_value)
         return value_length <= max_value
 
     def min(self, value, min_val):
@@ -588,8 +602,7 @@ class FormRequest:
         if not isinstance(min_val, (int, float)):
             raise ValueError("The min value for validation should be an int or float.")
 
-        if not str(value).isnumeric() or not isinstance(value, (int, float)):
-            return False
+        return int(value) >= min_val
 
     def min_digits(self, value, min_value):
         """
@@ -602,11 +615,8 @@ class FormRequest:
         Returns:
             bool: True if the integer has a length greater than or equal to min_value, False otherwise.
         """
-        if not isinstance(value, int):
-            return False  # The value is not an integer, return False
-
-        # Convert the integer to string to check its length
-        value_length = len(str(abs(value)))  # Use abs to handle negative numbers
+        str_value = str(value)
+        value_length = len(str_value)
         return value_length >= min_value
 
     def multiple_of(self, value, multiple):
@@ -663,9 +673,7 @@ class FormRequest:
         Returns:
             bool: True if the value matches the pattern, False otherwise.
         """
-        if isinstance(value, str):
-            return bool(re.match(pattern, value))
-        return False
+        return bool(re.match(pattern, str(value)))
 
     def required(self, value):
         """
@@ -781,7 +789,7 @@ class FormRequest:
         ulid_pattern = re.compile(r'^[0-9A-HJKMNP-TV-Z]{26}$')
         return bool(ulid_pattern.match(value))
 
-    def uuid(self, value):
+    def uuid(self, value, version):
         """
         Validates that the field under validation must be a valid UUID.
 
@@ -792,12 +800,56 @@ class FormRequest:
             bool: True if the value is a valid UUID, False otherwise.
         """
         try:
-            uuid_obj = uuid.UUID(value, version=1)  # Can check for other versions as needed
+            uuid_obj = uuid.UUID(value, version=version)
             return str(uuid_obj) == value
         except ValueError:
             return False
 
-    def apply_rule(self, field, rule):
+    def _cast_params(self, params:str=None):
+        """
+        Converts a string of parameters into a list of values.
+
+        This function processes a string of parameters expected to be comma-separated.
+        It checks if each parameter is a date in the format YYYY-MM-DD or evaluates
+        it as a Python expression to convert it to its appropriate type.
+
+        Args:
+            params (str): Comma-separated string of parameters to convert.
+
+        Returns:
+            list: List of values converted to their corresponding types.
+        """
+        data = []
+        if params:
+            for _param in params.split(','):
+
+                # Check if the parameter matches the date format YYYY-MM-DD
+                if re.match(r'^\d{4}-\d{2}-\d{2}$', _param):
+                    data.append(str(_param))
+
+                # Check if the parameter is a list, dict, or tuple
+                elif isinstance(_param, (list, dict, tuple)):
+                    data.append(_param)
+
+                # Check if the parameter is a boolean
+                elif _param.lower() in ['true', 'false']:
+                    data.append(_param.lower() == 'true')
+
+                # Check if the parameter is an integer
+                elif _param.isdigit() or (_param[0] == '-' and _param[1:].isdigit()):
+                    data.append(int(_param))
+
+                # Check if the parameter is a float using regex
+                elif re.match(r'^-?\d+(\.\d+)?$', _param):
+                    data.append(float(_param))
+
+                # If it cannot be converted to a known type, try to evaluate it as a literal
+                else:
+                    data.append(ast.literal_eval(f'"{_param}"'))
+
+        return data
+
+    def apply_rule(self, field, rule:str):
         """
         Apply a specific rule to a field value.
 
@@ -816,16 +868,16 @@ class FormRequest:
         rule_parts = rule.split(':')
         rule_name = rule_parts[0]
         param = rule_parts[1] if len(rule_parts) > 1 else None
+        param = self._cast_params(params=param)
 
         # Execute validation using reflection.
         try:
-            value_repr = value if not isinstance(value, str) else f"'{value}'"
-            params = f", {param}" if param else ''
-            result = eval(f"self.{rule_name}({value_repr}{params})")
-        except Exception:
-            raise ValueError(f"Undefined validation function '{rule_name}(self, ...)'. Define it within the FormRequest class.")
+            result = getattr(self, rule_name)(value, *param)
+        except AttributeError:
+            raise ValueError(f"Undefined validation function '{rule_name}'. Define it within the FormRequest class.")
+        except Exception as e:
+            raise ValueError(f"Error in validation function '{rule_name}': {e}")
 
-        # Register the error if validation fails.
         if not result:
             self.add_error(field, rule_name)
 
@@ -864,10 +916,13 @@ class FormRequest:
         """
 
         formatted_field = re.sub(r'\.\d+\.', r'.*.', field) + f'.{rule_name}'
-        message = self.messages().get(formatted_field, message or f"Validation for {field} failed on {rule_name}.")
-        if field not in self.errors:
-            self.errors[field] = []
-        self.errors[field].append(message)
+        message = self.messages().get(formatted_field, message or f"Validation for field:[{field}] failed on rule:[{rule_name}].")
+        formatted_field_index = field + f'.{rule_name}'
+
+        if formatted_field_index not in self.errors:
+            self.errors[formatted_field_index] = []
+        self.errors[formatted_field_index].append(message)
+
         if not self.first_error:
             self.first_error = message
 
