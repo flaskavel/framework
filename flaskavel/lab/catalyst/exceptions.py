@@ -1,4 +1,4 @@
-class DumpFlaskavelExecution(Exception):
+class DumpFlaskavelException(Exception):
     def __init__(self, response):
         self.response = response
 

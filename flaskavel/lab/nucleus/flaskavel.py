@@ -27,7 +27,7 @@ class Flaskavel(Flask):
         Returns:
             Response: Custom response object with error details.
         """
-        if isinstance(e, DumpFlaskavelExecution):
+        if isinstance(e, DumpFlaskavelException):
             Console.textDanger(message=f"Flaskavel Dump And Die")
             return Response.dd(
                 data=e.response

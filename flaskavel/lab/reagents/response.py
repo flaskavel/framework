@@ -1,4 +1,4 @@
-from flaskavel.lab.catalyst.exceptions import DumpFlaskavelExecution
+from flaskavel.lab.catalyst.exceptions import DumpFlaskavelException
 from flaskavel.lab.catalyst.http_status_code import HttpStatusCode
 from flask import jsonify, send_file, redirect
 
@@ -63,7 +63,7 @@ def dd(*args, **kwargs):
 
     sys.stdout.flush()
 
-    raise DumpFlaskavelExecution(response)
+    raise DumpFlaskavelException(response)
 
 class Response:
     """
