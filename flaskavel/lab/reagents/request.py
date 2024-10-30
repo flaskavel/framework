@@ -156,3 +156,40 @@ class Request:
     def hasFile(cls, key: str) -> bool:
         """Checks if a file has been uploaded with the specified name."""
         return key in request.files
+
+    @classmethod
+    def validate(cls, rules = None, messages = None, form_request = None) -> bool:
+        """
+        Validates the request data against provided rules and messages.
+
+        Args:
+            rules (Optional[Dict[str, Any]]): Validation rules to apply.
+            messages (Optional[Dict[str, str]]): Custom error messages.
+            form_request (Optional[FormRequest]): An optional FormRequest instance for validation.
+
+        Returns:
+            bool: True if validation is successful.
+        """
+
+        # Import FormRequest only when needed for easier loading
+        from flaskavel.lab.alchemist.http.base_form_request import FormRequest
+
+        # Check if a FormRequest instance is provided
+        if form_request is not None:
+            form_request.validated()
+            return True
+
+        # If no FormRequest is provided, create a standard request class
+        class StdRequest(FormRequest):
+            def __init__(self):
+                super().__init__(data=cls.all())
+
+            def rules(self) -> Dict[str, Any]:
+                return rules or {}
+
+            def messages(self) -> Dict[str, str]:
+                return messages or {}
+
+        # Validate using the standard request
+        StdRequest().validated()
+        return True

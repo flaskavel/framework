@@ -789,7 +789,7 @@ class FormRequest:
         ulid_pattern = re.compile(r'^[0-9A-HJKMNP-TV-Z]{26}$')
         return bool(ulid_pattern.match(value))
 
-    def uuid(self, value, version):
+    def uuid(self, value, version:int = 4):
         """
         Validates that the field under validation must be a valid UUID.
 
@@ -802,7 +802,7 @@ class FormRequest:
         try:
             uuid_obj = uuid.UUID(value, version=version)
             return str(uuid_obj) == value
-        except ValueError:
+        except Exception as e:
             return False
 
     def _cast_params(self, params:str=None):
