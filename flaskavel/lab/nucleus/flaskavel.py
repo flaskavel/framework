@@ -5,7 +5,7 @@ import typing as t
 from flask import Flask
 from flaskavel.lab.reagents.response import Response
 from flaskavel.lab.beaker.console.output import Console
-from flaskavel.lab.catalyst.exceptions import DumpFlaskavelExecution
+from flaskavel.lab.catalyst.exceptions import *
 
 class Flaskavel(Flask):
     """A Flaskavel class that extends the Flask application to add custom error handling and console output."""
@@ -27,9 +27,24 @@ class Flaskavel(Flask):
         Returns:
             Response: Custom response object with error details.
         """
-        # If the exception is a DumpExecution, return a response with execution data.
         if isinstance(e, DumpFlaskavelExecution):
-            return Response.dd(e.response)
+            Console.textDanger(message=f"Flaskavel Dump And Die")
+            return Response.dd(
+                data=e.response
+            )
+
+        if isinstance(e, AuthorizeFlaskavelException):
+            Console.textDanger(message=f"Flaskavel Unauthorized Request")
+            return Response.unauthorized(
+                message=e.response
+            )
+
+        if isinstance(e, ValidateFlaskavelException):
+            Console.textDanger(message=f"Flaskavel Unprocessable Entity")
+            return Response.unprocessableEntity(
+                errors=e.response.get('errors'),
+                message=e.response.get('message')
+            )
 
         # Convert the exception to a string and capture the traceback.
         error = str(e)
@@ -44,7 +59,7 @@ class Flaskavel(Flask):
                 )
 
         # Log the error details in the console with timestamped output.
-        Console.error(message=f"Flaskavel HTTP Runtime Exception: {error} detail: {traceback_list_errors[-1]}", timestamp=True)
+        Console.textDanger(message=f"Flaskavel HTTP Runtime Exception: {error} detail: {traceback_list_errors[-1]}")
         return Response.flaskavelError(errors=traceback_list_errors, message=error)
 
     def handle_not_found(self, error):
