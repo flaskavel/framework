@@ -14,7 +14,7 @@ class FlaskavelInit:
         # Convert the name to lowercase, replace spaces with underscores, and strip surrounding whitespace
         self.name_app = str(name_app).lower().replace(" ", "_").strip()
 
-        # Git Repo Skeleton
+        # Git Repo Skeleton.
         self.skeleton_repo = "https://github.com/flaskavel/skeleton"
 
     def create(self):
