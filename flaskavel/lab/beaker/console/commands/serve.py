@@ -71,7 +71,11 @@ class Serve(Command):
             sys.exit(status)
 
         except ValueError as e:
-            self.error(f"Error: {e}")
+            # Display error message for invalid input
+            self.error(f"Error: {e}", timestamp=True)
+            exit(1)
 
         except Exception as e:
-            self.error(f"An unexpected error occurred: {e}")
+            # Display general error message for any unexpected issue
+            self.error(f"An unexpected error occurred: {e}", timestamp=True)
+            exit(1)

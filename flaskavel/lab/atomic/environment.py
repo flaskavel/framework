@@ -41,7 +41,7 @@ class Env:
         Returns:
             The value of the environment variable or the default value if not found.
         """
-        environment = _Environment()  # Retrieves the Singleton instance
+        environment = _Environment()
         return environment.get(key=key, default=default)
 
     @staticmethod
@@ -56,7 +56,7 @@ class Env:
         Returns:
             None
         """
-        environment = _Environment()  # Retrieves the Singleton instance
+        environment = _Environment()
         environment.set(key=key, value=value)
 
     @staticmethod
@@ -70,7 +70,7 @@ class Env:
         Returns:
             None
         """
-        environment = _Environment()  # Retrieves the Singleton instance
+        environment = _Environment()
         environment.unset(key=key)
 
     @staticmethod
@@ -81,7 +81,7 @@ class Env:
         Returns:
             dict: A dictionary containing all environment variables and their values.
         """
-        environment = _Environment()  # Retrieves the Singleton instance
+        environment = _Environment()
         return environment.get_values()
 
     @staticmethod
@@ -92,5 +92,5 @@ class Env:
         Returns:
             str: The path to the .env file.
         """
-        environment = _Environment()  # Retrieves the Singleton instance
+        environment = _Environment()
         return environment.get_path()

@@ -11,7 +11,10 @@ class Command:
     to access console methods similar to Laravel commands.
     """
 
+    # The command signature used to execute this command.
     signature = None
+
+    # A brief description of the command.
     description = "Custom Command Application"
 
     def __init__(self) -> None:
@@ -229,12 +232,21 @@ class Command:
         else:
             raise ValueError(f"Argument '{index}' not found")
 
-    def handle(self):
+    def handle(self, *args, **kwargs):
         """
-        This method should be overridden in specific commands,
-        similar to the `handle` method in Laravel commands.
+        Abstract method to define the logic of the command.
+
+        This method must be overridden in subclasses.
+
+        Arguments:
+            *args: A list of variable-length arguments.
+            **kwargs: Arbitrary keyword arguments.
+
+        Raises:
+            NotImplementedError: If the method is not implemented in a subclass. This ensures that all command classes
+                                adhere to the expected structure.
         """
-        pass
+        raise NotImplementedError("The 'handle' method must be implemented in the child class.")
 
     def exit(self, code: int = 1):
         """
@@ -242,7 +254,7 @@ class Command:
         """
         sys.exit(code)
 
-    def clean(self):
+    def clear(self):
         """
         Clear the console to print new output.
         """

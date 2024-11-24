@@ -28,27 +28,37 @@ class CacheClear(Command):
         Returns:
             None
         """
-        base_path = Config.bootstrap('base_path')
-        config = Config.bootstrap('cache.config')
-        routes = Config.bootstrap('cache.routes')
 
-        # Initialize the cache clearing process
-        FlaskavelCache(basePath=base_path).clearStart()
+        try:
 
-        # Remove configuration cache file if it exists
-        if os.path.exists(config):
-            os.remove(config)
+            # Read bootstrap file.
+            base_path = Config.bootstrap('base_path')
+            config = Config.bootstrap('cache.config')
+            routes = Config.bootstrap('cache.routes')
 
-        # Remove route cache file if it exists
-        if os.path.exists(routes):
-            os.remove(routes)
+            # Initialize the cache clearing process
+            FlaskavelCache(basePath=base_path).clearStart()
 
-        # Recursively delete any __pycache__ directories found within the base path
-        for root, dirs, files in os.walk(base_path):
-            for dir in dirs:
-                if dir == '__pycache__':
-                    pycache_path = os.path.join(root, dir)
-                    shutil.rmtree(pycache_path)
+            # Remove configuration cache file if it exists
+            if os.path.exists(config):
+                os.remove(config)
 
-        # Log a success message with a timestamp
-        self.info(message='The application cache has been successfully cleared', timestamp=True)
+            # Remove route cache file if it exists
+            if os.path.exists(routes):
+                os.remove(routes)
+
+            # Recursively delete any __pycache__ directories found within the base path
+            for root, dirs, files in os.walk(base_path):
+                for dir in dirs:
+                    if dir == '__pycache__':
+                        pycache_path = os.path.join(root, dir)
+                        shutil.rmtree(pycache_path)
+
+            # Log a success message with a timestamp
+            self.info(message='The application cache has been successfully cleared.', timestamp=True)
+
+        except Exception as e:
+
+            # Display general error message for any unexpected issue
+            self.error(f"An unexpected error occurred: {e}" , timestamp=True)
+            exit(1)

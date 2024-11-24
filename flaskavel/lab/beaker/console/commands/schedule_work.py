@@ -1,7 +1,7 @@
+from app.Console.Kernel import Kernel  # type: ignore
 from flaskavel.lab.beaker.console.reactor import reactor
 from flaskavel.lab.beaker.console.command import Command
 from flaskavel.lab.beaker.scheduling.schedule import Schedule
-from app.Console.Kernel import Kernel  # type: ignore
 
 @reactor.register
 class ScheduleWork(Command):
@@ -24,21 +24,27 @@ class ScheduleWork(Command):
         the scheduled tasks.
         """
 
-        # Print a new line for better readability in the console output
-        self.newLine()
+        try:
 
-        # Inform the user that the scheduled jobs execution has started
-        self.info(f"The execution of the scheduled jobs has started successfully.")
-        self.newLine()
+            # Inform the user that the scheduled jobs execution has started
+            self.newLine()
+            self.info(f"The execution of the scheduled jobs has started successfully.", timestamp=True)
+            self.newLine()
 
-        # Initialize a new Schedule instance.
-        schedule = Schedule()
+            # Initialize a new Schedule instance.
+            schedule = Schedule()
 
-        # Create an instance of the Kernel class to manage the scheduling.
-        kernel = Kernel()
+            # Create an instance of the Kernel class to manage the scheduling.
+            kernel = Kernel()
 
-        # Schedule tasks in the kernel using the provided schedule instance.
-        kernel.schedule(schedule=schedule)
+            # Schedule tasks in the kernel using the provided schedule instance.
+            kernel.schedule(schedule=schedule)
 
-        # Start running the scheduled tasks using the schedule runner.
-        schedule.runner()
+            # Start running the scheduled tasks using the schedule runner.
+            schedule.runner()
+
+        except Exception as e:
+
+            # Display general error message for any unexpected issue
+            self.error(f"An unexpected error occurred: {e}", timestamp=True)
+            exit(1)

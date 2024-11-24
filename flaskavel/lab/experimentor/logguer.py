@@ -6,23 +6,35 @@ class Log:
     @staticmethod
     def info(message: str):
         """Logs an informational message."""
-        instance = Logguer()  # Get the singleton logger instance.
-        instance.info(message=message)  # Log the message as info.
+        # Get the singleton logger instance.
+        instance = Logguer()
+
+        # Log the message as info.
+        instance.info(message=message)
 
     @staticmethod
     def error(message: str):
         """Logs an error message."""
-        instance = Logguer()  # Get the singleton logger instance.
-        instance.error(message=message)  # Log the message as an error.
+        # Get the singleton logger instance.
+        instance = Logguer()
+
+        # Log the message as an error.
+        instance.error(message=message)
 
     @staticmethod
     def success(message: str):
         """Logs a success message (treated as an info level log)."""
-        instance = Logguer()  # Get the singleton logger instance.
-        instance.success(message=message)  # Log the message as success.
+        # Get the singleton logger instance.
+        instance = Logguer()
+
+        # Log the message as success.
+        instance.success(message=message)
 
     @staticmethod
     def warning(message: str):
         """Logs a warning message."""
-        instance = Logguer()  # Get the singleton logger instance.
-        instance.warning(message=message)  # Log the message as a warning.
+        # Get the singleton logger instance.
+        instance = Logguer()
+
+        # Log the message as a warning.
+        instance.warning(message=message)

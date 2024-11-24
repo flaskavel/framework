@@ -15,7 +15,7 @@ class MakeMiddleware(Command):
     signature: str = 'make:middleware'
 
     # Brief description of the command
-    description: str = 'Create a middleware'
+    description: str = 'Create a new middleware within the application'
 
     def arguments(self) -> list:
         """
@@ -84,12 +84,12 @@ class MakeMiddleware(Command):
                 new_file.write(middleware_content)
 
             # Display success message with path
-            self.info(f"Middleware '{middleware_name}' created successfully in {sub_path}")
+            self.info(f"Middleware '{middleware_name}' created successfully in {sub_path}", timestamp=True)
 
         except ValueError as e:
             # Display error message for invalid input
-            self.error(f"Error: {e}")
+            self.error(f"Error: {e}", timestamp=True)
 
         except Exception as e:
             # Display general error message for any unexpected issue
-            self.error(f"An unexpected error occurred: {e}")
+            self.error(f"An unexpected error occurred: {e}", timestamp=True)

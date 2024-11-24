@@ -7,8 +7,11 @@ class _Paths:
     of the path management logic is created, using a thread-safe implementation.
     """
 
-    _instance = None  # Class-level variable to store the singleton instance
-    _lock = threading.Lock()  # Thread lock for thread-safe singleton initialization
+    # Class-level variable to store the singleton instance
+    _instance = None
+
+    # Thread lock for thread-safe singleton initialization
+    _lock = threading.Lock()
 
     def __new__(cls, path: str = None):
         """

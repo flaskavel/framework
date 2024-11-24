@@ -1,20 +1,25 @@
 class BaseMiddleware:
     """
-    BaseMiddleware serves as an abstract base class for middleware in the framework. 
-    It provides a structure for implementing custom middleware by defining the required 
-    `handle` method, which must be overridden in subclasses.
+    BaseMiddleware
+
+    This abstract class serves as the foundation for middleware in the framework.
+    It enforces a standard structure for custom middleware by requiring the implementation
+    of the `handle` method in all subclasses.
     """
 
     def handle(self, *args, **kwargs):
         """
-        Abstract method to handle the middleware logic. This method should be implemented 
-        in subclasses to define specific middleware behavior.
+        Abstract method to define middleware logic.
 
-        Parameters:
-        *args: Variable length argument list.
-        **kwargs: Arbitrary keyword arguments.
+        This method must be overridden in subclasses to implement specific middleware behavior.
+        It acts as the entry point for middleware logic within the framework.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
 
         Raises:
-        NotImplementedError: If the method is not implemented in a subclass.
+            NotImplementedError: If the method is not implemented in a subclass. This ensures
+                                 that all middleware classes adhere to the expected structure.
         """
         raise NotImplementedError("The 'handle' method must be implemented in the child class.")

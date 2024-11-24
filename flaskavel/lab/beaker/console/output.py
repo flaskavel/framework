@@ -4,6 +4,7 @@ from flaskavel.lab.catalyst.colors import ConsoleColor
 from flaskavel.lab.beaker.console.helpers import strftime
 
 class Console:
+
     @staticmethod
     def clear():
         """Clears the console screen."""

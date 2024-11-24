@@ -9,8 +9,11 @@ class _Environment:
     modification, and deletion.
     """
 
-    _instance = None  # Singleton instance
-    _lock = threading.Lock()  # Thread lock to control instance creation
+    # Singleton instance
+    _instance = None
+
+    # Thread lock to control instance creation
+    _lock = threading.Lock()
 
     def __new__(cls, path: str = None):
         """
@@ -38,8 +41,12 @@ class _Environment:
                                   defaults to a relative path to locate .env.
         """
         self.path = path
+
+        # This block should never be executed. Ensure that 'self.path' always has a valid value.
         if not self.path:
-            self.path = os.path.join(__file__, '../../../../../../../.env')  # Default .env path
+
+            # Assign the value of 'self.path' to the '.env' file located at a relative path.
+            self.path = os.path.join(__file__, '../../../../../../../.env')
 
     def get(self, key: str, default=None):
         """

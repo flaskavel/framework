@@ -1,6 +1,6 @@
 from flaskavel.lab.alchemist.http.base_middleware import BaseMiddleware
-from flaskavel.lab.reagents.response import Response
 from flaskavel.lab.reagents.request import Request
+from flaskavel.lab.reagents.response import Response
 
 class {{name-middleware}}(BaseMiddleware):
 

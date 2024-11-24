@@ -15,7 +15,7 @@ class MakeCommand(Command):
     signature: str = 'make:command'
 
     # Brief description of the command
-    description: str = 'Create a command'
+    description: str = 'Create a new command within the application'
 
     def arguments(self) -> list:
         """
@@ -76,7 +76,9 @@ class MakeCommand(Command):
                 template_content = template_file.read()
 
             # Replace placeholders in template with command name details
-            command_content = template_content.replace('{{name-command}}', command_name).replace('{{signature-name-command}}', command_name.lower().replace('command',''))
+            command_content = template_content.replace('{{name-command}}', command_name)\
+                                              .replace('{{signature-name-command}}', command_name.lower()\
+                                              .replace('command',''))
 
             # Write the final command content to the new command file
             new_command_path = os.path.join(sub_path, command_filename)
@@ -84,12 +86,14 @@ class MakeCommand(Command):
                 new_file.write(command_content)
 
             # Display success message with path
-            self.info(f"Command '{command_name}' created successfully in {sub_path}")
+            self.info(f"Command '{command_name}' created successfully in {sub_path}", timestamp=True)
 
         except ValueError as e:
             # Display error message for invalid input
-            self.error(f"Error: {e}")
+            self.error(f"Error: {e}", timestamp=True)
+            exit(1)
 
         except Exception as e:
             # Display general error message for any unexpected issue
-            self.error(f"An unexpected error occurred: {e}")
+            self.error(f"An unexpected error occurred: {e}", timestamp=True)
+            exit(1)

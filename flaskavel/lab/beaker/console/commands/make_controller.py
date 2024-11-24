@@ -15,7 +15,7 @@ class MakeController(Command):
     signature: str = 'make:controller'
 
     # Brief description of the command
-    description: str = 'Create a controller'
+    description: str = 'Create a new controller within the application'
 
     def arguments(self) -> list:
         """
@@ -36,6 +36,7 @@ class MakeController(Command):
             ValueError: If controller name is invalid or already exists.
         """
         try:
+
             # Retrieve the controller name argument
             name: str = self.argument('name')
             controllers_base_path = app_path('Http/Controllers')
@@ -84,12 +85,14 @@ class MakeController(Command):
                 new_file.write(controller_content)
 
             # Display success message with path
-            self.info(f"Controller '{controller_name}' created successfully in {sub_path}")
+            self.info(f"Controller '{controller_name}' created successfully in {sub_path}", timestamp=True)
 
         except ValueError as e:
             # Display error message for invalid input
-            self.error(f"Error: {e}")
+            self.error(f"Error: {e}", timestamp=True)
+            exit(1)
 
         except Exception as e:
             # Display general error message for any unexpected issue
-            self.error(f"An unexpected error occurred: {e}")
+            self.error(f"An unexpected error occurred: {e}", timestamp=True)
+            exit(1)

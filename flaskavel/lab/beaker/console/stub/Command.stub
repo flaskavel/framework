@@ -1,5 +1,5 @@
-from flaskavel.lab.beaker.console.reactor import reactor
 from flaskavel.lab.beaker.console.command import Command
+from flaskavel.lab.beaker.console.reactor import reactor
 
 @reactor.register
 class {{name-command}}(Command):

@@ -3,8 +3,12 @@ import threading
 from flaskavel.lab.reagents.crypt import Crypt
 
 class _BootstrapCache:
-    _instance = None  # Singleton instance
-    _lock = threading.Lock()  # Lock for thread-safe instantiation
+
+    # Singleton instance
+    _instance = None
+
+    # Lock for thread-safe instantiation
+    _lock = threading.Lock()
 
     def __new__(cls, path_cache_routes=None, path_cache_config=None, encrypt=False, key=None):
         """
@@ -19,7 +23,9 @@ class _BootstrapCache:
         Returns:
             _BootstrapCache: Singleton instance of the _BootstrapCache class.
         """
-        with cls._lock:  # Ensure thread-safe instantiation
+
+        # Ensure thread-safe instantiation
+        with cls._lock:
             if cls._instance is None:
                 cls._instance = super(_BootstrapCache, cls).__new__(cls)
                 cls._instance._initialize(path_cache_routes, path_cache_config, encrypt, key)
@@ -59,9 +65,13 @@ class _BootstrapCache:
         """
         with open(path, 'r') as file:
             data = file.read()
-            if encrypt == 'Y':  # Decrypt if encryption flag is set
+
+            # Decrypt if encryption flag is set
+            if encrypt == 'Y':
                 return ast.literal_eval(Crypt.decrypt(value=data, key=key))
-            return ast.literal_eval(data)  # Directly parse if no encryption
+
+            # Directly parse if no encryption
+            return ast.literal_eval(data)
 
     def get_routes(self):
         """

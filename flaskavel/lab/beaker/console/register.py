@@ -1,5 +1,5 @@
 """
-This module registers the native commands specific to the Flaskavel framework.
+This module registers the native commands specific to the Flaskavel Framework.
 """
 
 # A list of native commands, each defined by its module and class name.

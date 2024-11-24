@@ -11,7 +11,9 @@ def strftime(format: str = '%Y-%m-%d %H:%M:%S') -> str:
     Returns:
         str: The current date and time formatted as specified.
     """
+
     # Get the current date and time
     current_datetime = datetime.datetime.now()
+
     # Format the current date and time based on the specified format
     return current_datetime.strftime(format)

@@ -10,8 +10,12 @@ class ConsoleThread:
         """
         Initializes a ConsoleThread instance with default attributes.
         """
-        self.isDaemon = False  # Indicates if the thread is a daemon
-        self.target_function = None  # Stores the target function for the thread
+
+        # Indicates if the thread is a daemon
+        self.isDaemon = False
+
+        # Stores the target function for the thread
+        self.target_function = None
 
     def daemon(self, isDaemon: bool = True) -> 'ConsoleThread':
         """
@@ -23,8 +27,12 @@ class ConsoleThread:
         Returns:
             ConsoleThread: The current instance for method chaining.
         """
-        self.isDaemon = isDaemon  # Set the daemon status
-        return self  # Return the instance for chaining
+
+        # Set the daemon status
+        self.isDaemon = isDaemon
+
+        # Return the instance for chaining
+        return self
 
     def target(self, function: callable) -> 'ConsoleThread':
         """
@@ -39,10 +47,16 @@ class ConsoleThread:
         Raises:
             ValueError: If the target is not callable.
         """
-        if not callable(function):  # Validate if the function is callable
+
+        # Validate if the function is callable
+        if not callable(function):
             raise ValueError("The target must be a callable (function, method, etc.).")
-        self.target_function = function  # Assign the target function
-        return self  # Return the instance for chaining
+
+        # Assign the target function
+        self.target_function = function
+
+        # Return the instance for chaining
+        return self
 
     def start(self, *args, **kwargs) -> None:
         """
@@ -55,11 +69,16 @@ class ConsoleThread:
         Raises:
             ValueError: If no target function has been set before starting.
         """
+
         # Ensure that the target function is set before starting the thread
         if self.target_function is None:
             raise ValueError("Target function must be set before starting the thread.")
 
         # Initialize the thread with the specified target function and daemon status
         job_thread = threading.Thread(target=self.target_function, args=args, kwargs=kwargs, daemon=self.isDaemon)
-        job_thread.start()  # Start the thread
-        job_thread.join()  # Wait for the thread to complete execution
+
+        # Start the thread
+        job_thread.start()
+
+        # Wait for the thread to complete execution
+        job_thread.join()

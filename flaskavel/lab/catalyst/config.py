@@ -8,8 +8,20 @@ class Config:
     accessing nested values via dot notation.
     """
 
-    SECTIONS = ['app', 'auth', 'cache', 'cors', 'database', 'filesystems',
-                'logging', 'mail', 'queue', 'session', 'bootstrap']  # Predefined config sections
+    # Predefined config sections
+    SECTIONS = [
+        'app',
+        'auth',
+        'cache',
+        'cors',
+        'database',
+        'filesystems',
+        'logging',
+        'mail',
+        'queue',
+        'session',
+        'bootstrap'
+    ]
 
     @staticmethod
     def get(section: str, dot_values: str = None):

@@ -26,14 +26,27 @@ class LoopsRun(Command):
             None
         """
 
-        # Initialize a new Loops instance to manage loop iterations
-        loops = Loops()
+        try:
 
-        # Create an instance of the Kernel class to load and configure loops
-        kernel = Kernel()
+            # Inform the user that the scheduled jobs execution has started
+            self.newLine()
+            self.info(f"The execution of the scheduled jobs has started successfully.", timestamp=True)
+            self.newLine()
 
-        # Load the loops into the Kernel
-        kernel.loops(loop=loops)
+            # Initialize a new Loops instance to manage loop iterations
+            loops = Loops()
 
-        # Start the execution of the loaded loops
-        loops.runner()
+            # Create an instance of the Kernel class to load and configure loops
+            kernel = Kernel()
+
+            # Load the loops into the Kernel
+            kernel.loops(loop=loops)
+
+            # Start the execution of the loaded loops
+            loops.runner()
+
+        except Exception as e:
+
+            # Display general error message for any unexpected issue
+            self.error(f"An unexpected error occurred: {e}", timestamp=True)
+            exit(1)

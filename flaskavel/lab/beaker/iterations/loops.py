@@ -87,7 +87,6 @@ class Loops:
         Initiates the execution of all registered loops.
         """
         for loop in self.loops:
-
             thread = ConsoleThread()
             thread.daemon(isDaemon=self.isDaemon)
             thread.target(function=self._run_job)
@@ -122,9 +121,12 @@ class Loops:
                 if rerun:
                     time.sleep(sleep)
 
-                # Manually invoke garbage collection after each iteration
-                gc.collect()
-
             except Exception as e:
 
+                # Throw exception.
                 raise ValueError(f"Error occurred in Loop {self.signature}: {str(e)}")
+
+            finally:
+
+                # Manually invoke garbage collection after each iteration
+                gc.collect()

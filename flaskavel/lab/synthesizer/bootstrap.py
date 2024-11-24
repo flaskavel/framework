@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import traceback
 import importlib
 from pathlib import Path
 from flaskavel.lab.reagents.crypt import Crypt
@@ -94,8 +95,29 @@ class FlaskavelBootstrap:
             self.cache.mount()
             return FlaskavelRunner(basePath=self.base_path, start_time=self.start_time)
 
+        except ImportError as e:
+
+            error_message = traceback.format_exc().splitlines()
+            error_response = None
+            for error_line in error_message:
+                if 'ImportError' in error_line:
+                    error_response = str(error_line).strip()
+                    break
+            if not error_response:
+                error_response = str(e)
+
+            Console.newLine()
+            Console.error(message=f"Critical Bootstrap Error in Flaskavel: {error_response}", timestamp=True)
+            Console.newLine()
+
+            raise ValueError(e)
+
         except Exception as e:
+
+            Console.newLine()
             Console.error(message=f"Critical Bootstrap Error in Flaskavel: {e}", timestamp=True)
+            Console.newLine()
+
             raise ValueError(e)
 
     def _middlewares(self):
