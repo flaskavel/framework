@@ -1,4 +1,4 @@
-# Byte-compiled / optimized / DLL files
+# Byte-Compiled / Optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
@@ -6,7 +6,7 @@ __pycache__/
 # Script Publish
 publish.py
 
-# Distribution / packaging
+# Distribution / Packaging
 build/
 dist/
 *.egg-info/

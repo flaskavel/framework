@@ -28,7 +28,7 @@ class FlaskavelInit:
 
             # Clone the repository
             Console.info(
-                message=f"Cloning the repository into '{self.name_app}'...",
+                message=f"Cloning the repository into '{self.name_app}'... (Getting Latest Version)",
                 timestamp=True
             )
 

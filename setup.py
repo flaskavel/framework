@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-from flaskavel.metadata import NAME, VERSION, AUTHOR, AUTHOR_EMAIL, DESCRIPTION, FRAMEWORK, PYTHON_REQUIRES
+from flaskavel.metadata import *
 
 setup(
     name=NAME,
