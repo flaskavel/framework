@@ -1,6 +1,8 @@
 # **Flaskavel Framework**
 **Your Web Development Laboratory**
 
+<p align="center"><a href="https://flaskavel.com" target="_blank"><img src="https://raw.githubusercontent.com/flaskavel/framework/refs/heads/master/flaskavel/art/logo.png" width="500"></a></p>
+
 Welcome to **Flaskavel**, the web framework designed to provide a seamless and powerful development experience! If you're looking for a solution that combines elegance, robustness, and ease of use, you're in the right place.
 
 ---
