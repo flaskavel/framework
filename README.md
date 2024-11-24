@@ -135,7 +135,7 @@ Flaskavel is an open-source project, and we invite you to help make it better! W
 
 ## **Documentation**
 
-For a complete reference on how to use Flaskavel, including advanced configuration and tips on building larger applications, visit our [full documentation](flaskavel.com).
+For a complete reference on how to use Flaskavel, including advanced configuration and tips on building larger applications, visit our [full documentation](https://flaskavel.com).
 
 ---
 
