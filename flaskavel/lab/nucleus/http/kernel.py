@@ -105,6 +105,6 @@ class Kernel:
                 methods=[route['verb']]
             )
 
-    def handle(self, *args, **kwargs):
+    def handle(self) -> 'Flaskavel':
         """Override the run method to include a custom banner when starting the app."""
-        self.app.run(*args, **kwargs)
+        return self.app

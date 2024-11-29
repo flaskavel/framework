@@ -1,11 +1,13 @@
 import re
+import os
 import time
 import traceback
 import typing as t
-from flask import Flask
+from flask import Flask, send_from_directory
+from flaskavel.lab.catalyst.exceptions import *
 from flaskavel.lab.reagents.response import Response
 from flaskavel.lab.beaker.console.output import Console
-from flaskavel.lab.catalyst.exceptions import *
+from flaskavel.lab.beaker.paths.helpers import storage_path
 
 class Flaskavel(Flask):
     """A Flaskavel class that extends the Flask application to add custom error handling and console output."""
@@ -13,9 +15,20 @@ class Flaskavel(Flask):
     def __init__(self, *args, **kwargs):
         """Initializes the Flaskavel application and sets up error handlers for global errors and 404 not found errors."""
         super(Flaskavel, self).__init__(*args, **kwargs)
+
+        # Set default folder paths
+        self.public_folder = os.path.join(storage_path(),'app','public')
+
+        # Serve static files from the public folder
+        self.route('/<path:filename>')(self.serve_public_files)
+
         self.register_error_handler(Exception, self.handle_global_error)
         self.register_error_handler(404, self.handle_not_found)
         self.start_time = time.time()
+
+    def serve_public_files(self, filename):
+        """Serve files from the public folder."""
+        return send_from_directory(self.public_folder, filename)
 
     def handle_global_error(self, e):
         """

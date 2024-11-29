@@ -12,7 +12,7 @@ class FlaskavelRunner:
         self._basePath =basePath
         self.start_time = start_time
 
-    def handleRequest(self, debug:bool=None, port:int=5000, use_reloader:bool=False):
+    def handleRequest(self):
         """Handle an incoming request.
 
         Args:
@@ -23,12 +23,7 @@ class FlaskavelRunner:
             bool: Returns True indicating the request has been handled.
         """
         from flaskavel.lab.nucleus.http.kernel import Kernel
-        return Kernel().handle(
-            debug = debug or Config.app('debug'),
-            port = port,
-            use_reloader = use_reloader,
-            load_dotenv = False
-        )
+        return Kernel().handle()
 
     def handleCommand(self, *args, **kwargs):
         """Handle a command execution within the application.
