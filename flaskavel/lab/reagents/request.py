@@ -2,7 +2,7 @@ from flask import request
 from typing import Any, List, Dict
 
 class Request:
-    """A class to handle HTTP request data in a Flask application."""
+    """A class to handle HTTP request data in a Flaskavel application."""
 
     @classmethod
     @property

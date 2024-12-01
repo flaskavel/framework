@@ -97,7 +97,7 @@ class Kernel:
             # Apply middlewares to the controller method
             wrapped_view_func = self.apply_middlewares(controller_method, middlewares)
 
-            # Register the route in Flask
+            # Register the route in Flaskavel
             self.app.add_url_rule(
                 rule=route['uri'],
                 endpoint=route['name'],
@@ -105,6 +105,42 @@ class Kernel:
                 methods=[route['verb']]
             )
 
-    def handle(self) -> 'Flaskavel':
-        """Override the run method to include a custom banner when starting the app."""
-        return self.app
+    def handleProductionWSGI(self, environ, start_response):
+        """
+        Handle WSGI requests for production environments.
+
+        This method wraps the WSGI app of the Flaskavel instance and handles the requests.
+
+        Args:
+            environ (dict): The WSGI environment.
+            start_response (callable): The WSGI start_response callable.
+
+        Returns:
+            The response from the WSGI app.
+        """
+        return self.app.wsgi_app(
+            environ=environ,
+            start_response=start_response
+        )
+
+    def handleDevelopment(self, debug=True, port=5000, use_reloader=True, load_dotenv=False):
+        """
+        Start the Flaskavel application in development mode.
+
+        This method runs the Flaskavel application with specified parameters for development purposes.
+
+        Args:
+            debug (bool, optional): Enables or disables debug mode. Defaults to True.
+            port (int, optional): The port to run the development server on. Defaults to 5000.
+            use_reloader (bool, optional): Enables or disables the reloader. Defaults to True.
+            load_dotenv (bool, optional): Determines if environment variables from .env should be loaded. Defaults to False.
+
+        Returns:
+            None
+        """
+        return self.app.run(
+            debug=debug,
+            port=port,
+            use_reloader=use_reloader,
+            load_dotenv=load_dotenv
+        )

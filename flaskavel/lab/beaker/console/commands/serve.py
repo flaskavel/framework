@@ -61,11 +61,10 @@ class Serve(Command):
                 raise ValueError(f"Invalid port number: {port}. Port must be between 1024 and 65535.")
 
             # Start the Flaskavel development server with the provided arguments
-            status = app().handleRequest().run(
+            status = app().handleDevelopment(
                 debug=debug,
                 port=port,
-                use_reloader=use_reloader,
-                load_dotenv = False
+                use_reloader=use_reloader
             )
 
             # Exit with the server status code
