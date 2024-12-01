@@ -1,5 +1,5 @@
 NAME="flaskavel"
-VERSION="1.9.8"
+VERSION="1.9.9"
 AUTHOR="Raul Mauricio Uñate Castro"
 AUTHOR_EMAIL="raulmauriciounate@gmail.com"
 DESCRIPTION="Your Laboratory for Elegant Web Development"

@@ -1,4 +1,4 @@
-from flaskavel.lab.nucleus.http.kernel import Kernel as KernerHttp
+from flaskavel.lab.nucleus.http.kernel import Kernel as KernelHttp
 from app.Console.Kernel import Kernel as KernelCLI # type: ignore
 
 class FlaskavelRunner:
@@ -26,7 +26,7 @@ class FlaskavelRunner:
         Returns:
             The response from the WSGI app.
         """
-        return KernerHttp().handleProductionWSGI(
+        return KernelHttp().handleProductionWSGI(
             environ=environ,
             start_response=start_response
         )
@@ -46,7 +46,7 @@ class FlaskavelRunner:
         Returns:
             None
         """
-        return KernerHttp().handleDevelopment(
+        return KernelHttp().handleDevelopment(
             debug=debug,
             port=port,
             use_reloader=use_reloader,
