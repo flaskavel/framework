@@ -47,7 +47,7 @@ class DatabaseManager:
         driver = config['driver']
         if driver == 'sqlite':
             return f"sqlite:///{config['database']}"
-        elif driver in ['mysql', 'postgresql', 'mssql']:
+        elif driver in ['mysql', 'postgresql', 'mssql', 'oracle']:
             username = config['username']
             password = config.get('password', '')
             host = config['host']
