@@ -88,36 +88,43 @@ class QueryBuilder:
             if results_list:
                 return results_list[0]  # Primer elemento de la lista
             return None
-    
-    def create(self, data: dict) -> Any:
-        """Inserta un nuevo registro en la tabla."""
+
+    def create(self, data: dict | list) -> Any:
+        """Inserta un nuevo registro o múltiples registros en la tabla usando bulk insert cuando sea necesario."""
+
         if self.table_instance is None:
             raise ValueError("Tabla no inicializada. Usa el método 'table' primero.")
-        
-        # Obtener las columnas de la tabla
-        columns = self.table_instance.columns
 
-        # Crear un diccionario con los valores de data mapeados a las columnas de la tabla
-        insert_data = {}
+        # Si 'data' es un solo diccionario, lo convertimos a una lista para tratarlo uniformemente
+        if isinstance(data, dict):
+            data = [data]
 
-        for column in columns:
-            # Si la clave de la columna está en el diccionario 'data', asignarla
-            column_name = column.name
-            if column_name in data:
-                insert_data[column_name] = data[column_name]
-        
-        # Crear la sentencia de inserción
-        stmt = insert(self.table_instance).values(insert_data)
-        
+        # Si 'data' tiene más de un registro, usamos una inserción múltiple con 'insert().values()'
+        if len(data) > 1:
+            # Convertir los datos a un formato que sea adecuado para insertarlos en bloque
+            # Excluir 'id' de los datos a insertar
+            insert_data = [
+                {column.name: record.get(column.name) for column in self.table_instance.columns if column.name != 'id'}
+                for record in data
+            ]
+
+            with self.db_manager.using_connection() as session:  # Usar la conexión
+                session.execute(insert(self.table_instance).values(insert_data))  # Inserción en bloque
+                session.commit()
+                return len(data)  # Devolvemos el número de registros insertados
+
+        # Si es solo un registro, hacemos la inserción tradicional
+        insert_data = {column.name: data[0].get(column.name) for column in self.table_instance.columns if column.name != 'id'}  # Excluir 'id'
+
+        stmt = insert(self.table_instance).values(insert_data)  # No pasar 'id'
+
         with self.db_manager.using_connection() as session:
             result = session.execute(stmt)
             session.commit()
-            
-            # Obtener el ID del registro insertado directamente desde el result
-            # Asumimos que la clave primaria de la tabla es 'id'
-            inserted_id = result.inserted_primary_key[0]  # Aquí se obtiene el valor del ID insertado
-            
-            return inserted_id
+
+            # Aquí no es necesario recuperar el id manualmente, ya que lo genera automáticamente la base de datos.
+            return result.rowcount  # Devuelve la cantidad de registros insertados
+
 
     def update(self, where_conditions: dict, data: dict) -> Any:
         """Actualiza los registros de la tabla que cumplen con las condiciones WHERE."""
@@ -197,6 +204,45 @@ class QueryBuilder:
         else:
             # Si no se encuentra el registro, realizar la inserción
             return self.create(data)
+        
+    def update_or_create_masive(self, data_list: list) -> Any:
+        """
+        Para cada elemento en data_list, busca si el registro existe según las condiciones 'where_conditions'.
+        Si existe, actualiza el registro, si no, lo crea.
+        Cada elemento de 'data_list' puede tener sus propias condiciones de búsqueda.
+        """
+        if self.table_instance is None:
+            raise ValueError("Tabla no inicializada. Usa el método 'table' primero.")
+        
+        updated_count = 0  # Contador para saber cuántos registros se actualizaron
+        inserted_count = 0  # Contador para saber cuántos registros se insertaron
+        
+        for data in data_list:
+            # Verificar que cada diccionario tenga 'where_conditions' y 'data'
+            where_conditions = data.get('where_conditions')
+            if not where_conditions:
+                raise ValueError("Cada elemento de data_list debe contener 'where_conditions'.")
+            
+            data_to_insert_or_update = {key: value for key, value in data.items() if key != 'where_conditions'}
+
+            # Aplicar las condiciones WHERE a la consulta para este registro
+            self.query = select(self.table_instance).where(
+                and_(*[getattr(self.table_instance.c, column) == value for column, value in where_conditions.items()])
+            )
+
+            # Buscar el primer registro que cumpla con las condiciones WHERE
+            existing_record = self.first()
+
+            if existing_record:
+                # Si se encuentra el registro, realizar la actualización
+                self.update(where_conditions, data_to_insert_or_update)
+                updated_count += 1
+            else:
+                # Si no se encuentra el registro, realizar la inserción
+                self.create(data_to_insert_or_update)
+                inserted_count += 1
+
+        return {"updated": updated_count, "inserted": inserted_count}
         
     def order_by(self, column: str, order: str = None) -> 'QueryBuilder':
         """Agrega una cláusula ORDER BY a la consulta."""
