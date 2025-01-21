@@ -51,10 +51,10 @@ class QueryBuilder:
                 condition = column_expr.like(value)
             else:
                 raise ValueError(f"Operador '{operator}' no soportado.")
-        
+
         # Añadir la condición al WHERE
         self.query = self.query.where(condition)
-        
+
         return self
 
     def select(self, *columns: str) -> 'QueryBuilder':
@@ -75,7 +75,7 @@ class QueryBuilder:
             # Convertir cada fila (row) en un diccionario utilizando _mapping
             results_list = [dict(row._mapping) for row in result]
             return results_list
-        
+
     def first(self) -> Any:
         """Ejecuta la consulta SELECT y obtiene el primer registro encontrado."""
         with self.db_manager.using_connection() as session:
@@ -83,7 +83,7 @@ class QueryBuilder:
 
             # Convertir cada fila (row) en un diccionario utilizando _mapping
             results_list = [dict(row._mapping) for row in result]
-            
+
             # Retornar el primer registro o None si no hay resultados
             if results_list:
                 return results_list[0]  # Primer elemento de la lista
@@ -130,11 +130,11 @@ class QueryBuilder:
         """Actualiza los registros de la tabla que cumplen con las condiciones WHERE."""
         if self.table_instance is None:
             raise ValueError("Tabla no inicializada. Usa el método 'table' primero.")
-        
+
         # Verificar si where_conditions es un diccionario
         if not isinstance(where_conditions, dict):
             raise ValueError("where_conditions debe ser un diccionario.")
-        
+
         # Inicializar una lista de condiciones
         conditions = []
 
@@ -148,7 +148,7 @@ class QueryBuilder:
 
         # Crear la sentencia de actualización
         stmt = update(self.table_instance).where(where_clause).values(data)
-        
+
         with self.db_manager.using_connection() as session:
             result = session.execute(stmt)
             session.commit()
@@ -158,7 +158,7 @@ class QueryBuilder:
         """Elimina los registros de la tabla que cumplen con las condiciones WHERE."""
         if self.table_instance is None:
             raise ValueError("Tabla no inicializada. Usa el método 'table' primero.")
-        
+
         conditions = []
 
         if isinstance(value, (list, set, tuple)):
@@ -173,7 +173,7 @@ class QueryBuilder:
             condition = getattr(self.table_instance.c, column) == value
             conditions.append(condition)
 
-        if conditions: 
+        if conditions:
             where_clause = and_(*conditions)
             stmt = delete(self.table_instance).where(where_clause)
 
@@ -190,7 +190,7 @@ class QueryBuilder:
         """
         if self.table_instance is None:
             raise ValueError("Tabla no inicializada. Usa el método 'table' primero.")
-        
+
         # Aplicar las condiciones WHERE a la consulta
         for column, value in where_conditions.items():
             self.where(column, value)
@@ -204,7 +204,7 @@ class QueryBuilder:
         else:
             # Si no se encuentra el registro, realizar la inserción
             return self.create(data)
-        
+
     def update_or_create_masive(self, data_list: list) -> Any:
         """
         Para cada elemento en data_list, busca si el registro existe según las condiciones 'where_conditions'.
@@ -213,16 +213,16 @@ class QueryBuilder:
         """
         if self.table_instance is None:
             raise ValueError("Tabla no inicializada. Usa el método 'table' primero.")
-        
+
         updated_count = 0  # Contador para saber cuántos registros se actualizaron
         inserted_count = 0  # Contador para saber cuántos registros se insertaron
-        
+
         for data in data_list:
             # Verificar que cada diccionario tenga 'where_conditions' y 'data'
             where_conditions = data.get('where_conditions')
             if not where_conditions:
                 raise ValueError("Cada elemento de data_list debe contener 'where_conditions'.")
-            
+
             data_to_insert_or_update = {key: value for key, value in data.items() if key != 'where_conditions'}
 
             # Aplicar las condiciones WHERE a la consulta para este registro
@@ -243,19 +243,19 @@ class QueryBuilder:
                 inserted_count += 1
 
         return {"updated": updated_count, "inserted": inserted_count}
-        
+
     def order_by(self, column: str, order: str = None) -> 'QueryBuilder':
         """Agrega una cláusula ORDER BY a la consulta."""
-        
+
         # Si 'order' no es especificado, se asume ascendente
         if order == 'desc':
             order_clause = desc(getattr(self.table_instance.c, column))
         else:
             order_clause = asc(getattr(self.table_instance.c, column))
-        
+
         # Agregar la cláusula ORDER BY a la consulta
         self.query = self.query.order_by(order_clause)
-        
+
         return self
 
     def distinct(self, *columns: str) -> 'QueryBuilder':
@@ -268,28 +268,28 @@ class QueryBuilder:
             # Si no se pasan columnas, aplicar DISTINCT a toda la consulta
             self.query = self.query.distinct()
         return self
-    
+
     def group_by(self, *columns: str) -> 'QueryBuilder':
         """Agrega una cláusula GROUP BY a la consulta."""
         # Si no se pasan columnas, lanzamos un error
         if not columns:
             raise ValueError("Debe proporcionar al menos una columna para el GROUP BY.")
-        
+
         # Aplicar GROUP BY a las columnas especificadas
         group_by_columns = [getattr(self.table_instance.c, column) for column in columns]
         self.query = self.query.group_by(*group_by_columns)
 
         return self
-    
+
     def count(self) -> int:
         """Cuenta el número de registros que cumplen con la consulta actual."""
         if self.query is None:
             raise ValueError("La consulta no está inicializada. Usa el método 'table' primero.")
-        
+
         # Realizar la consulta de contar los registros sobre la query existente
         count_query = select(func.count()).select_from(self.query.alias())
-        
+
         with self.db_manager.using_connection() as session:
             result = session.execute(count_query).scalar()  # `.scalar()` para obtener el resultado único
-        
+
         return result

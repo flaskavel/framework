@@ -47,13 +47,20 @@ class DatabaseManager:
         driver = config['driver']
         if driver == 'sqlite':
             return f"sqlite:///{config['database']}"
-        elif driver in ['mysql', 'postgresql', 'mssql', 'oracle']:
+        elif driver in ['mssql', 'oracle']:
             username = config['username']
             password = config.get('password', '')
             host = config['host']
             database = config['database']
             port = config['port']
             return f"{driver}://{username}:{password}@{host}:{port}/{database}"
+        elif driver in ['mysql', 'postgresql']:
+            username = config['username']
+            password = config.get('password', '')
+            host = config['host']
+            database = config['database']
+            port = config['port']
+            return f"{driver}://{username}:{password}@{host}:{port}/{database}?{ f'charset={config['charset']}' if driver == 'mysql' else f'client_encoding={config['charset']}'}"
         else:
             raise ValueError(f"Unsupported driver: {driver}")
 
