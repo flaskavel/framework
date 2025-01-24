@@ -1,6 +1,6 @@
 from flaskavel.lab.catalyst.exceptions import DumpFlaskavelException
 from flaskavel.lab.catalyst.http_status_code import HttpStatusCode
-from flask import jsonify, send_file, redirect
+from flask import has_request_context, jsonify, send_file, redirect
 
 def dd(*args, **kwargs):
 
@@ -94,7 +94,9 @@ class Response:
             "errors": errors or {}
         }
 
-        return jsonify(response), code, headers or {}
+        if has_request_context():
+            return jsonify(response), code, headers or {}
+        return response
 
     @staticmethod
     def success(data:dict=None, message:str="Operation successful", headers:dict=None):
@@ -242,12 +244,16 @@ class Response:
         """
         Performs a redirect to a different location (similar to Laravel’s `redirect()`).
         """
-        return redirect(location)
+        if has_request_context():
+            return redirect(location)
+        raise ValueError("An attempt was made to use the 'redirect' functionality outside the context of an HTTP request.")
 
     @staticmethod
     def download(file_path, filename=None, mimetype=None):
         """
         Responds by sending a file to the client (similar to Laravel’s `download()`).
         """
-        return send_file(file_path, as_attachment=True, download_name=filename, mimetype=mimetype)
+        if has_request_context():
+            return send_file(file_path, as_attachment=True, download_name=filename, mimetype=mimetype)
+        raise ValueError("An attempt was made to use the 'download' functionality outside the context of an HTTP request.")
 
