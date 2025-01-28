@@ -33,7 +33,7 @@ class _Display:
             path = os.path.join(dir_path, 'art', 'art.ascii')
             with open(path, 'r', encoding='utf-8') as file:
                 content = file.read()
-            output = content.replace('{{version}}', str(VERSION)).replace('{{author}}', AUTHOR).replace('{{docs}}', DOCS)
+            output = content.replace('{{version}}', str(VERSION)).replace('{{docs}}', DOCS)
             print(output)
         except Exception as e:
             pass
