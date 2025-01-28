@@ -141,7 +141,7 @@ class _FlaskavelInit:
 
             # Clone the repository
             _Display.info(f"Cloning the repository into '{self.name_app_folder}'... (Getting Latest Version)")
-            subprocess.run(["git", "clone", SKELETON, self.name_app_folder], check=True)
+            subprocess.run(["git", "clone", SKELETON, self.name_app_folder], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             _Display.info(f"Repository successfully cloned into '{self.name_app_folder}'.",)
 
             # Change to the project directory
@@ -151,7 +151,7 @@ class _FlaskavelInit:
 
             # Create a virtual environment
             _Display.info("Creating virtual environment...")
-            subprocess.run([sys.executable, "-m", "venv", "venv"], check=True)
+            subprocess.run([sys.executable, "-m", "venv", "venv"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             _Display.info("Virtual environment successfully created.")
 
             # Virtual environment path
@@ -165,7 +165,7 @@ class _FlaskavelInit:
 
                 # Install dependencies from requirements.txt
                 _Display.info("Installing dependencies from 'requirements.txt'...")
-                subprocess.run([os.path.join(venv_path, "pip"), "install", "-r", "requirements.txt"], check=True)
+                subprocess.run([os.path.join(venv_path, "pip"), "install", "-r", "requirements.txt"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 _Display.info("Dependencies successfully installed.")
 
                 # Create .env
@@ -175,10 +175,10 @@ class _FlaskavelInit:
 
                 # Create ApiKey
                 os.chdir(project_path)
-                subprocess.run(['python', '-B', 'reactor', 'key:generate'], capture_output=True, text=True)
+                subprocess.run([sys.executable, '-B', 'reactor', 'key:generate'], capture_output=True, text=True)
 
                 # remove .git origin
-                subprocess.run(["git", "remote", "remove", "origin"], check=True)
+                subprocess.run(["git", "remote", "remove", "origin"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
                 # Invalidate Cache File
                 temp_dir = tempfile.gettempdir()
