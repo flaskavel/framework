@@ -29,6 +29,18 @@ class _Display:
         # Displays a success message using Console.textSuccess()
         Console.textSuccess(message=f"Thank you for using {NAME}, welcome.")
 
+    # Static method to display a welcome message
+    @staticmethod
+    def finished():
+        """
+        Displays a welcome message to the framework.
+        This method does not take any parameters and does not return any value.
+        """
+        # Displays a success message using Console.textSuccess()
+        Console.textSuccess(message="Welcome aboard, the journey starts now. Let your imagination soar!")
+        # Calls Console.newLine() to add a new line in the console
+        Console.newLine()
+
     # Static method to display an informational message
     @staticmethod
     def info(message: str = ''):
@@ -228,6 +240,9 @@ def main():
         # Create and run the app
         app = _FlaskavelInit(name_app=args.name_app)
         app.handle()
+
+        # Startup finished
+        _Display.finished()
 
     except SystemExit as e:
         _Display.error("Invalid arguments. Usage example: 'flaskavel new example_app'")
