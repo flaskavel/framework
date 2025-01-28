@@ -6,7 +6,7 @@ import tempfile
 import argparse
 import subprocess
 from unicodedata import normalize
-from flaskavel.metadata import SKELETON, NAME, DOCS
+from flaskavel.metadata import SKELETON, NAME, DOCS, VERSION, AUTHOR
 from flaskavel.lab.beaker.console.output import Console
 
 # Definition of the _Display class
@@ -24,6 +24,20 @@ class _Display:
         Displays a welcome message to the framework.
         This method does not take any parameters and does not return any value.
         """
+        # Calls Console.newLine() to add a new line in the console
+        Console.newLine()
+
+        # Print Ascci Art
+        try:
+            dir_path = os.path.dirname(__file__)
+            path = os.path.join(dir_path, 'art', 'art.ascii')
+            with open(path, 'r') as file:
+                content = file.read()
+            output = content.replace('{{version}}', VERSION).replace('{{author}}', AUTHOR).replace('{{docs}}', DOCS)
+            print(output)
+        except Exception as e:
+            pass
+
         # Calls Console.newLine() to add a new line in the console
         Console.newLine()
         # Displays a success message using Console.textSuccess()
