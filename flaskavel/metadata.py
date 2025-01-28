@@ -2,7 +2,7 @@
 NAME = "flaskavel"
 
 # Current version of the project or framework
-VERSION = "1.10.8"
+VERSION = "1.10.9"
 
 # Full name of the author or maintainer of the project
 AUTHOR = "Raul Mauricio Uñate Castro"

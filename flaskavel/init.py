@@ -165,6 +165,10 @@ class _FlaskavelInit:
 
         try:
 
+            # Validate Folder
+            if os.path.exists(self.name_app_folder) and os.path.isdir(self.name_app_folder):
+                raise ValueError(f"The folder '{self.name_app_folder}' already exists.")
+
             # Clone the repository
             _Display.info(f"Cloning the repository into '{self.name_app_folder}'... (Getting Latest Version)")
             subprocess.run(["git", "clone", SKELETON, self.name_app_folder], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
