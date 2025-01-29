@@ -39,11 +39,11 @@ def main():
 
         # Validate command (this is already done by 'choices')
         if args.command != 'new':
-            Output.error("Unrecognized command, did you mean 'flaskavel new example.app'?")
+            Output.error("Unrecognized command, did you mean 'flaskavel new example-app'?")
 
         # Validate app name (empty check is not needed because argparse handles that)
         if not args.name:
-            Output.error("You must specify an application name, did you mean 'flaskavel new example.app'?")
+            Output.error("You must specify an application name, did you mean 'flaskavel new example-app'?")
 
         # Create and run the app setup process
         app = Setup(name_app=str(args.name).strip())
@@ -54,7 +54,7 @@ def main():
 
     except SystemExit as e:
         # Handles invalid arguments and prints usage error
-        Output.error("Invalid arguments. Usage example: 'flaskavel new example_app'")
+        Output.error("Invalid arguments. Usage example: 'flaskavel new example-app'")
     except Exception as e:
         # Handles any other unexpected errors
         Output.error(f"Fatal Error: {e}")
