@@ -6,7 +6,7 @@ import tempfile
 import argparse
 import subprocess
 from unicodedata import normalize
-from flaskavel.metadata import SKELETON, NAME, DOCS, VERSION, AUTHOR
+from flaskavel.metadata import SKELETON, NAME, DOCS, VERSION
 from flaskavel.lab.beaker.console.output import Console
 
 # Definition of the _Display class
@@ -41,7 +41,7 @@ class _Display:
         # Calls Console.newLine() to add a new line in the console
         Console.newLine()
         # Displays a success message using Console.textSuccess()
-        Console.textSuccess(message=f"Thank you for using {NAME}, welcome.")
+        Console.textSuccess(message=f"Thank you for using {NAME}.")
 
     # Static method to display a welcome message
     @staticmethod
