@@ -80,6 +80,9 @@ class Setup(SetupInterface):
         if not name:
             raise ValueError("Folder name cannot be empty.")
 
+        # Strip leading and trailing whitespace
+        name = name.strip()
+
         # Normalize to remove accents and special characters
         name = normalize("NFKD", name).encode("ascii", "ignore").decode("ascii")
 
@@ -91,9 +94,6 @@ class Setup(SetupInterface):
 
         # Remove invalid characters for folder names
         name = re.sub(r'[\\/:*?"<>|]', '', name)
-
-        # Strip leading and trailing whitespace
-        name = name.strip()
 
         # Limit the length to 255 characters
         name = name[:255]

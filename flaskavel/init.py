@@ -46,7 +46,7 @@ def main():
             Output.error("You must specify an application name, did you mean 'flaskavel new example-app'?")
 
         # Create and run the app setup process
-        Setup(name_app=str(args.name).strip()).handle()
+        Setup(name_app=args.name).handle()
 
         # Startup finished
         Output.finished()
