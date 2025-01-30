@@ -31,7 +31,7 @@ def main():
 
     # Required 'new' command and app name
     parser.add_argument('command', choices=['new'], help="Command must be 'new'.")
-    parser.add_argument('name', help="The name of the Flaskavel application to create.")
+    parser.add_argument('name', help="The name of the Flaskavel application to create.", default="example-app", required=False)
 
     try:
         # Parse the arguments
