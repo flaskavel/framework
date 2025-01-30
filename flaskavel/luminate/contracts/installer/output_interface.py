@@ -2,79 +2,73 @@ from abc import ABC, abstractmethod
 
 class IOutput(ABC):
     """
-    Interface for console display operations.
-
-    Defines methods for displaying different types of messages, such as informational,
-    success, failure, and error messages.
+    Interface for Output class to ensure the implementation of methods for displaying
+    various messages to the console, including:
+    - Welcome messages
+    - Informational messages
+    - Failure messages
+    - Error messages
     """
 
+    @staticmethod
     @abstractmethod
-    def welcome(self):
+    def asciiArt() -> None:
         """
-        Displays a welcome message to the framework.
-
-        This method does not take any parameters and does not return any value.
+        Displays a welcome message to the framework, including ASCII art.
         """
         pass
 
+    @staticmethod
     @abstractmethod
-    def finished(self):
+    def startInstallation() -> None:
         """
-        Displays a message indicating the completion of the process.
-
-        This method does not take any parameters and does not return any value.
+        Displays the starting message when installation begins.
         """
         pass
 
+    @staticmethod
     @abstractmethod
-    def info(self, message: str):
+    def endInstallation() -> None:
         """
-        Displays an informational message.
+        Displays the ending message after installation is complete.
+        """
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def info(message: str = '') -> None:
+        """
+        Displays an informational message to the console.
 
         Parameters
         ----------
         message : str
-            The message to display. It is displayed with an informational prefix and timestamp.
-
-        Returns
-        -------
-        None
+            The message to display.
         """
         pass
 
+    @staticmethod
     @abstractmethod
-    def fail(self, message: str):
+    def fail(message: str = '') -> None:
         """
-        Displays a failure message.
+        Displays a failure message to the console.
 
         Parameters
         ----------
         message : str
-            The message to display. It is displayed with a failure prefix and timestamp.
-
-        Returns
-        -------
-        None
+            The message to display.
         """
         pass
 
+    @staticmethod
     @abstractmethod
-    def error(self, message: str):
+    def error(message: str = '') -> None:
         """
-        Displays an error message and terminates the program.
+        Displays an error message to the console and terminates the program.
 
         Parameters
         ----------
         message : str
-            The error message to display. It is displayed with an error prefix and timestamp.
-
-        Returns
-        -------
-        None
-
-        Raises
-        ------
-        SystemExit
-            Exits the program with an error code (1).
+            The message to display.
         """
         pass

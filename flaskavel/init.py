@@ -1,5 +1,4 @@
 import argparse
-from flaskavel.metadata import NAME, VERSION
 from flaskavel.luminate.installer.output import Output
 from flaskavel.luminate.installer.setup import Setup
 
@@ -12,9 +11,6 @@ def main():
     - `flaskavel --version` to display the current version.
     """
 
-    # Startup message
-    Output.welcome()
-
     # Create the argument parser
     parser = argparse.ArgumentParser(description="Flaskavel Command Line Tool")
 
@@ -23,7 +19,7 @@ def main():
 
     # Define the main command ('new') and its argument
     parser.add_argument('command', nargs='?', choices=['new'], help="Available command: 'new'.")
-    parser.add_argument('name', nargs='?', help="The name of the Flaskavel application to create.")
+    parser.add_argument('name', nargs='?', help="The name of the Flaskavel application to create.", default="example-app")
 
     try:
         # Parse the arguments
@@ -31,20 +27,23 @@ def main():
 
         # Handle --version first (it overrides everything else)
         if args.version:
-            print(f"Flaskavel v{VERSION}")
+            Output.asciiArt()
             return
 
         # Ensure a valid command is provided
         if not args.command:
             Output.error("No command provided. Use 'flaskavel new <app_name>' or 'flaskavel --version'.")
+            return
 
         # Handle 'new' command
         if args.command == 'new':
             if not args.name:
                 Output.error("You must specify an application name. Example: 'flaskavel new example-app'")
             else:
+                Output.startInstallation()
                 Setup(name_app=args.name).handle()
-                Output.finished()
+                Output.endInstallation()
+            return
 
     except SystemExit:
         Output.error("Invalid arguments. Use 'flaskavel new <app_name>' or 'flaskavel --version'.")
