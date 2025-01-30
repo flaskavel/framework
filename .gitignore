@@ -6,6 +6,9 @@ __pycache__/
 # Script Publish
 publish.py
 
+# Script Test
+test.py
+
 # Distribution / Packaging
 build/
 dist/
