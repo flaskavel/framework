@@ -11,13 +11,8 @@ def main():
     - `flaskavel --version` to display the current version.
     """
 
-    # Create the argument parser
     parser = argparse.ArgumentParser(description="Flaskavel Command Line Tool")
-
-    # Add '--version' option
     parser.add_argument('--version', action='store_true', help="Show Flaskavel version.")
-
-    # Define the main command ('new') and its argument
     parser.add_argument('command', nargs='?', choices=['new'], help="Available command: 'new'.")
     parser.add_argument('name', nargs='?', help="The name of the Flaskavel application to create.", default="example-app")
 
