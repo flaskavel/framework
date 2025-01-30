@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-class SetupInterface(ABC):
+class ISetup(ABC):
     """
     Abstract base class for setup operations.
 

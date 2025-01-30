@@ -2,9 +2,9 @@ import os
 import sys
 import datetime
 from flaskavel.metadata import NAME, VERSION, DOCS
-from flaskavel.luminate.contracts.installer.output_interface import OutputInterface
+from flaskavel.luminate.contracts.installer.output_interface import IOutput
 
-class Output(OutputInterface):
+class Output(IOutput):
     """
     Class for specific use within this file.
     Provides static methods to display messages to the console,

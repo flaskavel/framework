@@ -1,4 +1,4 @@
-from flaskavel.luminate.contracts.installer.setup_interface import SetupInterface
+from flaskavel.luminate.contracts.installer.setup_interface import ISetup
 from flaskavel.luminate.installer.output import Output
 from flaskavel.metadata import SKELETON, NAME, DOCS
 import os
@@ -9,7 +9,7 @@ import tempfile
 from unicodedata import normalize
 import re
 
-class Setup(SetupInterface):
+class Setup(ISetup):
     """
     A class to initialize a Flaskavel project by performing the following setup actions:
     1. Sanitize the folder name.

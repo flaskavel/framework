@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-class OutputInterface(ABC):
+class IOutput(ABC):
     """
     Interface for console display operations.
 
