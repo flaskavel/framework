@@ -1,6 +1,8 @@
 ┌─┐┬  ┌─┐┌─┐┬┌─┌─┐┬  ┬┌─┐┬
 ├┤ │  ├─┤└─┐├┴┐├─┤└┐┌┘├┤ │
 └  ┴─┘┴ ┴└─┘┴ ┴┴ ┴ └┘ └─┘┴─┘
-Python isn't just powerful; it’s thrilling.
+{{message}}
+-------------------------------------------
+Flaskavel Team © 2024 - {{year}}
 Version: {{version}}
 Docs: {{docs}}

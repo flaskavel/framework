@@ -68,7 +68,9 @@ class Output(OutputInterface):
             path = os.path.join(dir_path, 'art.ascii')
             with open(path, 'r', encoding='utf-8') as file:
                 content = file.read()
-            output = content.replace('{{version}}', str(VERSION)).replace('{{docs}}', DOCS)
+            year = datetime.datetime.now().year
+            message = '\u001b[32m{} \u001b[0m'.format("Python isn't just powerful; it’s thrilling.")
+            output = content.replace('{{version}}', str(VERSION)).replace('{{docs}}', DOCS).replace('{{year}}', str(year)).replace('{{message}}', str(message))
             print(output)
         except FileNotFoundError:
             print(str(NAME).upper())
