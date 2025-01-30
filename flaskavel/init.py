@@ -40,8 +40,6 @@ def main():
                 Output.endInstallation()
             return
 
-    except SystemExit:
-        Output.error("Invalid arguments. Use 'flaskavel new <app_name>' or 'flaskavel --version'.")
     except Exception as e:
         Output.error(f"Fatal Error: {e}")
 
