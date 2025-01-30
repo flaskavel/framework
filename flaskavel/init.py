@@ -28,21 +28,20 @@ def main():
             Output.asciiArt()
 
         # Handle --upgrade command
-        if args.upgrade:
+        elif args.upgrade:
             try:
                 Output.info("Starting the upgrade process...")
                 Upgrade.execute()
-                Output.info("Flaskavel has been successfully upgraded!")
                 Output.asciiArt()
             except Exception as e:
                 Output.error(f"Fatal Error: {e}")
 
         # Ensure a valid command is provided
-        if not args.command:
+        elif not args.command:
             Output.error("No command provided. Use 'flaskavel new <app_name>', 'flaskavel --version', or 'flaskavel --upgrade'.")
 
         # Handle 'new' command
-        if args.command == 'new':
+        elif args.command == 'new':
             if not args.name:
                 Output.error("You must specify an application name. Example: 'flaskavel new example-app'")
 
