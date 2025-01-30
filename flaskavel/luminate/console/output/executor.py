@@ -1,7 +1,8 @@
 from datetime import datetime
 from flaskavel.luminate.console.output.styles import ANSIColors
+from flaskavel.luminate.contracts.console.executor_interface import IExecutor
 
-class Executor:
+class Executor(IExecutor):
     """
     A utility class for logging program execution states with ANSI color formatting.
 
@@ -29,7 +30,7 @@ class Executor:
         state_color : str
             The ANSI color code for the state.
         time : str, optional
-            The time duration of execution, default is an empty string.
+            The time duration of execution, default is an empty string, example (30s)
         """
         width = 60
         len_state = len(state)
