@@ -1,61 +1,54 @@
 import argparse
+from flaskavel.metadata import NAME, VERSION
 from flaskavel.luminate.installer.output import Output
 from flaskavel.luminate.installer.setup import Setup
 
 def main():
     """
-    Main entry point for the Flaskavel App Creation Tool.
+    Main entry point for the Flaskavel CLI.
 
-    This function handles the argument parsing, validation, and initiates the app creation process.
-    It ensures that the provided arguments are valid, creates a new Flaskavel app, and provides feedback
-    throughout the process.
-
-    Steps:
-    1. Outputs a welcome message using Output.welcome().
-    2. Parses command-line arguments using argparse.
-    3. Validates the 'command' and 'name_app' arguments.
-    4. Calls Setup to handle the app creation process.
-    5. Outputs the completion message using Output.finished().
-
-    Raises
-    ------
-    SystemExit : If invalid arguments are provided, prints error and exits.
-    Exception : For any unexpected errors during the execution process.
+    Supports:
+    - `flaskavel new <app_name>` to create a new Flaskavel app.
+    - `flaskavel --version` to display the current version.
     """
 
     # Startup message
     Output.welcome()
 
     # Create the argument parser
-    parser = argparse.ArgumentParser(description="Flaskavel App Creation Tool")
+    parser = argparse.ArgumentParser(description="Flaskavel Command Line Tool")
 
-    # Required 'new' command and app name
-    parser.add_argument('command', choices=['new'], help="Command must be 'new'.")
-    parser.add_argument('name', help="The name of the Flaskavel application to create.", default="example-app", required=False)
+    # Add '--version' option
+    parser.add_argument('--version', action='store_true', help="Show Flaskavel version.")
+
+    # Define the main command ('new') and its argument
+    parser.add_argument('command', nargs='?', choices=['new'], help="Available command: 'new'.")
+    parser.add_argument('name', nargs='?', help="The name of the Flaskavel application to create.")
 
     try:
         # Parse the arguments
         args = parser.parse_args()
 
-        # Validate command (this is already done by 'choices')
-        if args.command != 'new':
-            Output.error("Unrecognized command, did you mean 'flaskavel new example-app'?")
+        # Handle --version first (it overrides everything else)
+        if args.version:
+            print(f"Flaskavel v{VERSION}")
+            return
 
-        # Validate app name (empty check is not needed because argparse handles that)
-        if not args.name:
-            Output.error("You must specify an application name, did you mean 'flaskavel new example-app'?")
+        # Ensure a valid command is provided
+        if not args.command:
+            Output.error("No command provided. Use 'flaskavel new <app_name>' or 'flaskavel --version'.")
 
-        # Create and run the app setup process
-        Setup(name_app=args.name).handle()
+        # Handle 'new' command
+        if args.command == 'new':
+            if not args.name:
+                Output.error("You must specify an application name. Example: 'flaskavel new example-app'")
+            else:
+                Setup(name_app=args.name).handle()
+                Output.finished()
 
-        # Startup finished
-        Output.finished()
-
-    except SystemExit as e:
-        # Handles invalid arguments and prints usage error
-        Output.error("Invalid arguments. Usage example: 'flaskavel new example-app'")
+    except SystemExit:
+        Output.error("Invalid arguments. Use 'flaskavel new <app_name>' or 'flaskavel --version'.")
     except Exception as e:
-        # Handles any other unexpected errors
         Output.error(f"Fatal Error: {e}")
 
 if __name__ == "__main__":
