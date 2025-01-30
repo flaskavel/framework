@@ -41,7 +41,7 @@ class Output(IOutput):
             ANSI color code for the background of the message.
         """
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        print(f'\u001b[{color_code}m\u001b[97m {label} \u001b[0m {timestamp} [Init Project] - {message}\u001b[0m')
+        print(f'\u001b[{color_code}m\u001b[97m {label} \u001b[0m {timestamp} [Flaskavel Framework] - {message}\u001b[0m')
 
     @staticmethod
     def asciiArt():
