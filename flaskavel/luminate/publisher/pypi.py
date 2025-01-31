@@ -96,7 +96,7 @@ class PypiPublisher(IPypiPublisher):
         """
         Compiles the package using `setup.py` to generate distribution files.
 
-        This method runs the `setup.py` script to generate both source (`sdist`) 
+        This method runs the `setup.py` script to generate both source (`sdist`)
         and wheel (`bdist_wheel`) distribution formats for the package.
 
         Raises
@@ -126,7 +126,7 @@ class PypiPublisher(IPypiPublisher):
         """
         Uploads the package to PyPI using Twine.
 
-        This method uses the `twine` command to upload the built distribution files 
+        This method uses the `twine` command to upload the built distribution files
         from the `dist/` folder to the PyPI repository.
 
         Parameters
