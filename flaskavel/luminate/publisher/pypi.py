@@ -35,7 +35,7 @@ class PypiPublisher(IPypiPublisher):
             Authentication token for PyPI. If not provided, it is retrieved from environment variables.
         """
         self.token = token or os.getenv("PYPI_TOKEN")
-        self.working_dir = os.getcwd()  # Ensure all commands run in the current execution directory
+        self.working_dir = os.path.abspath(os.getcwd())
 
     def gitPush(self):
         """
