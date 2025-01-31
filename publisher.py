@@ -20,6 +20,7 @@ if __name__ == "__main__":
     try:
         publisher = PypiPublisher()
         publisher.gitPush()
+        publisher.build()
         publisher.publish()
         publisher.clearRepository()
     except Exception as e:

@@ -1,6 +1,7 @@
 import os
 import shutil
 import subprocess
+import sys
 from flaskavel.luminate.console.output.console import Console
 from flaskavel.luminate.contracts.publisher.pypi_publisher_repository import IPypiPublisher
 from flaskavel.metadata import VERSION
@@ -13,6 +14,9 @@ class PypiPublisher(IPypiPublisher):
     -------
     git_push():
         Adds, commits, and pushes changes to the Git repository if modifications are detected.
+
+    build():
+        Compiles the package using `setup.py` to generate distribution files.
 
     publish():
         Uploads the package to PyPI using Twine.
@@ -27,8 +31,8 @@ class PypiPublisher(IPypiPublisher):
 
         Parameters
         ----------
-        token : str
-            Authentication token for PyPI.
+        token : str, optional
+            Authentication token for PyPI. If not provided, it is retrieved from environment variables.
         """
         self.token = token or os.getenv("PYPI_TOKEN")
 
@@ -36,7 +40,6 @@ class PypiPublisher(IPypiPublisher):
         """
         Commits and pushes changes to the Git repository if there are modifications.
         """
-        # Check repository status
         git_status = subprocess.run(
             ["git", "status", "--short"], capture_output=True, text=True
         )
@@ -54,21 +57,45 @@ class PypiPublisher(IPypiPublisher):
         else:
             Console.info("✅ No changes to commit.")
 
+    def build(self):
+        """
+        Compiles the package using `setup.py` to generate distribution files.
+
+        This process creates both source (`sdist`) and wheel (`bdist_wheel`) distributions.
+        """
+        try:
+            Console.info("🛠️ Building the package...")
+
+            # Get the current Python interpreter path
+            python_path = sys.executable
+
+            # Ensure setup.py exists in the current directory
+            setup_path = os.path.join(os.getcwd(), "setup.py")
+            if not os.path.exists(setup_path):
+                Console.error("❌ Error: setup.py not found in the current directory.")
+                return
+
+            # Run the build command
+            subprocess.run([python_path, "setup.py", "sdist", "bdist_wheel"], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+            Console.success("✅ Build process completed successfully!")
+        except subprocess.CalledProcessError as e:
+            Console.error(f"❌ Build failed: {e}")
+
     def publish(self):
         """
         Uploads the package to PyPI using Twine.
 
         The PyPI token is retrieved from the 'PYPI' environment variable.
         """
-        token = os.getenv("PYPI")
+        token = self.token
 
-        if not self.token:
+        if not token:
             Console.error("❌ Error: PyPI token not found in environment variables.")
             return
 
-        # Get Twine path within the virtual environment
-        current_path = os.getcwd()
-        twine_path = os.path.join(os.path.abspath(current_path), 'venv', 'Scripts', 'twine')
+        # Get Twine path
+        twine_path = os.path.join(os.getcwd(), "venv", "Scripts", "twine")
 
         if not os.path.exists(twine_path):
             Console.error(f"❌ Error: Twine not found at the expected path: {twine_path}")
@@ -80,7 +107,7 @@ class PypiPublisher(IPypiPublisher):
             check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
         )
 
-        # Clean temporary Python files (__pycache__, .pyc)
+        # Clean up temporary Python files (__pycache__, .pyc)
         Console.info("🧹 Cleaning up temporary files...")
         subprocess.run(
             ["powershell", "-Command", "Get-ChildItem -Recurse -Filter *.pyc | Remove-Item; Get-ChildItem -Recurse -Filter __pycache__ | Remove-Item -Recurse"],
