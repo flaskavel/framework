@@ -1,7 +1,8 @@
+from flaskavel.luminate.contracts.installer.upgrade_interface import IUpgrade
 import subprocess
 import sys
 
-class Upgrade:
+class Upgrade(IUpgrade):
     """
     A class responsible for handling the upgrade process of Flaskavel.
 
