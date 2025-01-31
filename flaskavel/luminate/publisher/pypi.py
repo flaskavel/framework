@@ -35,25 +35,26 @@ class PypiPublisher(IPypiPublisher):
             Authentication token for PyPI. If not provided, it is retrieved from environment variables.
         """
         self.token = token or os.getenv("PYPI_TOKEN")
+        self.working_dir = os.getcwd()  # Ensure all commands run in the current execution directory
 
     def gitPush(self):
         """
         Commits and pushes changes to the Git repository if there are modifications.
         """
         git_status = subprocess.run(
-            ["git", "status", "--short"], capture_output=True, text=True
+            ["git", "status", "--short"], capture_output=True, text=True, cwd=self.working_dir
         )
         modified_files = git_status.stdout.strip()
 
         if modified_files:
             Console.info("📌 Staging files for commit...")
-            subprocess.run(["git", "add", "."], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run(["git", "add", "."], check=True, cwd=self.working_dir, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
             Console.info(f"✅ Committing changes: '📦 Release version {VERSION}'")
-            subprocess.run(["git", "commit", "-m", f"📦 Release version {VERSION}"], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run(["git", "commit", "-m", f"📦 Release version {VERSION}"], check=True, cwd=self.working_dir, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
             Console.info("🚀 Pushing changes to the remote repository...")
-            subprocess.run(["git", "push", "-f"], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run(["git", "push", "-f"], check=True, cwd=self.working_dir, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         else:
             Console.info("✅ No changes to commit.")
 
@@ -69,14 +70,14 @@ class PypiPublisher(IPypiPublisher):
             # Get the current Python interpreter path
             python_path = sys.executable
 
-            # Ensure setup.py exists in the current directory
-            setup_path = os.path.join(os.getcwd(), "setup.py")
+            # Ensure setup.py exists in the working directory
+            setup_path = os.path.join(self.working_dir, "setup.py")
             if not os.path.exists(setup_path):
-                Console.error("❌ Error: setup.py not found in the current directory.")
+                Console.error("❌ Error: setup.py not found in the current execution directory.")
                 return
 
             # Run the build command
-            subprocess.run([python_path, "setup.py", "sdist", "bdist_wheel"], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run([python_path, "setup.py", "sdist", "bdist_wheel"], check=True, cwd=self.working_dir, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
             Console.success("✅ Build process completed successfully!")
         except subprocess.CalledProcessError as e:
@@ -94,8 +95,8 @@ class PypiPublisher(IPypiPublisher):
             Console.error("❌ Error: PyPI token not found in environment variables.")
             return
 
-        # Get Twine path
-        twine_path = os.path.join(os.path.abspath(os.getcwd()), "venv", "Scripts", "twine.exe")
+        # Get Twine path in the working directory
+        twine_path = os.path.join(self.working_dir, "venv", "Scripts", "twine")
 
         if not os.path.exists(twine_path):
             Console.error(f"❌ Error: Twine not found at the expected path: {twine_path}")
@@ -104,14 +105,14 @@ class PypiPublisher(IPypiPublisher):
         Console.info("📤 Uploading package to PyPI...")
         subprocess.run(
             [twine_path, "upload", "dist/*", "-u", "__token__", "-p", token],
-            check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            check=True, cwd=self.working_dir, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
         )
 
         # Clean up temporary Python files (__pycache__, .pyc)
         Console.info("🧹 Cleaning up temporary files...")
         subprocess.run(
             ["powershell", "-Command", "Get-ChildItem -Recurse -Filter *.pyc | Remove-Item; Get-ChildItem -Recurse -Filter __pycache__ | Remove-Item -Recurse"],
-            check=True, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            check=True, cwd=self.working_dir, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
         )
 
         Console.success("✅ Publishing process completed successfully!")
@@ -127,12 +128,13 @@ class PypiPublisher(IPypiPublisher):
         """
         folders = ["build", "dist", "flaskavel.egg-info"]
         for folder in folders:
-            if os.path.exists(folder):
-                Console.info(f"🗑️ Removing {folder}...")
+            folder_path = os.path.join(self.working_dir, folder)
+            if os.path.exists(folder_path):
+                Console.info(f"🗑️ Removing {folder_path}...")
                 try:
-                    shutil.rmtree(folder)
+                    shutil.rmtree(folder_path)
                 except PermissionError:
-                    Console.error(f"❌ Error: Could not remove {folder} due to insufficient permissions.")
+                    Console.error(f"❌ Error: Could not remove {folder_path} due to insufficient permissions.")
                 except Exception as e:
-                    Console.error(f"❌ Error removing {folder}: {str(e)}")
+                    Console.error(f"❌ Error removing {folder_path}: {str(e)}")
         Console.success("✅ Cleanup completed.")
