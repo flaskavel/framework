@@ -35,7 +35,7 @@ class Setup(ISetup):
         The sanitized folder name for the application.
     """
 
-    def __init__(self, output = Output, name_app: str = None):
+    def __init__(self, output = Output, name_app: str = 'example-app'):
         """
         Initialize FlaskavelInit class.
 
@@ -44,10 +44,10 @@ class Setup(ISetup):
         output : Output
             An instance of Output to handle logging.
         name_app : str, optional
-            Name of the application. If not provided, defaults to "{NAME}_app".
+            Name of the application. If not provided, defaults to "example-app".
         """
         self.output = output
-        self.name_app_folder = self._sanitize_folder_name(name_app or f"{NAME}_app")
+        self.name_app_folder = self._sanitize_folder_name(name_app)
 
     def _sanitize_folder_name(self, name: str) -> str:
         """
@@ -57,7 +57,7 @@ class Setup(ISetup):
         1. Normalize text to remove accents and special characters.
         2. Convert to lowercase.
         3. Replace spaces with underscores.
-        4. Remove invalid characters (e.g., \ / : * ? " < > |).
+        4. Remove invalid characters.
         5. Strip leading and trailing whitespace.
         6. Enforce length limit (255 characters).
         7. Ensure the result contains only valid characters.

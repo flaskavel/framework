@@ -1,57 +1,48 @@
 import argparse
-from flaskavel.luminate.installer.output import Output
-from flaskavel.luminate.installer.setup import Setup
-from flaskavel.luminate.installer.upgrade import Upgrade
+from flaskavel.luminate.installer.init import Init
 
 def main():
     """
-    Main entry point for the Flaskavel CLI.
-
-    Supports:
-    - `flaskavel new <app_name>` to create a new Flaskavel app.
-    - `flaskavel --version` to display the current version.
-    - `flaskavel --upgrade` to upgrade Flaskavel to the latest version.
+    Main entry point for the Flaskavel CLI tool.
     """
 
+    # Create the argument parser for CLI commands
     parser = argparse.ArgumentParser(description="Flaskavel Command Line Tool")
+
+    # Optional argument for displaying the current Flaskavel version
     parser.add_argument('--version', action='store_true', help="Show Flaskavel version.")
+
+    # Optional argument for upgrading Flaskavel to the latest version
     parser.add_argument('--upgrade', action='store_true', help="Upgrade Flaskavel to the latest version.")
+
+    # Command to create a new Flaskavel app (requires an app name)
     parser.add_argument('command', nargs='?', choices=['new'], help="Available command: 'new'.")
+
+    # Name of the application to be created (defaults to 'example-app')
     parser.add_argument('name', nargs='?', help="The name of the Flaskavel application to create.", default="example-app")
 
-    try:
-        # Parse the arguments
-        args = parser.parse_args()
+    # Parse the provided arguments
+    args = parser.parse_args()
 
-        # Handle --version first (it overrides everything else)
-        if args.version:
-            Output.asciiArt()
+    # Initialize the Flaskavel tools for handling operations
+    init = Init()
 
-        # Handle --upgrade command
-        elif args.upgrade:
-            try:
-                Output.info("Starting the upgrade process...")
-                Upgrade.execute()
-                Output.asciiArt()
-            except Exception as e:
-                Output.error(f"Fatal Error: {e}")
+    # Handle the version command
+    if args.version:
+        init.displayVersion()
 
-        # Ensure a valid command is provided
-        elif not args.command:
-            Output.error("No command provided. Use 'flaskavel new <app_name>', 'flaskavel --version', or 'flaskavel --upgrade'.")
+    # Handle the upgrade command
+    elif args.upgrade:
+        init.executeUpgrade()
 
-        # Handle 'new' command
-        elif args.command == 'new':
-            if not args.name:
-                Output.error("You must specify an application name. Example: 'flaskavel new example-app'")
+    # Handle the 'new' command to create a new app
+    elif args.command == 'new':
+        init.createNewApp(name_app=args.name or 'example-app')
 
-            Output.startInstallation()
-            Setup(name_app=args.name).handle()
-            Output.endInstallation()
+    # If no valid command is provided, show the help message
+    else:
+        init.displayInfo()
 
-
-    except Exception as e:
-        Output.error(f"Fatal Error: {e}")
-
+# Execute the main function if the script is run directly
 if __name__ == "__main__":
     main()
