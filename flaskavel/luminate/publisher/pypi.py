@@ -68,7 +68,7 @@ class PypiPublisher(IPypiPublisher):
 
         # Get Twine path within the virtual environment
         current_path = os.getcwd()
-        twine_path = os.path.abspath(os.path.join(current_path, "venv", "Scripts", "twine"))
+        twine_path = os.path.join(os.path.abspath(current_path), 'venv', 'Scripts', 'twine')
 
         if not os.path.exists(twine_path):
             Console.error(f"❌ Error: Twine not found at the expected path: {twine_path}")
