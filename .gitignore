@@ -3,9 +3,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Script Publish
-publish.py
-
 # Script Test
 test.py
 
