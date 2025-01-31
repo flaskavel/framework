@@ -80,6 +80,8 @@ class PypiPublisher(IPypiPublisher):
 
         # Find Twine in the virtual environment path
         twine_path = os.path.abspath(os.path.join(self.project_root, 'venv', 'Scripts', 'twine'))
+        print(twine_path)
+        exit(1)
 
         Console.info("📤 Uploading package to PyPI...")
         subprocess.run(
