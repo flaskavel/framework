@@ -85,8 +85,9 @@ class PypiPublisher(IPypiPublisher):
         Console.info("📤 Uploading package to PyPI...")
         subprocess.run(
             [twine_path, "upload", "dist/*", "-u", "__token__", "-p", token],
-            check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=self.project_root
+            check=True, cwd=self.project_root
         )
+
 
         Console.info("🧹 Cleaning up temporary files...")
         subprocess.run(
