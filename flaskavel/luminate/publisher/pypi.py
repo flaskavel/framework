@@ -18,6 +18,7 @@ class PypiPublisher(IPypiPublisher):
         self.token = token or os.getenv("PYPI_TOKEN").strip()
         self.python_path = sys.executable
         self.project_root = os.getcwd()
+        self.clearRepository()
 
     def gitPush(self):
         """
@@ -85,7 +86,7 @@ class PypiPublisher(IPypiPublisher):
         Console.info("📤 Uploading package to PyPI...")
         subprocess.run(
             [twine_path, "upload", "dist/*", "-u", "__token__", "-p", token],
-            check=True, cwd=self.project_root
+            check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=self.project_root
         )
 
         Console.info("🧹 Cleaning up temporary files...")
@@ -93,7 +94,7 @@ class PypiPublisher(IPypiPublisher):
             ["powershell", "-Command", "Get-ChildItem -Recurse -Filter *.pyc | Remove-Item; Get-ChildItem -Recurse -Filter __pycache__ | Remove-Item -Recurse"],
             check=True, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=self.project_root
         )
-
+        self.clearRepository()
         Console.success("✅ Publishing process completed successfully!")
 
     def clearRepository(self):
@@ -104,11 +105,9 @@ class PypiPublisher(IPypiPublisher):
         for folder in folders:
             folder_path = os.path.join(self.project_root, folder)
             if os.path.exists(folder_path):
-                Console.info(f"🗑️ Removing {folder_path}...")
                 try:
                     shutil.rmtree(folder_path)
                 except PermissionError:
                     Console.error(f"❌ Error: Could not remove {folder_path} due to insufficient permissions.")
                 except Exception as e:
                     Console.error(f"❌ Error removing {folder_path}: {str(e)}")
-        Console.success("✅ Cleanup completed.")

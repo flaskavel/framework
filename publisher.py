@@ -19,10 +19,8 @@ if __name__ == "__main__":
     """
     try:
         publisher = PypiPublisher()
-        publisher.clearRepository()
         publisher.gitPush()
         publisher.build()
         publisher.publish()
-        publisher.clearRepository()
     except Exception as e:
         raise ValueError(f"General Error: {e}")
