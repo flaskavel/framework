@@ -94,6 +94,8 @@ class PypiPublisher(IPypiPublisher):
 
         # 🔍 Encuentra Twine automáticamente dentro del entorno virtual
         twine_path = os.path.join(os.path.dirname(self.python_path), "twine")
+        print(twine_path)
+        exit(1)
 
         # ⚠️ Verificar si Twine existe en la ubicación esperada
         if not os.path.exists(twine_path):
