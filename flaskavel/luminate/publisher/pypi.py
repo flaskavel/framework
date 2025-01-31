@@ -66,7 +66,7 @@ class PypiPublisher(IPypiPublisher):
                 [self.python_path, "setup.py", "sdist", "bdist_wheel"], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=self.project_root
             )
 
-            Console.success("✅ Build process completed successfully!")
+            Console.info("✅ Build process completed successfully!")
         except subprocess.CalledProcessError as e:
             Console.error(f"❌ Build failed: {e}")
 
@@ -95,7 +95,7 @@ class PypiPublisher(IPypiPublisher):
             check=True, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=self.project_root
         )
         self.clearRepository()
-        Console.success("✅ Publishing process completed successfully!")
+        Console.success(f"✅ [v{VERSION}] - Publishing process completed successfully!")
 
     def clearRepository(self):
         """
