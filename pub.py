@@ -66,7 +66,9 @@ def publish():
         print("❌ Error: PyPI_TOKEN no encontrado en las variables de entorno.")
         return
 
-    twine_path = os.path.join(os.path.dirname(sys.executable), "twine")  # 🛠️ Encuentra Twine automáticamente
+    # twine_path = os.path.join(os.path.dirname(sys.executable), "twine")  # 🛠️ Encuentra Twine automáticamente
+    current_path = os.path.dirname(__file__)
+    twine_path = os.path.join(os.path.abspath(current_path), 'venv', 'Scripts', 'twine')
 
     if not os.path.exists(twine_path):
         print(f"❌ Error: Twine no encontrado en {twine_path}. Instala con `pip install twine`")
