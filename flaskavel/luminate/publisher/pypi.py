@@ -94,21 +94,10 @@ class PypiPublisher(IPypiPublisher):
 
         # 🔍 Encuentra Twine automáticamente dentro del entorno virtual
         twine_path = os.path.join(os.path.dirname(self.python_path), "twine")
-        print(token)
-        exit(1)
-
-        # ⚠️ Verificar si Twine existe en la ubicación esperada
-        if not os.path.exists(twine_path):
-            Console.warning(f"⚠️ Twine not found at {twine_path}. Trying global Twine...")
-            twine_path = shutil.which("twine")
-
-        if not twine_path:
-            Console.error("❌ Error: Twine not found. Install it with `pip install twine`.")
-            return
 
         Console.info("📤 Uploading package to PyPI...")
         subprocess.run(
-            [twine_path, "upload", "dist/*", "-u", "__token__", "-p", token],
+            [os.path.abspath(twine_path), "upload", "dist/*", "-u", "__token__", "-p", token],
             check=True, cwd=self.working_dir, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
         )
 
