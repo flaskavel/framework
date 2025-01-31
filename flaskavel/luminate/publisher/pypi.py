@@ -9,11 +9,45 @@ from flaskavel.metadata import VERSION
 class PypiPublisher(IPypiPublisher):
     """
     Handles the publishing process of a package to PyPI and repository management.
+
+    This class automates the process of committing changes to a Git repository, building a Python package, 
+    uploading it to PyPI, and cleaning up temporary files. It requires a PyPI authentication token.
+
+    Methods
+    -------
+    __init__(token: str = None)
+        Initializes the class with an optional PyPI authentication token.
+
+    gitPush()
+        Commits and pushes changes to the Git repository if modifications are detected.
+
+    build()
+        Compiles the package using `setup.py` to generate distribution files.
+
+    publish()
+        Uploads the package to PyPI using Twine.
+
+    clearRepository()
+        Deletes temporary directories created during the publishing process.
     """
 
     def __init__(self, token: str = None):
         """
         Initializes the class with an authentication token.
+
+        Parameters
+        ----------
+        token : str, optional
+            Authentication token for PyPI. If not provided, it is retrieved from environment variables.
+
+        Attributes
+        ----------
+        token : str
+            The PyPI authentication token.
+        python_path : str
+            The path to the Python interpreter used in the environment.
+        project_root : str
+            The root directory of the project where the process is executed.
         """
         self.token = token or os.getenv("PYPI_TOKEN").strip()
         self.python_path = sys.executable
@@ -23,6 +57,16 @@ class PypiPublisher(IPypiPublisher):
     def gitPush(self):
         """
         Commits and pushes changes to the Git repository if there are modifications.
+
+        This method checks for uncommitted changes and stages, commits, and pushes them 
+        to the remote Git repository.
+
+        If there are no changes, it logs a message indicating no commits are necessary.
+
+        Raises
+        ------
+        subprocess.CalledProcessError
+            If any of the subprocess calls to Git fail.
         """
         # Aseguramos que los comandos de Git se ejecuten desde la raíz del proyecto
         git_status = subprocess.run(
@@ -51,6 +95,14 @@ class PypiPublisher(IPypiPublisher):
     def build(self):
         """
         Compiles the package using `setup.py` to generate distribution files.
+
+        This method runs the `setup.py` script to generate both source (`sdist`) 
+        and wheel (`bdist_wheel`) distribution formats for the package.
+
+        Raises
+        ------
+        subprocess.CalledProcessError
+            If the `setup.py` command fails.
         """
         try:
             Console.info("🛠️ Building the package...")
@@ -73,6 +125,21 @@ class PypiPublisher(IPypiPublisher):
     def publish(self):
         """
         Uploads the package to PyPI using Twine.
+
+        This method uses the `twine` command to upload the built distribution files 
+        from the `dist/` folder to the PyPI repository.
+
+        Parameters
+        ----------
+        token : str
+            The PyPI authentication token, which is passed during the initialization.
+
+        Raises
+        ------
+        subprocess.CalledProcessError
+            If the Twine command fails during the upload process.
+        ValueError
+            If no token is provided for authentication.
         """
         token = self.token
         if not token:
@@ -100,6 +167,18 @@ class PypiPublisher(IPypiPublisher):
     def clearRepository(self):
         """
         Deletes temporary directories created during the publishing process.
+
+        This method removes the following directories from the project root:
+        - `build/`
+        - `dist/`
+        - `flaskavel.egg-info/`
+
+        Raises
+        ------
+        PermissionError
+            If the method fails to delete any of the directories due to insufficient permissions.
+        Exception
+            If any other error occurs during the deletion process.
         """
         folders = ["build", "dist", "flaskavel.egg-info"]
         for folder in folders:
