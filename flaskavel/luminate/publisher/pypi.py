@@ -15,7 +15,7 @@ class PypiPublisher(IPypiPublisher):
         """
         Initializes the class with an authentication token.
         """
-        self.token = token or os.getenv("PYPI_TOKEN")
+        self.token = token or os.getenv("PYPI_TOKEN").strip()
         self.python_path = sys.executable
         self.project_root = os.getcwd()
 
@@ -83,8 +83,6 @@ class PypiPublisher(IPypiPublisher):
         twine_path = os.path.abspath(twine_path)
 
         Console.info("📤 Uploading package to PyPI...")
-        print(token)
-        exit(1)
         subprocess.run(
             [twine_path, "upload", "dist/*", "-u", "__token__", "-p", token],
             check=True, cwd=self.project_root
