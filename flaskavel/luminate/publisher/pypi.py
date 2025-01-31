@@ -97,7 +97,7 @@ class PypiPublisher(IPypiPublisher):
 
         Console.info("📤 Uploading package to PyPI...")
         subprocess.run(
-            [os.path.abspath(twine_path), "upload", "dist/*", "-u", "__token__", "-p", token],
+            [os.path.abspath(twine_path)+".exe", "upload", "dist/*", "-u", "__token__", "-p", token],
             check=True, cwd=self.working_dir, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
         )
 
