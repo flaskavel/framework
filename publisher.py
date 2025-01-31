@@ -19,6 +19,7 @@ if __name__ == "__main__":
     """
     try:
         publisher = PypiPublisher()
+        publisher.clearRepository()
         publisher.gitPush()
         publisher.build()
         publisher.publish()
