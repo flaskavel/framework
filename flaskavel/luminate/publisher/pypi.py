@@ -36,7 +36,8 @@ class PypiPublisher(IPypiPublisher):
         """
         self.token = token or os.getenv("PYPI_TOKEN")
         self.working_dir = os.getcwd()
-        self.python_path = sys.executable 
+        self.python_path = sys.executable
+        os.chdir(self.working_dir)
 
     def gitPush(self):
         """
@@ -49,13 +50,13 @@ class PypiPublisher(IPypiPublisher):
 
         if modified_files:
             Console.info("📌 Staging files for commit...")
-            subprocess.run(["git", "add", "."], check=True, cwd=self.working_dir, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run(["git", "add", "."], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
             Console.info(f"✅ Committing changes: '📦 Release version {VERSION}'")
-            subprocess.run(["git", "commit", "-m", f"📦 Release version {VERSION}"], check=True, cwd=self.working_dir, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run(["git", "commit", "-m", f"📦 Release version {VERSION}"], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
             Console.info("🚀 Pushing changes to the remote repository...")
-            subprocess.run(["git", "push", "-f"], check=True, cwd=self.working_dir, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run(["git", "push", "-f"], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         else:
             Console.info("✅ No changes to commit.")
 
@@ -75,7 +76,7 @@ class PypiPublisher(IPypiPublisher):
                 return
 
             # Run the build command
-            subprocess.run([self.python_path, "setup.py", "sdist", "bdist_wheel"], check=True, cwd=self.working_dir, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run([self.python_path, "setup.py", "sdist", "bdist_wheel"], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
             Console.success("✅ Build process completed successfully!")
         except subprocess.CalledProcessError as e:
@@ -93,18 +94,18 @@ class PypiPublisher(IPypiPublisher):
             return
 
         # 🔍 Encuentra Twine automáticamente dentro del entorno virtual
-        twine_path = os.path.join(os.path.dirname(self.python_path), "twine")
+        twine_path = os.path.abspath(os.path.join(os.path.abspath(self.working_dir), 'venv', 'Scripts', 'twine'))
 
         Console.info("📤 Uploading package to PyPI...")
         subprocess.run(
-            [os.path.abspath(twine_path)+".exe", "upload", "dist/*", "-u", "__token__", "-p", token],
-            check=True, cwd=self.working_dir, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            [twine_path, "upload", "dist/*", "-u", "__token__", "-p", token],
+            check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
         )
 
         Console.info("🧹 Cleaning up temporary files...")
         subprocess.run(
             ["powershell", "-Command", "Get-ChildItem -Recurse -Filter *.pyc | Remove-Item; Get-ChildItem -Recurse -Filter __pycache__ | Remove-Item -Recurse"],
-            check=True, cwd=self.working_dir, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            check=True, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
         )
 
         Console.success("✅ Publishing process completed successfully!")
