@@ -83,11 +83,12 @@ class PypiPublisher(IPypiPublisher):
         twine_path = os.path.abspath(twine_path)
 
         Console.info("📤 Uploading package to PyPI...")
+        print(token)
+        exit(1)
         subprocess.run(
             [twine_path, "upload", "dist/*", "-u", "__token__", "-p", token],
             check=True, cwd=self.project_root
         )
-
 
         Console.info("🧹 Cleaning up temporary files...")
         subprocess.run(
