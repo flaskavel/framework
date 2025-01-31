@@ -96,5 +96,5 @@ class ProgressBar(IProgressBar):
         """
         self.progress = self.total
         self._update_bar()
-        sys.stdout.write("\n")  # Move to a new line after completion
+        sys.stdout.write("\n")
         sys.stdout.flush()
