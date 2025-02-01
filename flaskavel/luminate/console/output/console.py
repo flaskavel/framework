@@ -122,7 +122,7 @@ class Console(IConsole):
 
     @staticmethod
     def fail(message: str = '', timestamp: bool = True):
-        """Prints an error message with a red background."""
+        """Prints an fail message with a red background."""
         Console._print_with_background("FAIL", ANSIColors.BG_FAIL, message, timestamp)
 
     # ---- ERROR ----

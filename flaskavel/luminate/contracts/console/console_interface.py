@@ -78,6 +78,14 @@ class IConsole(ABC):
         """Prints a bold warning message in yellow."""
         pass
 
+    # ---- FAIL ----
+
+    @staticmethod
+    @abstractmethod
+    def fail(message: str = '', timestamp: bool = True):
+        """Prints an fail message with a red background."""
+        pass
+
     # ---- ERROR ----
 
     @staticmethod
