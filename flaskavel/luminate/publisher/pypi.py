@@ -105,7 +105,7 @@ class PypiPublisher(IPypiPublisher):
             If the `setup.py` command fails.
         """
         try:
-            Console.info("🛠️ Building the package...")
+            Console.info("🛠️  Building the package...")
 
             # Ensure setup.py exists in the current working directory
             setup_path = os.path.join(self.project_root, "setup.py")
