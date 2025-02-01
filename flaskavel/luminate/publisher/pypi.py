@@ -158,8 +158,8 @@ class PypiPublisher(IPypiPublisher):
                 check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=self.project_root
             )
         except Exception as e:
-            Console.warning("🔴 Error loading the package. Try changing the version and retry.")
-            Console.error("⛔ If the issue persists, review the script in detail.")
+            Console.fail("🔴 Error loading the package. Try changing the version and retry.")
+            Console.warning("⛔ If the issue persists, review the script in detail.")
             exit()
 
         Console.info("🧹 Cleaning up temporary files...")

@@ -118,6 +118,13 @@ class Console(IConsole):
         """Prints a bold warning message in yellow."""
         Console._print_colored(message, ANSIColors.TEXT_BOLD_WARNING)
 
+    # ---- FAIL ----
+
+    @staticmethod
+    def fail(message: str = '', timestamp: bool = True):
+        """Prints an error message with a red background."""
+        Console._print_with_background("ERROR", ANSIColors.BG_ERROR, message, timestamp)
+
     # ---- ERROR ----
 
     @staticmethod
