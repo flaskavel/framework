@@ -157,10 +157,12 @@ class PypiPublisher(IPypiPublisher):
         )
 
         Console.info("🧹 Cleaning up temporary files...")
-        subprocess.run(
+        responde = subprocess.run(
             ["powershell", "-Command", "Get-ChildItem -Recurse -Filter *.pyc | Remove-Item; Get-ChildItem -Recurse -Filter __pycache__ | Remove-Item -Recurse"],
             check=True, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=self.project_root
         )
+        print(responde)
+        exit()
         self.clearRepository()
         Console.success(f"✅ [v{VERSION}] - Publishing process completed successfully!")
 
