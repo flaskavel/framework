@@ -159,7 +159,7 @@ class PypiPublisher(IPypiPublisher):
         Console.info("🧹 Cleaning up temporary files...")
         responde = subprocess.run(
             ["powershell", "-Command", "Get-ChildItem -Recurse -Filter *.pyc | Remove-Item; Get-ChildItem -Recurse -Filter __pycache__ | Remove-Item -Recurse"],
-            check=True, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=self.project_root
+            check=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=self.project_root
         )
         print(responde)
         exit()
