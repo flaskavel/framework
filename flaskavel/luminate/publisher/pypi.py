@@ -10,7 +10,7 @@ class PypiPublisher(IPypiPublisher):
     """
     Handles the publishing process of a package to PyPI and repository management.
 
-    This class automates the process of committing changes to a Git repository, building a Python package, 
+    This class automates the process of committing changes to a Git repository, building a Python package,
     uploading it to PyPI, and cleaning up temporary files. It requires a PyPI authentication token.
 
     Methods
@@ -58,7 +58,7 @@ class PypiPublisher(IPypiPublisher):
         """
         Commits and pushes changes to the Git repository if there are modifications.
 
-        This method checks for uncommitted changes and stages, commits, and pushes them 
+        This method checks for uncommitted changes and stages, commits, and pushes them
         to the remote Git repository.
 
         If there are no changes, it logs a message indicating no commits are necessary.
