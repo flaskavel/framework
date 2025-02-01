@@ -69,6 +69,7 @@ class ANSIColors(Enum):
     # Background Colors
     BG_INFO = '\033[44m'                # Blue background for INFO
     BG_ERROR = '\033[41m'               # Red background for ERROR
+    BG_FAIL = '\033[48;5;166m'          # Red background for FAIL
     BG_WARNING = '\033[43m'             # Yellow background for WARNING
     BG_SUCCESS = '\033[42m'             # Green background for SUCCESS
 
