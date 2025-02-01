@@ -49,6 +49,7 @@ class PypiPublisher(IPypiPublisher):
         project_root : str
             The root directory of the project where the process is executed.
         """
+        Console.clear()
         self.token = token or os.getenv("PYPI_TOKEN").strip()
         self.python_path = sys.executable
         self.project_root = os.getcwd()
