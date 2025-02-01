@@ -151,18 +151,18 @@ class PypiPublisher(IPypiPublisher):
         twine_path = os.path.abspath(twine_path)
 
         Console.info("📤 Uploading package to PyPI...")
-        subprocess.run(
+        response = subprocess.run(
             [twine_path, "upload", "dist/*", "-u", "__token__", "-p", token],
             check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=self.project_root
         )
+        print(response)
+        exit()
 
         Console.info("🧹 Cleaning up temporary files...")
-        responde = subprocess.run(
+        subprocess.run(
             ["powershell", "-Command", "Get-ChildItem -Recurse -Filter *.pyc | Remove-Item; Get-ChildItem -Recurse -Filter __pycache__ | Remove-Item -Recurse"],
-            check=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=self.project_root
+            check=True, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=self.project_root
         )
-        print(responde)
-        exit()
         self.clearRepository()
         Console.success(f"✅ [v{VERSION}] - Publishing process completed successfully!")
 
