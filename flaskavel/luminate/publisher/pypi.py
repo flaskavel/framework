@@ -158,6 +158,7 @@ class PypiPublisher(IPypiPublisher):
             )
         except Exception as e:
             Console.error("❌ Error: Error loading the package. Try changing the version and retry. If the issue persists, review the script in detail.")
+            exit()
 
         Console.info("🧹 Cleaning up temporary files...")
         subprocess.run(
