@@ -10,6 +10,9 @@ class BaseCommand(IBaseCommand):
     This class acts as a foundation for command classes, offering utility methods to interact with the console.
     """
 
+    # Command arguments
+    args = {}
+
     def success(self, message: str = '', timestamp: bool = True):
         """
         Prints a success message with a green background.
@@ -392,19 +395,23 @@ class BaseCommand(IBaseCommand):
         return ProgressBar(total=total, width=width)
 
 
-    def handle(self, **kwargs):
+    def setArgs(self, args: dict):
         """
-        Abstract method to define the logic of the command.
+        Abstract method to define the logic of setting command arguments.
 
-        This method must be overridden in subclasses.
+        This method is intended to be overridden in subclasses where the
+        logic for setting the command's arguments is defined.
 
-        Arguments
-        ---------
-        **kwargs : Arbitrary keyword arguments.
+        Parameters
+        ----------
+        args : dict
+            A dictionary containing the arguments to be set for the command.
+            The keys are the argument names and the values are the argument values.
 
         Raises
         ------
         NotImplementedError
-            If not implemented in the subclass.
+            If this method is not implemented in the subclass.
         """
-        raise NotImplementedError("The 'handle' method must be implemented in the child class.")
+        self.args = args
+

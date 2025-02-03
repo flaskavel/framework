@@ -1,3 +1,4 @@
+import shlex
 import time
 from flaskavel.luminate.cache.console.commands import CacheCommands
 from flaskavel.luminate.console.output.console import Console
@@ -14,7 +15,7 @@ class Command(ICommand):
     """
 
     @staticmethod
-    def call(signature: str, *args):
+    def call(signature: str, *args, **kwargs):
         """
         Calls a registered command from the CacheCommands singleton.
 
@@ -45,22 +46,27 @@ class Command(ICommand):
             cache = CacheCommands()  # Access the singleton instance
             command_info = cache.get(signature)  # Get command data using the signature
 
-            # Initialize the argument parser and set the arguments
-            argParser = Parser()
-            argParser.setArguments(command_info['arguments'])
-            arguments = argParser.argumentsParse(args)
-
             # Print the start status to the console
             Executor.running(program=signature)
 
+            # Initialize the argument parser and set the arguments
+            arguments = {}
+            if command_info['arguments']:
+                argParser = Parser()
+                argParser.setArguments(command_info['arguments'])
+                argParser.parseArgs(*args)
+                argParser.parseKargs(**kwargs)
+                arguments = argParser.get()
+
             # Retrieve the command class from the cached data
-            command_class = command_info['class']
+            command_class = command_info['instance']
 
             # Instantiate the command class
             command_instance = command_class()
+            command_instance.setArgs(arguments)
 
             # Execute the 'handle()' method with parsed arguments
-            output = command_instance.handle(arguments)
+            output = command_instance.handle()
 
             # Calculate the elapsed time for executing the command
             elapsed_time = round(time.time() - start_time, 2)
@@ -73,11 +79,11 @@ class Command(ICommand):
 
         except KeyError as e:
             # Handle case when the command signature is not found in the cache
-            Console.error(message=f"Command with signature '{signature}' not found in cache. Error: {e}")
+            Console.error(message=e)
 
         except Exception as e:
             # Handle unexpected errors during the command execution
-            Console.error(message=f"An error occurred while executing the command '{signature}': {e}")
+            Console.error(message=e)
 
             # Calculate the elapsed time for executing the command (even in failure)
             elapsed_time = round(time.time() - start_time, 2)
