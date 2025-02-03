@@ -1,4 +1,7 @@
+import time
 from flaskavel.luminate.cache.console.commands import CacheCommands
+from flaskavel.luminate.console.output.console import Console
+from flaskavel.luminate.console.output.executor import Executor
 from flaskavel.luminate.contracts.console.command_interface import ICommand
 
 class Command(ICommand):
@@ -33,10 +36,17 @@ class Command(ICommand):
         RuntimeError
             If an error occurs while executing the command.
         """
+
+        # Record the start time
+        start_time = time.time()
+
         try:
             # Retrieve the command information from the CacheCommands singleton
             cache = CacheCommands()  # Access the singleton instance
             command_info = cache.get(signature)  # Get command data using the signature
+
+            # Print Executor Console
+            Executor.running(program=signature)
 
             # Retrieve the command class from the cached data
             command_class = command_info['class']
@@ -45,9 +55,29 @@ class Command(ICommand):
             command_instance = command_class(**kwargs)
 
             # Execute the handle() method of the command instance
-            command_instance.handle()
+            output = command_instance.handle()
+
+            # Calculate the time taken to execute the command
+            elapsed_time = round(time.time() - start_time, 2)
+
+            # Indicate that the command has completed successfully
+            Executor.done(program=signature, time=f"{elapsed_time}s")
+
+            # Return Outpout Command
+            return output
 
         except KeyError as e:
-            raise KeyError(f"Command with signature '{signature}' not found.") from e
+
+            # Handle case when the command signature is not found in the cache
+            Console.error(message=e)
+
         except Exception as e:
-            raise RuntimeError(f"Error executing the command '{signature}': {e}") from e
+
+            # Handle other exceptions during the execution of the command
+            Console.error(message=e)
+
+            # Calculate the time taken to execute the command
+            elapsed_time = round(time.time() - start_time, 2)
+
+             # Indicate that the command has failed
+            Executor.fail(program=signature, time=f"{elapsed_time}s")
