@@ -27,7 +27,7 @@ class CacheCommands(ICacheCommands):
             cls._instance.commands = {}
         return cls._instance
 
-    def register(self, signature: str, description: str, instance):
+    def register(self, signature: str, description: str, arguments: list, instance):
         """
         Register a new command with its signature, description, and class instance.
 
@@ -49,9 +49,10 @@ class CacheCommands(ICacheCommands):
             raise ValueError(f"Command '{signature}' is already registered. Please ensure signatures are unique.")
 
         self.commands[signature] = {
-            'class': instance,
-            'signature': signature,
-            'description': description
+            'instance':instance,
+            'arguments':arguments,
+            'description':description,
+            'signature':signature
         }
 
     def unregister(self, signature: str):

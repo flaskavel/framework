@@ -14,11 +14,7 @@ class Register(IRegister):
 
     def __init__(self):
         """
-        Initializes the Register instance.
-
-        Parameters
-        ----------
-        None
+        Initializes the Register instance and prepares the cache commands system.
         """
         self.cache_commands = CacheCommands()
 
@@ -69,9 +65,18 @@ class Register(IRegister):
         if not hasattr(command_class, 'description') or not isinstance(command_class.description, str):
             raise ValueError(f"Class {command_class.__name__} must have a 'description' attribute as a string.")
 
+        # Sanitaze signature
+        description = command_class.description.strip()
+
         # Validate 'handle' method
         if not hasattr(command_class, 'handle') or not callable(getattr(command_class, 'handle')):
             raise ValueError(f"Class {command_class.__name__} must implement a 'handle' method.")
+
+        # Validate 'arguments' method
+        if hasattr(command_class, 'arguments') and callable(getattr(command_class, 'arguments')):
+            arguments = command_class().arguments()
+        else:
+            arguments = []
 
         # Validate inheritance from 'BaseCommand'
         if not issubclass(command_class, BaseCommand):
@@ -80,12 +85,14 @@ class Register(IRegister):
         # Register the command
         self.cache_commands.register(
             instance=command_class,
-            description=command_class.description.strip(),
+            arguments=arguments,
+            description=description,
             signature=signature
         )
 
         # Return Class
         return command_class
+
 
 # Return Decorator.
 register = Register()
