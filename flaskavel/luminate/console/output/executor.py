@@ -42,7 +42,7 @@ class Executor(IExecutor):
         time_formatted = f"{ANSIColors.TEXT_MUTED.value}{time}{ANSIColors.DEFAULT.value}" if time else ""
         state_formatted = f"{state_color}{state}{ANSIColors.DEFAULT.value}"
 
-        print(f"{timestamp} {program_formatted} {line} {time_formatted} {state_formatted}")
+        print(f"{timestamp} [ {program_formatted} ] {line} {time_formatted} {state_formatted}")
 
     @staticmethod
     def running(program: str, time: str = ''):

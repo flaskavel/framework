@@ -51,11 +51,11 @@ class Command(ICommand):
             # Retrieve the command class from the cached data
             command_class = command_info['class']
 
-            # Instantiate the command class with the provided keyword arguments
-            command_instance = command_class(**kwargs)
+            # Instantiate the command class
+            command_instance = command_class()
 
-            # Execute the handle() method of the command instance
-            output = command_instance.handle()
+            # Execute the handle() method of the command instance with the provided keyword arguments
+            output = command_instance.handle(**kwargs)
 
             # Calculate the time taken to execute the command
             elapsed_time = round(time.time() - start_time, 2)
