@@ -1,6 +1,8 @@
 from flaskavel.luminate.console.base.command import BaseCommand
+from flaskavel.luminate.cache.console.commands import CacheCommands
+from flaskavel.luminate.contracts.console.register_interface import IRegister
 
-class Register:
+class Register(IRegister):
     """
     A class to register and manage command classes.
 
@@ -18,7 +20,7 @@ class Register:
         ----------
         None
         """
-        self.commands = {}
+        self.cache_commands = CacheCommands()
 
     def command(self, command_class):
         """
@@ -76,10 +78,14 @@ class Register:
             raise TypeError(f"Class {command_class.__name__} must inherit from 'BaseCommand'.")
 
         # Register the command
-        self.commands[signature] = {
-            'class': command_class,
-            'signature': signature,
-            'description': command_class.description.strip(),
-        }
+        self.cache_commands.register(
+            instance=command_class,
+            description=command_class.description.strip(),
+            signature=signature
+        )
 
+        # Return Class
         return command_class
+
+# Return Decorator.
+register = Register()
