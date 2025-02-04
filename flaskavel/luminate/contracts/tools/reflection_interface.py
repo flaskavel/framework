@@ -1,127 +1,50 @@
-from typing import Any, Callable, List, Optional
+from abc import ABC, abstractmethod
+from typing import Any, List, Optional
 
-
-class IReflection:
+class IReflection(ABC):
     """
-    A class that allows for reflection on a Python class and its components.
-    It provides functionality to inspect modules, classes, methods, properties,
-    and constants dynamically.
-
-    Attributes
-    ----------
-    classname : str, optional
-        The name of the class to reflect on. (Default is None)
-    module_name : str, optional
-        The name of the module where the class is located. (Default is None)
-    cls : type, optional
-        The class object itself after successful import.
-
-    Methods
-    -------
-    safe_import() -> None
-        Attempts to import the module and class safely. Raises ValueError if import fails.
-    has_class() -> bool
-        Checks if the class exists in the module.
-    has_method(method_name: str) -> bool
-        Checks if the class has the specified method.
-    has_property(prop: str) -> bool
-        Checks if the class has the specified property.
-    has_constant(constant: str) -> bool
-        Checks if the class/module has the specified constant.
-    get_attributes() -> List[str]
-        Returns a list of all attributes of the class.
-    get_constructor() -> Optional[Callable]
-        Returns the class constructor (__init__) or None if not available.
-    get_doc_comment() -> Optional[str]
-        Returns the docstring for the class or None if not available.
-    get_file_name() -> Optional[str]
-        Returns the file path where the class is defined.
-    get_method(method_name: str) -> Optional[Callable]
-        Returns the specified method or None if not found.
-    get_methods() -> List[Callable]
-        Returns a list of all methods of the class.
-    get_name() -> Optional[str]
-        Returns the full name of the class.
-    get_parent_class() -> Optional[tuple]
-        Returns the parent classes of the class, or None if no parent exists.
-    get_properties() -> List[str]
-        Returns a list of all properties of the class.
-    get_property(prop: str) -> Optional[Any]
-        Returns the value of a specified property or None if not found.
-    is_abstract() -> bool
-        Checks if the class is abstract.
-    is_enum() -> bool
-        Checks if the class is an Enum.
-    is_iterable() -> bool
-        Checks if the class is iterable.
-    is_instantiable() -> bool
-        Checks if the class can be instantiated.
-    new_instance(*args, **kwargs) -> Any
-        Creates a new instance of the class with the given arguments.
-    __str__() -> str
-        Returns a string representation of the Reflection object.
+    Interface for Reflection class to dynamically inspect and load classes and their attributes.
+    This interface defines the contract for any class that performs reflection-based operations on Python classes.
     """
 
-    def __init__(self, classname: Optional[str] = None, module: Optional[str] = None):
+    @abstractmethod
+    def hasClass(self) -> bool:
         """
-        Initializes the Reflection instance with an optional class name and module.
-
-        Parameters
-        ----------
-        classname : str, optional
-            The name of the class to reflect on. (Default is None)
-        module : str, optional
-            The name of the module where the class is located. (Default is None)
-        """
-
-        pass
-
-    def safe_import(self) -> None:
-        """
-        Safely imports the class from the specified module.
-
-        Raises
-        ------
-        ValueError
-            If the class cannot be found in the module or if the import fails.
-        """
-        pass
-
-    def has_class(self) -> bool:
-        """
-        Checks if the class exists in the specified module.
+        Checks if the class exists within the module.
 
         Returns
         -------
         bool
-            True if the class exists, False otherwise.
+            True if the class is defined, False otherwise.
         """
         pass
 
-    def has_method(self, method_name: str) -> bool:
+    @abstractmethod
+    def hasMethod(self, method_name: str) -> bool:
         """
-        Checks if the class has a specified method.
+        Checks if the class has a method with the specified name.
 
         Parameters
         ----------
         method_name : str
-            The name of the method to check.
+            The name of the method to check for.
 
         Returns
         -------
         bool
-            True if the method exists in the class, False otherwise.
+            True if the method exists, False otherwise.
         """
         pass
 
-    def has_property(self, prop: str) -> bool:
+    @abstractmethod
+    def hasProperty(self, prop: str) -> bool:
         """
-        Checks if the class has a specified property.
+        Checks if the class has a property with the specified name.
 
         Parameters
         ----------
         prop : str
-            The name of the property to check.
+            The name of the property to check for.
 
         Returns
         -------
@@ -130,14 +53,15 @@ class IReflection:
         """
         pass
 
-    def has_constant(self, constant: str) -> bool:
+    @abstractmethod
+    def hasConstant(self, constant: str) -> bool:
         """
-        Checks if the class or module has the specified constant.
+        Checks if the class or module contains a constant with the specified name.
 
         Parameters
         ----------
         constant : str
-            The name of the constant to check.
+            The name of the constant to check for.
 
         Returns
         -------
@@ -146,53 +70,58 @@ class IReflection:
         """
         pass
 
-    def get_attributes(self) -> List[str]:
+    @abstractmethod
+    def getAttributes(self) -> List[str]:
         """
-        Returns a list of all attributes of the class.
+        Retrieves all attributes of the class.
 
         Returns
         -------
-        list of str
-            A list of attribute names in the class.
+        list
+            A list of attribute names of the class.
         """
         pass
 
-    def get_constructor(self) -> Optional[Callable]:
+    @abstractmethod
+    def getConstructor(self) -> Optional[Any]:
         """
-        Returns the constructor (__init__) of the class, or None if not available.
+        Retrieves the constructor (__init__) of the class.
 
         Returns
         -------
-        Callable or None
-            The constructor of the class or None if it doesn't exist.
+        callable or None
+            The constructor method if it exists, None otherwise.
         """
         pass
 
-    def get_doc_comment(self) -> Optional[str]:
+    @abstractmethod
+    def getDocComment(self) -> Optional[str]:
         """
-        Returns the class's docstring.
-
-        Returns
-        -------
-        str or None
-            The docstring of the class or None if not available.
-        """
-        pass
-
-    def get_file_name(self) -> Optional[str]:
-        """
-        Returns the file path where the class is defined.
+        Retrieves the docstring of the class.
 
         Returns
         -------
         str or None
-            The file path of the class or None if not available.
+            The class docstring if available, None otherwise.
         """
         pass
 
-    def get_method(self, method_name: str) -> Optional[Callable]:
+    @abstractmethod
+    def getFileName(self) -> Optional[str]:
         """
-        Returns the specified method of the class by name.
+        Retrieves the file name where the class is defined.
+
+        Returns
+        -------
+        str or None
+            The file name if the class is found, None otherwise.
+        """
+        pass
+
+    @abstractmethod
+    def getMethod(self, method_name: str) -> Optional[Any]:
+        """
+        Retrieves the method with the specified name from the class.
 
         Parameters
         ----------
@@ -201,58 +130,63 @@ class IReflection:
 
         Returns
         -------
-        Callable or None
-            The method if found, or None if not found.
+        callable or None
+            The method if found, None otherwise.
         """
         pass
 
-    def get_methods(self) -> List[Callable]:
+    @abstractmethod
+    def getMethods(self) -> List[str]:
         """
-        Returns a list of all methods of the class.
+        Retrieves all methods within the class.
 
         Returns
         -------
-        list of Callable
-            A list of methods of the class.
+        list
+            A list of method names in the class.
         """
         pass
 
-    def get_name(self) -> Optional[str]:
+    @abstractmethod
+    def getName(self) -> Optional[str]:
         """
-        Returns the full name of the class.
+        Retrieves the name of the class.
 
         Returns
         -------
         str or None
-            The name of the class or None if not available.
+            The name of the class if available, None otherwise.
         """
         pass
 
-    def get_parent_class(self) -> Optional[tuple]:
+    @abstractmethod
+    def getParentClass(self) -> Optional[tuple]:
         """
-        Returns the parent classes of the class, or None if no parent exists.
+        Retrieves the parent class of the class.
 
         Returns
         -------
         tuple or None
-            A tuple of parent classes or None if there is no parent class.
+            A tuple of base classes if available, None otherwise.
         """
         pass
 
-    def get_properties(self) -> List[str]:
+    @abstractmethod
+    def getProperties(self) -> List[str]:
         """
-        Returns a list of all properties of the class.
+        Retrieves all properties within the class.
 
         Returns
         -------
-        list of str
-            A list of properties of the class.
+        list
+            A list of property names in the class.
         """
         pass
 
-    def get_property(self, prop: str) -> Optional[Any]:
+    @abstractmethod
+    def getProperty(self, prop: str) -> Optional[Any]:
         """
-        Returns the value of a specified property.
+        Retrieves the value of a specified property.
 
         Parameters
         ----------
@@ -261,12 +195,13 @@ class IReflection:
 
         Returns
         -------
-        Any or None
-            The value of the property or None if not found.
+        any
+            The value of the property if found, None otherwise.
         """
         pass
 
-    def is_abstract(self) -> bool:
+    @abstractmethod
+    def isAbstract(self) -> bool:
         """
         Checks if the class is abstract.
 
@@ -277,7 +212,8 @@ class IReflection:
         """
         pass
 
-    def is_enum(self) -> bool:
+    @abstractmethod
+    def isEnum(self) -> bool:
         """
         Checks if the class is an Enum.
 
@@ -288,7 +224,8 @@ class IReflection:
         """
         pass
 
-    def is_iterable(self) -> bool:
+    @abstractmethod
+    def isIterable(self) -> bool:
         """
         Checks if the class is iterable.
 
@@ -299,47 +236,50 @@ class IReflection:
         """
         pass
 
-    def is_instantiable(self) -> bool:
+    @abstractmethod
+    def isInstantiable(self) -> bool:
         """
-        Checks if the class is instantiable.
+        Checks if the class can be instantiated.
 
         Returns
         -------
         bool
-            True if the class is instantiable, False otherwise.
+            True if the class can be instantiated, False otherwise.
         """
         pass
 
-    def new_instance(self, *args, **kwargs) -> Any:
+    @abstractmethod
+    def newInstance(self, *args, **kwargs) -> Any:
         """
-        Creates a new instance of the class with the given arguments.
+        Creates a new instance of the class with the provided arguments.
 
         Parameters
         ----------
         *args : tuple
-            Arguments to pass to the constructor.
+            Arguments passed to the class constructor.
         **kwargs : dict
-            Keyword arguments to pass to the constructor.
+            Keyword arguments passed to the class constructor.
 
         Returns
         -------
-        Any
+        object
             A new instance of the class.
 
         Raises
         ------
         TypeError
-            If the class is not instantiable.
+            If the class cannot be instantiated.
         """
         pass
 
+    @abstractmethod
     def __str__(self) -> str:
         """
-        Returns a string representation of the class details.
+        Returns a string representation of the Reflection instance.
 
         Returns
         -------
         str
-            A string describing the class.
+            The string representation of the Reflection instance.
         """
         pass

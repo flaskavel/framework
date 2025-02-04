@@ -11,7 +11,6 @@ class IConsole(ABC):
 
     # ---- SUCCESS ----
 
-    @staticmethod
     @abstractmethod
     def success(message: str = '', timestamp: bool = True):
         """
@@ -26,13 +25,11 @@ class IConsole(ABC):
         """
         pass
 
-    @staticmethod
     @abstractmethod
     def textSuccess(message: str = ''):
         """Prints a success message in green."""
         pass
 
-    @staticmethod
     @abstractmethod
     def textSuccessBold(message: str = ''):
         """Prints a bold success message in green."""
@@ -40,19 +37,16 @@ class IConsole(ABC):
 
     # ---- INFO ----
 
-    @staticmethod
     @abstractmethod
     def info(message: str = '', timestamp: bool = True):
         """Prints an informational message with a blue background."""
         pass
 
-    @staticmethod
     @abstractmethod
     def textInfo(message: str = ''):
         """Prints an informational message in blue."""
         pass
 
-    @staticmethod
     @abstractmethod
     def textInfoBold(message: str = ''):
         """Prints a bold informational message in blue."""
@@ -60,19 +54,16 @@ class IConsole(ABC):
 
     # ---- WARNING ----
 
-    @staticmethod
     @abstractmethod
     def warning(message: str = '', timestamp: bool = True):
         """Prints a warning message with a yellow background."""
         pass
 
-    @staticmethod
     @abstractmethod
     def textWarning(message: str = ''):
         """Prints a warning message in yellow."""
         pass
 
-    @staticmethod
     @abstractmethod
     def textWarningBold(message: str = ''):
         """Prints a bold warning message in yellow."""
@@ -80,7 +71,6 @@ class IConsole(ABC):
 
     # ---- FAIL ----
 
-    @staticmethod
     @abstractmethod
     def fail(message: str = '', timestamp: bool = True):
         """Prints an fail message with a red background."""
@@ -88,19 +78,16 @@ class IConsole(ABC):
 
     # ---- ERROR ----
 
-    @staticmethod
     @abstractmethod
     def error(message: str = '', timestamp: bool = True):
         """Prints an error message with a red background."""
         pass
 
-    @staticmethod
     @abstractmethod
     def textError(message: str = ''):
         """Prints an error message in red."""
         pass
 
-    @staticmethod
     @abstractmethod
     def textErrorBold(message: str = ''):
         """Prints a bold error message in red."""
@@ -108,13 +95,11 @@ class IConsole(ABC):
 
     # ---- MUTED ----
 
-    @staticmethod
     @abstractmethod
     def textMuted(message: str = ''):
         """Prints a muted (gray) message."""
         pass
 
-    @staticmethod
     @abstractmethod
     def textMutedBold(message: str = ''):
         """Prints a bold muted (gray) message."""
@@ -122,7 +107,6 @@ class IConsole(ABC):
 
     # ---- UNDERLINE ----
 
-    @staticmethod
     @abstractmethod
     def textUnderline(message: str = ''):
         """
@@ -137,13 +121,11 @@ class IConsole(ABC):
 
     # ---- CLEAR CONSOLE ----
 
-    @staticmethod
     @abstractmethod
     def clear():
         """Clears the console screen."""
         pass
 
-    @staticmethod
     @abstractmethod
     def clearLine():
         """Clears the current console line."""
@@ -151,13 +133,11 @@ class IConsole(ABC):
 
     # ---- EMPTY LINE CONSOLE ----
 
-    @staticmethod
     @abstractmethod
     def line(message: str = ''):
         """Prints a line of text."""
         pass
 
-    @staticmethod
     @abstractmethod
     def newLine(count: int = 1):
         """
@@ -177,7 +157,6 @@ class IConsole(ABC):
 
     # ---- WRITE CONSOLE ----
 
-    @staticmethod
     @abstractmethod
     def write(message: str = ''):
         """
@@ -190,7 +169,6 @@ class IConsole(ABC):
         """
         pass
 
-    @staticmethod
     @abstractmethod
     def writeLine(message: str = ''):
         """
@@ -203,7 +181,6 @@ class IConsole(ABC):
         """
         pass
 
-    @staticmethod
     @abstractmethod
     def ask(question: str) -> str:
         """
@@ -221,7 +198,6 @@ class IConsole(ABC):
         """
         pass
 
-    @staticmethod
     @abstractmethod
     def confirm(question: str, default: bool = False) -> bool:
         """
@@ -243,7 +219,6 @@ class IConsole(ABC):
         """
         pass
 
-    @staticmethod
     @abstractmethod
     def secret(question: str) -> str:
         """
@@ -261,7 +236,6 @@ class IConsole(ABC):
         """
         pass
 
-    @staticmethod
     @abstractmethod
     def table(headers: list, rows: list):
         """
@@ -281,7 +255,6 @@ class IConsole(ABC):
         """
         pass
 
-    @staticmethod
     @abstractmethod
     def anticipate(question: str, options: list, default=None):
         """
@@ -310,7 +283,6 @@ class IConsole(ABC):
         """
         pass
 
-    @staticmethod
     @abstractmethod
     def choice(question: str, choices: list, default_index: int = 0) -> str:
         """

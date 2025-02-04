@@ -8,7 +8,6 @@ class ICommand(ABC):
     for executing commands from a cache by their signature.
     """
 
-    @staticmethod
     @abstractmethod
     def call(signature: str, **kwargs):
         """

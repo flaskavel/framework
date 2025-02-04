@@ -17,49 +17,6 @@ class Reflection(IReflection):
         The name of the module where the class is defined.
     cls : type, optional
         The class object after it has been imported and assigned.
-
-    Methods
-    -------
-    safe_import() :
-        Safely imports the specified module and class.
-    has_class() :
-        Checks if the class is defined in the module.
-    has_method(method_name) :
-        Checks if the class has a method with the specified name.
-    has_property(prop) :
-        Checks if the class has a property with the specified name.
-    has_constant(constant) :
-        Checks if the class or module has a constant with the specified name.
-    get_attributes() :
-        Returns all attributes of the class.
-    get_constructor() :
-        Returns the class constructor (__init__).
-    get_doc_comment() :
-        Returns the class docstring.
-    get_file_name() :
-        Returns the file name where the class is defined.
-    get_method(method_name) :
-        Returns the method with the specified name.
-    get_methods() :
-        Returns all methods of the class.
-    get_name() :
-        Returns the class name.
-    get_parent_class() :
-        Returns the parent class of the class.
-    get_properties() :
-        Returns all properties of the class.
-    get_property(prop) :
-        Returns the value of the specified property.
-    is_abstract() :
-        Checks if the class is abstract.
-    is_enum() :
-        Checks if the class is an Enum.
-    is_iterable() :
-        Checks if the class is iterable.
-    is_instantiable() :
-        Checks if the class is instantiable.
-    new_instance(*args, **kwargs) :
-        Creates a new instance of the class with the provided arguments.
     """
 
     def __init__(self, classname: str = None, module: str = None):
@@ -77,9 +34,9 @@ class Reflection(IReflection):
         self.module_name = module
         self.cls = None
         if module:
-            self.safe_import()
+            self.safeImport()
 
-    def safe_import(self):
+    def safeImport(self):
         """
         Safely imports the specified module and, if a classname is provided,
         assigns the class object to `self.cls`.
@@ -98,7 +55,7 @@ class Reflection(IReflection):
         except ImportError as e:
             raise ValueError(f"Error importing module '{self.module_name}': {e}")
 
-    def has_class(self) -> bool:
+    def hasClass(self) -> bool:
         """
         Checks if the class exists within the module.
 
@@ -109,7 +66,7 @@ class Reflection(IReflection):
         """
         return self.cls is not None
 
-    def has_method(self, method_name: str) -> bool:
+    def hasMethod(self, method_name: str) -> bool:
         """
         Checks if the class has a method with the specified name.
 
@@ -125,7 +82,7 @@ class Reflection(IReflection):
         """
         return hasattr(self.cls, method_name)
 
-    def has_property(self, prop: str) -> bool:
+    def hasProperty(self, prop: str) -> bool:
         """
         Checks if the class has a property with the specified name.
 
@@ -141,7 +98,7 @@ class Reflection(IReflection):
         """
         return hasattr(self.cls, prop)
 
-    def has_constant(self, constant: str) -> bool:
+    def hasConstant(self, constant: str) -> bool:
         """
         Checks if the class or module contains a constant with the specified name.
 
@@ -157,7 +114,7 @@ class Reflection(IReflection):
         """
         return hasattr(self.cls, constant)
 
-    def get_attributes(self) -> list:
+    def getAttributes(self) -> list:
         """
         Retrieves all attributes of the class.
 
@@ -168,7 +125,7 @@ class Reflection(IReflection):
         """
         return dir(self.cls) if self.cls else []
 
-    def get_constructor(self):
+    def getConstructor(self):
         """
         Retrieves the constructor (__init__) of the class.
 
@@ -179,7 +136,7 @@ class Reflection(IReflection):
         """
         return self.cls.__init__ if self.cls else None
 
-    def get_doc_comment(self) -> str:
+    def getDocComment(self) -> str:
         """
         Retrieves the docstring of the class.
 
@@ -190,7 +147,7 @@ class Reflection(IReflection):
         """
         return self.cls.__doc__ if self.cls else None
 
-    def get_file_name(self) -> str:
+    def getFileName(self) -> str:
         """
         Retrieves the file name where the class is defined.
 
@@ -201,7 +158,7 @@ class Reflection(IReflection):
         """
         return inspect.getfile(self.cls) if self.cls else None
 
-    def get_method(self, method_name: str):
+    def getMethod(self, method_name: str):
         """
         Retrieves the method with the specified name from the class.
 
@@ -217,7 +174,7 @@ class Reflection(IReflection):
         """
         return getattr(self.cls, method_name, None) if self.cls else None
 
-    def get_methods(self) -> list:
+    def getMethods(self) -> list:
         """
         Retrieves all methods within the class.
 
@@ -228,7 +185,7 @@ class Reflection(IReflection):
         """
         return inspect.getmembers(self.cls, predicate=inspect.isfunction) if self.cls else []
 
-    def get_name(self) -> str:
+    def getName(self) -> str:
         """
         Retrieves the name of the class.
 
@@ -239,7 +196,7 @@ class Reflection(IReflection):
         """
         return self.cls.__name__ if self.cls else None
 
-    def get_parent_class(self):
+    def getParentClass(self):
         """
         Retrieves the parent class of the class.
 
@@ -250,7 +207,7 @@ class Reflection(IReflection):
         """
         return self.cls.__bases__ if self.cls else None
 
-    def get_properties(self) -> list:
+    def getProperties(self) -> list:
         """
         Retrieves all properties within the class.
 
@@ -261,7 +218,7 @@ class Reflection(IReflection):
         """
         return [prop for prop in dir(self.cls) if isinstance(getattr(self.cls, prop), property)] if self.cls else []
 
-    def get_property(self, prop: str):
+    def getProperty(self, prop: str):
         """
         Retrieves the value of a specified property.
 
@@ -277,7 +234,7 @@ class Reflection(IReflection):
         """
         return getattr(self.cls, prop, None) if self.cls else None
 
-    def is_abstract(self) -> bool:
+    def isAbstract(self) -> bool:
         """
         Checks if the class is abstract.
 
@@ -288,7 +245,7 @@ class Reflection(IReflection):
         """
         return hasattr(self.cls, '__abstractmethods__') and bool(self.cls.__abstractmethods__) if self.cls else False
 
-    def is_enum(self) -> bool:
+    def isEnum(self) -> bool:
         """
         Checks if the class is an Enum.
 
@@ -299,7 +256,7 @@ class Reflection(IReflection):
         """
         return isinstance(self.cls, type) and issubclass(self.cls, Enum) if self.cls else False
 
-    def is_iterable(self) -> bool:
+    def isIterable(self) -> bool:
         """
         Checks if the class is iterable.
 
@@ -310,7 +267,7 @@ class Reflection(IReflection):
         """
         return hasattr(self.cls, '__iter__') if self.cls else False
 
-    def is_instantiable(self) -> bool:
+    def isInstantiable(self) -> bool:
         """
         Checks if the class can be instantiated (i.e., it is not abstract).
 
@@ -321,7 +278,7 @@ class Reflection(IReflection):
         """
         return self.cls is not None and callable(self.cls) and not self.is_abstract()
 
-    def new_instance(self, *args, **kwargs):
+    def newInstance(self, *args, **kwargs):
         """
         Creates a new instance of the class with the provided arguments.
 

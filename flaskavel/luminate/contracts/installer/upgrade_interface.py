@@ -8,7 +8,6 @@ class IUpgrade(ABC):
     upgrading Flaskavel to the latest version.
     """
 
-    @staticmethod
     @abstractmethod
     def execute() -> None:
         """

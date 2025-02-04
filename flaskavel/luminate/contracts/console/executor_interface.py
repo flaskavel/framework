@@ -8,7 +8,6 @@ class IExecutor(ABC):
     "RUNNING", "DONE", and "FAIL".
     """
 
-    @staticmethod
     @abstractmethod
     def running(program: str, time: str = ''):
         """
@@ -23,7 +22,6 @@ class IExecutor(ABC):
         """
         pass
 
-    @staticmethod
     @abstractmethod
     def done(program: str, time: str = ''):
         """
@@ -38,7 +36,6 @@ class IExecutor(ABC):
         """
         pass
 
-    @staticmethod
     @abstractmethod
     def fail(program: str, time: str = ''):
         """
