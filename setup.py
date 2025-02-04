@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-from flaskavel.metadata import *
+from flaskavel.framework import *
 
 setup(
     name=NAME,
@@ -32,7 +32,8 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "flaskavel=flaskavel.init:main"
+            "flaskavel=flaskavel.cli_manager:main"
+            "fk=flaskavel.cli_manager:main"
         ]
     }
 )

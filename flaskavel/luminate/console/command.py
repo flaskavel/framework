@@ -1,4 +1,3 @@
-import shlex
 import time
 from flaskavel.luminate.cache.console.commands import CacheCommands
 from flaskavel.luminate.console.output.console import Console
@@ -49,21 +48,20 @@ class Command(ICommand):
             # Print the start status to the console
             Executor.running(program=signature)
 
+            # Retrieve the command class from the cached data
+            command_class = command_info['instance']
+
+            # Instantiate the command class
+            command_instance = command_class()
+
             # Initialize the argument parser and set the arguments
-            arguments = {}
             if command_info['arguments']:
                 argParser = Parser()
                 argParser.setArguments(command_info['arguments'])
                 argParser.parseArgs(*args)
                 argParser.parseKargs(**kwargs)
                 arguments = argParser.get()
-
-            # Retrieve the command class from the cached data
-            command_class = command_info['instance']
-
-            # Instantiate the command class
-            command_instance = command_class()
-            command_instance.setArgs(arguments)
+                command_instance.setArgs(arguments)
 
             # Execute the 'handle()' method with parsed arguments
             output = command_instance.handle()

@@ -1,13 +1,13 @@
-from flaskavel.luminate.contracts.installer.setup_interface import ISetup
-from flaskavel.luminate.installer.output import Output
-from flaskavel.metadata import SKELETON, NAME, DOCS
+import re
 import os
-import subprocess
 import sys
 import shutil
 import tempfile
+import subprocess
 from unicodedata import normalize
-import re
+from flaskavel.framework import SKELETON, DOCS
+from flaskavel.luminate.installer.output import Output
+from flaskavel.luminate.contracts.installer.setup_interface import ISetup
 
 class Setup(ISetup):
     """
@@ -35,7 +35,7 @@ class Setup(ISetup):
         The sanitized folder name for the application.
     """
 
-    def __init__(self, output = Output, name_app: str = 'example-app'):
+    def __init__(self, name: str = 'example-app', output = Output):
         """
         Initialize FlaskavelInit class.
 
@@ -47,7 +47,8 @@ class Setup(ISetup):
             Name of the application. If not provided, defaults to "example-app".
         """
         self.output = output
-        self.name_app_folder = self._sanitize_folder_name(name_app)
+        self.output.startInstallation()
+        self.name_app_folder = self._sanitize_folder_name(name)
 
     def _sanitize_folder_name(self, name: str) -> str:
         """
@@ -78,7 +79,7 @@ class Setup(ISetup):
             If the sanitized folder name is empty or contains invalid characters.
         """
         if not name:
-            raise ValueError("Folder name cannot be empty.")
+            self.output.error("Folder name cannot be empty.")
 
         # Strip leading and trailing whitespace
         name = name.strip()
@@ -100,10 +101,10 @@ class Setup(ISetup):
 
         # Validate against allowed characters
         if not re.match(r'^[a-z0-9_-]+$', name):
-            raise ValueError("The folder name can only contain letters, numbers, underscores, and hyphens.")
+            self.output.error("The folder name can only contain letters, numbers, underscores, and hyphens.")
 
         if not name:
-            raise ValueError("The sanitized folder name is empty after processing.")
+            self.output.error("The sanitized folder name is empty after processing.")
 
         return name
 
@@ -129,7 +130,7 @@ class Setup(ISetup):
         try:
             # Validate Folder
             if os.path.exists(self.name_app_folder) and os.path.isdir(self.name_app_folder):
-                raise ValueError(f"The folder '{self.name_app_folder}' already exists.")
+                self.output.error(f"The folder '{self.name_app_folder}' already exists.")
 
             # Clone the repository
             self.output.info(f"Cloning the repository into '{self.name_app_folder}'... (Getting Latest Version)")
@@ -151,7 +152,7 @@ class Setup(ISetup):
 
             # Check if requirements.txt exists
             if not os.path.exists("requirements.txt"):
-                raise ValueError(f"'requirements.txt' not found. Please visit the Flaskavel Docs for more details: {DOCS}")
+                self.output.error(f"'requirements.txt' not found. Please visit the Flaskavel Docs for more details: {DOCS}")
 
             # Install dependencies from requirements.txt
             self.output.info("Installing dependencies from 'requirements.txt'...")
@@ -182,9 +183,9 @@ class Setup(ISetup):
 
             # Finish Process Message
             self.output.info(f"Project '{self.name_app_folder}' successfully created at '{os.path.abspath(project_path)}'.")
+            self.output.endInstallation()
 
         except subprocess.CalledProcessError as e:
-            raise ValueError(f"Error while executing command: {e}")
-
+            self.output.error(f"Error while executing command: {e}")
         except Exception as e:
-            raise ValueError(f"An unexpected error occurred: {e}")
+            self.output.error(f"An unexpected error occurred: {e}")

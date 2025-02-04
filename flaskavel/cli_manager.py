@@ -1,5 +1,5 @@
 import argparse
-from flaskavel.luminate.installer.init import Init
+from flaskavel.luminate.console.scripts.management import Management
 
 def main():
     """
@@ -25,23 +25,23 @@ def main():
     args = parser.parse_args()
 
     # Initialize the Flaskavel tools for handling operations
-    init = Init()
+    cli_manager = Management()
 
     # Handle the version command
     if args.version:
-        init.displayVersion()
+        cli_manager.displayVersion()
 
     # Handle the upgrade command
     elif args.upgrade:
-        init.executeUpgrade()
+        cli_manager.executeUpgrade()
 
     # Handle the 'new' command to create a new app
     elif args.command == 'new':
-        init.createNewApp(name_app=args.name or 'example-app')
+        cli_manager.createNewApp(args.name or 'example-app')
 
     # If no valid command is provided, show the help message
     else:
-        init.displayInfo()
+        cli_manager.displayInfo()
 
 # Execute the main function if the script is run directly
 if __name__ == "__main__":

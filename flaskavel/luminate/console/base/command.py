@@ -12,6 +12,7 @@ class BaseCommand(IBaseCommand):
 
     # Command arguments
     args = {}
+    arg = {}
 
     def success(self, message: str = '', timestamp: bool = True):
         """
@@ -394,24 +395,15 @@ class BaseCommand(IBaseCommand):
         """
         return ProgressBar(total=total, width=width)
 
-
-    def setArgs(self, args: dict):
+    def setArgs(self, args):
         """
-        Abstract method to define the logic of setting command arguments.
-
-        This method is intended to be overridden in subclasses where the
-        logic for setting the command's arguments is defined.
+        Define the logic of setting command arguments.
 
         Parameters
         ----------
-        args : dict
-            A dictionary containing the arguments to be set for the command.
-            The keys are the argument names and the values are the argument values.
-
-        Raises
-        ------
-        NotImplementedError
-            If this method is not implemented in the subclass.
+        args : argparse.Namespace
+            Contain the arguments to be set for the command.
         """
-        self.args = args
+        self.args = vars(args)
+        self.arg = args
 

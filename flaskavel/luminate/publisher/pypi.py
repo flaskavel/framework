@@ -4,7 +4,7 @@ import subprocess
 import sys
 from flaskavel.luminate.console.output.console import Console
 from flaskavel.luminate.contracts.publisher.pypi_publisher_repository import IPypiPublisher
-from flaskavel.metadata import VERSION
+from flaskavel.framework import VERSION
 
 class PypiPublisher(IPypiPublisher):
     """

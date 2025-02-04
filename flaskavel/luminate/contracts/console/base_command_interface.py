@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import List
 
+from flaskavel.luminate.console.output.progress_bar import ProgressBar
+
 class IBaseCommand(ABC):
     """
     Interface for console output commands. This defines the methods that must be implemented in a command class.
@@ -390,19 +392,40 @@ class IBaseCommand(ABC):
         pass
 
     @abstractmethod
-    def handle(self, **kwargs) -> None:
+    def createProgressBar(self, total: int = 100, width: int = 50) -> ProgressBar:
         """
-        Abstract method to define the logic of the command.
+        Creates and returns a new progress bar.
 
-        This method must be overridden in subclasses.
+        This method initializes a `ProgressBar` object with the specified total and width.
 
-        Arguments
-        ---------
-        **kwargs : Arbitrary keyword arguments.
+        Parameters
+        ----------
+        total : int, optional
+            The total number of steps for the progress bar. Default is 100.
+        width : int, optional
+            The width (in characters) of the progress bar. Default is 50.
 
-        Raises
-        ------
-        NotImplementedError
-            If not implemented in the subclass.
+        Returns
+        -------
+        ProgressBar
+            A new instance of the `ProgressBar` class, initialized with the specified `total` and `width`.
+
+        Notes
+        -----
+        The progress bar can be used to visually track the progress of a task.
+        The `total` parameter represents the number of steps to complete the task,
+        and the `width` parameter controls the number of characters used to represent the progress bar in the console.
+        """
+        pass
+
+    @abstractmethod
+    def setArgs(self, args) -> None:
+        """
+        Abstract method to define the logic of setting command arguments.
+
+        Parameters
+        ----------
+        args : argparse.Namespace
+            Contain the arguments to be set for the command.
         """
         pass

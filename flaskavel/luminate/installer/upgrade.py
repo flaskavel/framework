@@ -1,6 +1,7 @@
-from flaskavel.luminate.contracts.installer.upgrade_interface import IUpgrade
-import subprocess
 import sys
+import subprocess
+from flaskavel.luminate.installer.output import Output
+from flaskavel.luminate.contracts.installer.upgrade_interface import IUpgrade
 
 class Upgrade(IUpgrade):
     """
@@ -31,9 +32,11 @@ class Upgrade(IUpgrade):
         The upgrade process uses `pip` via the command:
         `python -m pip install --upgrade flaskavel`.
         """
+        output = Output()
         try:
+            output.info("Starting the upgrade process...")
             subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade", "flaskavel"])
         except subprocess.CalledProcessError as e:
-            raise ValueError(f"Upgrade failed: {e}")
+            output.error(message=f"Upgrade failed: {e}")
         except Exception as e:
-            raise ValueError(e)
+            output.error(message=e)

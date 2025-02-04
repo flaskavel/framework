@@ -81,10 +81,7 @@ class Parser(IParser):
             # Check if the first argument indicates a Python script or command alias (flaskavel or fk)
             if first_arg.endswith('.py') or first_arg in ['flaskavel', 'fk']:
                 args = all_args[1:]
-
             else:
-
-                # Keep the arguments as they are
                 args = all_args
 
         # Process each argument passed in args
@@ -144,7 +141,7 @@ class Parser(IParser):
         """
         try:
             parsed_args = self.argparse.parse_args(self.args)
-            return vars(parsed_args)
+            return parsed_args
         except argparse.ArgumentError as e:
             # Handle errors with argument parsing
             error_msg = f"Argument parsing error: {e}"

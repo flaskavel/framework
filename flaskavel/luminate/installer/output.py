@@ -1,7 +1,7 @@
 import os
 import sys
 import datetime
-from flaskavel.metadata import NAME, VERSION, DOCS
+from flaskavel.framework import NAME, VERSION, DOCS
 from flaskavel.luminate.contracts.installer.output_interface import IOutput
 
 class Output(IOutput):

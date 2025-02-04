@@ -2,68 +2,124 @@ from abc import ABC, abstractmethod
 
 class IOutput(ABC):
     """
-    Interface for the Output class to ensure consistency in displaying messages to the console.
+    Interface defining the contract for the Output class.
+
+    This interface ensures that any implementing class provides methods for
+    displaying messages, ASCII-based framework information, and handling errors.
 
     Methods
     -------
-    welcome() -> None
-        Displays a welcome message to the framework.
-    finished() -> None
-        Displays a success message after initialization.
+    asciiIco() -> None
+        Displays the framework's ASCII icon along with relevant information.
+    asciiInfo() -> None
+        Displays additional ASCII-based information about the framework.
+    startInstallation() -> None
+        Shows a welcome message when installation starts.
+    endInstallation() -> None
+        Shows a completion message when installation finishes.
     info(message: str) -> None
-        Displays an informational message to the console.
+        Displays an informational message.
     fail(message: str) -> None
-        Displays a failure message to the console.
+        Displays a failure message.
     error(message: str) -> None
-        Displays an error message to the console and terminates the program.
+        Displays an error message and terminates the program.
     """
 
     @abstractmethod
-    def welcome(self) -> None:
+    def asciiIco(self) -> None:
         """
-        Displays a welcome message to the framework.
+        Displays the framework's ASCII icon along with relevant information.
+
+        Raises
+        ------
+        Exception
+            If an error occurs while displaying the ASCII art.
         """
         pass
 
     @abstractmethod
-    def finished(self) -> None:
+    def asciiInfo(self) -> None:
         """
-        Displays a success message after initialization.
+        Displays additional ASCII-based information about the framework.
+
+        Raises
+        ------
+        Exception
+            If an error occurs while displaying the ASCII information.
         """
         pass
 
     @abstractmethod
-    def info(self, message: str = '') -> None:
+    def startInstallation(self) -> None:
         """
-        Displays an informational message to the console.
+        Shows a welcome message when installation starts.
+
+        Raises
+        ------
+        Exception
+            If an error occurs during message display.
+        """
+        pass
+
+    @abstractmethod
+    def endInstallation(self) -> None:
+        """
+        Shows a completion message when installation finishes.
+
+        Raises
+        ------
+        Exception
+            If an error occurs during message display.
+        """
+        pass
+
+    @abstractmethod
+    def info(self, message: str) -> None:
+        """
+        Displays an informational message.
 
         Parameters
         ----------
-        message : str, optional
-            The message to display. Defaults to an empty string.
+        message : str
+            The message to display.
+
+        Raises
+        ------
+        Exception
+            If an error occurs while displaying the message.
         """
         pass
 
     @abstractmethod
-    def fail(self, message: str = '') -> None:
+    def fail(self, message: str) -> None:
         """
-        Displays a failure message to the console.
+        Displays a failure message.
 
         Parameters
         ----------
-        message : str, optional
-            The message to display. Defaults to an empty string.
+        message : str
+            The message to display.
+
+        Raises
+        ------
+        Exception
+            If an error occurs while displaying the message.
         """
         pass
 
     @abstractmethod
-    def error(self, message: str = '') -> None:
+    def error(self, message: str) -> None:
         """
-        Displays an error message to the console and terminates the program.
+        Displays an error message and terminates the program.
 
         Parameters
         ----------
-        message : str, optional
-            The message to display. Defaults to an empty string.
+        message : str
+            The message to display.
+
+        Raises
+        ------
+        SystemExit
+            Terminates the program with an exit code.
         """
         pass

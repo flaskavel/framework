@@ -1,6 +1,6 @@
 from pathlib import Path
 from flaskavel.lab.synthesizer.bootstrap import FlaskavelBootstrap
-from flaskavel.metadata import NAME, VERSION
+from flaskavel.framework import NAME, VERSION
 
 class Application:
     """Application class to configure the Flaskavel framework."""
