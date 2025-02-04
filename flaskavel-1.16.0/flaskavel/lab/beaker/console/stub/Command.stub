@@ -1,0 +1,26 @@
+from flaskavel.lab.beaker.console.command import Command
+from flaskavel.lab.beaker.console.reactor import reactor
+
+@reactor.register
+class {{name-command}}(Command):
+
+    # Name by which it will be called from the CLI
+    signature = 'app:{{signature-name-command}}'
+
+    # Description of the command
+    description = 'Description {{name-command}}'
+
+    def arguments(self):
+        """
+        Define the arguments for your command.
+        """
+        return [
+            # Define the arguments for your command.
+        ]
+
+    def handle(self) -> None:
+
+        """
+        Define the logic of your command.
+        """
+        pass

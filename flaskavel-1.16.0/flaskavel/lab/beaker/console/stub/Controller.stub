@@ -1,0 +1,43 @@
+from flaskavel.lab.alchemist.http.base_controller import BaseController
+from flaskavel.lab.reagents.request import Request
+from flaskavel.lab.reagents.response import Response
+
+class {{name-controller}}(BaseController):
+
+    def index(self):
+        """
+        Retrieve a list or view of resources.
+        """
+
+        # Custom logic to list resources goes here
+        pass
+
+    def store(self):
+        """
+        Store a new resource in the system.
+        """
+
+        # Custom logic to process the request and create a new resource
+        pass
+
+    def show(self, id):
+        """
+        Display a specific resource
+        """
+
+        # Custom logic to retrieve a resource by ID
+        pass
+
+    def update(self, id):
+        """
+        Update an existing resource.
+        """
+        # Custom logic to update the resource
+        pass
+
+    def destroy(self, id):
+        """
+        Delete a specific resource.
+        """
+        # Custom logic to delete the resource
+        pass

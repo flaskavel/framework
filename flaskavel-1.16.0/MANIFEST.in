@@ -1,0 +1,3 @@
+include README.md
+include LICENSE
+recursive-include flaskavel *.py *.stub *.png *.ascii
