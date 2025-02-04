@@ -32,7 +32,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "flaskavel=flaskavel.cli_manager:main"
+            "flaskavel=flaskavel.cli_manager:main",
             "fk=flaskavel.cli_manager:main"
         ]
     }
