@@ -68,7 +68,10 @@ class PypiPublisher(IPypiPublisher):
         subprocess.CalledProcessError
             If any of the subprocess calls to Git fail.
         """
-        # Aseguramos que los comandos de Git se ejecuten desde la raíz del proyecto
+        subprocess.run(
+            ["git", "rm", "-r", "--cached", "."], capture_output=True, text=True, cwd=self.project_root
+        )
+
         git_status = subprocess.run(
             ["git", "status", "--short"], capture_output=True, text=True, cwd=self.project_root
         )
@@ -107,13 +110,11 @@ class PypiPublisher(IPypiPublisher):
         try:
             Console.info("🛠️  Building the package...")
 
-            # Ensure setup.py exists in the current working directory
             setup_path = os.path.join(self.project_root, "setup.py")
             if not os.path.exists(setup_path):
                 Console.error("❌ Error: setup.py not found in the current execution directory.")
                 return
 
-            # Run the build command
             subprocess.run(
                 [self.python_path, "setup.py", "sdist", "bdist_wheel"], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=self.project_root
             )
@@ -146,7 +147,6 @@ class PypiPublisher(IPypiPublisher):
             Console.error("❌ Error: PyPI token not found in environment variables.")
             return
 
-        # Find Twine in the virtual environment path
         twine_path = os.path.join(self.project_root, 'venv', 'Scripts', 'twine')
         twine_path = os.path.abspath(twine_path)
 
