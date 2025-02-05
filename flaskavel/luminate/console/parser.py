@@ -1,6 +1,8 @@
 import argparse
 import shlex
 import types
+from io import StringIO
+from contextlib import redirect_stderr
 from flaskavel.luminate.contracts.console.parser_interface import IParser
 
 class Parser(IParser):
@@ -16,24 +18,31 @@ class Parser(IParser):
         The argument parser instance used for defining and parsing arguments.
     args : list
         A list storing the command-line arguments to be parsed.
+    kwargs : dict
+        A dictionary containing keyword arguments.
     registered_arguments : set
         A set tracking registered argument names to prevent duplicates.
     """
 
-    def __init__(self):
+    def __init__(self, vars: dict, args: tuple, kwargs: dict):
         """
         Initializes the Parser class.
 
-        Creates an ArgumentParser instance with a predefined description.
-        Also initializes storage for arguments and a set for registered arguments.
+        Parameters
+        ----------
+        vars : dict
+            A dictionary containing additional variables.
+        args : tuple
+            A tuple containing command-line arguments.
+        kwargs : dict
+            A dictionary containing keyword arguments.
         """
         self.argparse = argparse.ArgumentParser(description='Flaskavel Argument Parser')
-
-        # Store parsed arguments
-        self.args = []
-
-        # Track registered arguments to prevent duplicates
+        self.vars = vars or {}
+        self.args = list(args)
+        self.kwargs = kwargs or {}
         self.registered_arguments = set()
+        self.parsed_arguments = []
 
     def setArguments(self, arguments: list):
         """
@@ -46,84 +55,78 @@ class Parser(IParser):
             - str: The argument name (e.g., '--value')
             - dict: A dictionary of options (e.g., {'type': int, 'required': True})
 
-        Notes
-        -----
-        If an argument is already registered, it is skipped to prevent duplication.
+        Raises
+        ------
+        ValueError
+            If an argument is already registered.
         """
         for arg, options in arguments:
-            if arg not in self.registered_arguments:
-                self.argparse.add_argument(arg, **options)
-                self.registered_arguments.add(arg)
+            if arg in self.registered_arguments:
+                raise ValueError(f"Duplicate argument detected: {arg}")
+            self.argparse.add_argument(arg, **options)
+            self.registered_arguments.add(arg)
 
-    def parseArgs(self, *args):
+    def _validateType(self, value):
         """
-        Adds positional arguments to the internal argument list.
+        Validates that a value is not an instance of a class, function, or lambda.
 
         Parameters
         ----------
-        args : tuple of str
-            A tuple of command-line arguments passed as positional arguments.
+        value : any
+            The value to be validated.
 
-        Notes
-        -----
-        These arguments will be stored for later parsing.
+        Raises
+        ------
+        ValueError
+            If the value is a class instance, function, or lambda.
+        """
+        if isinstance(value, (types.FunctionType, types.LambdaType, type)):
+            raise ValueError("Command arguments cannot be functions, lambdas, or class instances.")
+
+    def recognize(self):
+        """
+        Processes and formats command-line arguments before parsing.
+
+        Raises
+        ------
+        ValueError
+            If an argument does not follow the correct format.
         """
 
-        # Check if the arguments are passed as a single dictionary inside a tuple
-        if (isinstance(args, tuple) and (len(args) == 1) and (isinstance(args[0], dict))):
+        # If `args` is a single list inside a list, extract it
+        if isinstance(self.args, list) and len(self.args) == 1 and isinstance(self.args[0], list):
+            all_args:list = self.args[0]
+            first_arg:str = all_args[0]
 
-            # Extract the dictionary of arguments
-            all_args = args[0]
-
-            # Get the first argument (typically script name or command identifier)
-            first_arg:str = all_args.get(0)
-
-            # Check if the first argument indicates a Python script or command alias (flaskavel or fk)
             if first_arg.endswith('.py') or first_arg in ['flaskavel', 'fk']:
-                args = all_args[1:]
+                self.args = all_args[1:]
             else:
-                args = all_args
+                self.args = all_args
 
-        # Process each argument passed in args
-        for arg in args:
+        # Merge `kwargs` with `vars`
+        if isinstance(self.vars, dict):
+            self.kwargs = {**self.vars, **self.kwargs}
+        else:
+            self.args = [self.vars, *self.args]
 
-            # Strip leading/trailing spaces from the argument
-            arg = arg.strip()
+        # Process each argument in `args`
+        formatted_args = []
+        for arg in self.args:
+            self._validateType(arg)
 
-            # Validate that the argument starts with '--' and contains '=' in the expected format
+            arg = str(arg).strip()
             if arg.startswith('--') and '=' in arg[2:]:
-                self.args.append(str(arg))
+                formatted_args.append(arg)
             else:
-                raise ValueError(f'Unrecognized argument: "{str(arg)}". All command arguments must follow the convention: --key="value"')
+                raise ValueError(f'Unrecognized argument: "{arg}". Expected format: --key="value"')
 
-    def parseKargs(self, **kargs):
-        """
-        Adds keyword arguments to the internal argument list.
+        # Convert `kwargs` to `--key=value` format
+        for key, value in self.kwargs.items():
+            self._validateType(value)
+            formatted_args.append(f'--{key}={shlex.quote(str(value))}')
 
-        This method formats keyword arguments as `--key="value"` and ensures values are safely quoted.
-
-        Parameters
-        ----------
-        **kargs : dict
-            A dictionary where keys represent argument names and values are their assigned values.
-
-        Notes
-        -----
-        If the argument value is a class, function, or lambda, a ValueError is raised.
-        """
-        for key, value in kargs.items():
-
-            # Check if the value is an instance of a class
-            if isinstance(value, type):
-                raise ValueError("Command arguments cannot be instances of a class.")
-
-            # Check if the value is a lambda or function
-            elif (isinstance(value, types.LambdaType) or isinstance(value, types.FunctionType)):
-                raise ValueError("Command arguments cannot be functions.")
-
-            # Format the argument as '--key="value"' and append it to the args list
-            else:
-                self.args.append(f'--{key}={shlex.quote(str(value))}')
+        # Replace args with processed version
+        self.parsed_arguments = formatted_args
 
     def get(self):
         """
@@ -137,16 +140,20 @@ class Parser(IParser):
         Raises
         ------
         ValueError
-            If required arguments are missing or an error occurs during parsing.
+            If required arguments are missing or an error occurs during parsing,
+            it raises a customized error message including the original argparse error.
         """
+        stderr_capture = StringIO()
+
         try:
-            parsed_args = self.argparse.parse_args(self.args)
-            return parsed_args
-        except argparse.ArgumentError as e:
-            # Handle errors with argument parsing
-            error_msg = f"Argument parsing error: {e}"
-            self.argparse.error(error_msg)
-        except SystemExit as e:
-            # Handle SystemExit (which is raised by argparse) and re-raise it with a custom message
-            error_msg = f"Argument parsing failed: {str(e)}"
-            raise ValueError(f"{error_msg}. Please provide all required arguments: {', '.join(self.registered_arguments)}")
+            with redirect_stderr(stderr_capture):
+                return self.argparse.parse_args(self.parsed_arguments)
+
+        except SystemExit:
+            error_message = stderr_capture.getvalue().strip()
+            array_message = error_message.split('error: ')
+            final_message = str(array_message[1]).replace('unrecognized', 'Unrecognized')
+            raise ValueError(f"Argument parsing failed | {final_message} | Required arguments: {', '.join(self.registered_arguments)}")
+
+        except Exception as e:
+            raise ValueError(f"An unexpected error occurred while parsing arguments: {str(e)}")

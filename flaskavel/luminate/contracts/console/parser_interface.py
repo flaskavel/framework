@@ -1,16 +1,34 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict
+from typing import List, Tuple, Dict, Any
+import argparse
+
 
 class IParser(ABC):
     """
-    Interface for dynamic command-line argument parsing.
+    Interface for a command-line argument parser.
 
-    Defines methods required for registering, managing, and parsing
-    command-line arguments.
+    Defines the necessary methods for a command-line parser, ensuring
+    consistency across implementations.
     """
 
     @abstractmethod
-    def setArguments(self, arguments: List[tuple]):
+    def __init__(self, vars: Dict[str, Any], args: Tuple[Any, ...], kwargs: Dict[str, Any]):
+        """
+        Initializes the parser.
+
+        Parameters
+        ----------
+        vars : dict
+            A dictionary containing additional variables.
+        args : tuple
+            A tuple containing command-line arguments.
+        kwargs : dict
+            A dictionary containing keyword arguments.
+        """
+        pass
+
+    @abstractmethod
+    def setArguments(self, arguments: List[Tuple[str, Dict[str, Any]]]) -> None:
         """
         Registers command-line arguments dynamically.
 
@@ -21,46 +39,27 @@ class IParser(ABC):
             - str: The argument name (e.g., '--value')
             - dict: A dictionary of options (e.g., {'type': int, 'required': True})
 
-        Notes
-        -----
-        If an argument is already registered, it is skipped to prevent duplication.
+        Raises
+        ------
+        ValueError
+            If an argument is already registered.
         """
         pass
 
     @abstractmethod
-    def parseArgs(self, *args: str):
+    def recognize(self) -> None:
         """
-        Adds positional arguments to the internal argument list.
+        Processes and formats command-line arguments before parsing.
 
-        Parameters
-        ----------
-        *args : tuple of str
-            Command-line arguments passed as positional arguments.
-
-        Notes
-        -----
-        These arguments will be stored for later parsing.
+        Raises
+        ------
+        ValueError
+            If an argument does not follow the correct format.
         """
         pass
 
     @abstractmethod
-    def parseKargs(self, **kargs: str):
-        """
-        Adds keyword arguments to the internal argument list.
-
-        Parameters
-        ----------
-        **kargs : dict
-            A dictionary where keys represent argument names and values are their assigned values.
-
-        Notes
-        -----
-        This method formats keyword arguments as `--key="value"` and ensures values are safely quoted.
-        """
-        pass
-
-    @abstractmethod
-    def get(self):
+    def get(self) -> argparse.Namespace:
         """
         Parses the collected command-line arguments.
 

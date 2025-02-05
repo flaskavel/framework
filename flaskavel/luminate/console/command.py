@@ -1,5 +1,6 @@
 import time
 from flaskavel.luminate.cache.console.commands import CacheCommands
+from flaskavel.luminate.console.base.command import BaseCommand
 from flaskavel.luminate.console.output.console import Console
 from flaskavel.luminate.console.output.executor import Executor
 from flaskavel.luminate.console.parser import Parser
@@ -14,7 +15,7 @@ class Command(ICommand):
     """
 
     @staticmethod
-    def call(signature: str, *args, **kwargs):
+    def call(signature: str, vars:dict = {},  *args, **kwargs):
         """
         Calls a registered command from the CacheCommands singleton.
 
@@ -52,19 +53,19 @@ class Command(ICommand):
             command_class = command_info['instance']
 
             # Instantiate the command class
-            command_instance = command_class()
+            command_instance : BaseCommand = command_class()
 
             # Initialize the argument parser and set the arguments
             if command_info['arguments']:
-                argParser = Parser()
+
+                # Set arguments in the command
+                argParser = Parser(vars=vars, args=args, kwargs=kwargs)
                 argParser.setArguments(command_info['arguments'])
-                argParser.parseArgs(*args)
-                argParser.parseKargs(**kwargs)
-                arguments = argParser.get()
-                command_instance.setArgs(arguments)
+                argParser.recognize()
+                command_instance.setArgs(argParser.get())
 
             # Execute the 'handle()' method with parsed arguments
-            output = command_instance.handle()
+            output = command_instance.handle(vars, *args, **kwargs)
 
             # Calculate the elapsed time for executing the command
             elapsed_time = round(time.time() - start_time, 2)

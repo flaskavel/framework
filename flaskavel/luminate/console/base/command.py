@@ -407,3 +407,18 @@ class BaseCommand(IBaseCommand):
         self.args = vars(args)
         self.arg = args
 
+    def handle(self, *args, **kwargs):
+        """
+        Abstract method to define the logic of the command.
+
+        This method must be overridden in subclasses.
+
+        Arguments:
+            *args: A list of variable-length arguments.
+            **kwargs: Arbitrary keyword arguments.
+
+        Raises:
+            NotImplementedError: If the method is not implemented in a subclass. This ensures that all command classes
+                                adhere to the expected structure.
+        """
+        raise NotImplementedError("The 'handle' method must be implemented in the child class.")
