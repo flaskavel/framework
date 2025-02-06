@@ -2,8 +2,9 @@ import logging
 from typing import Optional
 from flaskavel.luminate.log.logger import Logguer
 from flaskavel.luminate.contracts.log.logger_interface import ILogger
+from flaskavel.luminate.contracts.facades.log_interface import ILogFacade
 
-class Log:
+class Log(ILogFacade):
     """
     Facade for accessing the Logguer instance.
 
