@@ -111,10 +111,6 @@ class CLIPipeline(ICLIPipeline):
             If the command instance is invalid.
         """
         command_class = self._command.get("instance")
-
-        if not issubclass(command_class, BaseCommand):
-            raise ValueError(f"Invalid command class: {command_class}")
-
         command_instance: BaseCommand = command_class()
         command_instance.setArgs(self._parsed_arguments)
-        return command_instance.handle(*vars(self._parsed_arguments))
+        return command_instance.handle(**vars(self._parsed_arguments))

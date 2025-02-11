@@ -411,14 +411,13 @@ class BaseCommand(IBaseCommand):
             self.args = {}
 
 
-    def handle(self, *args, **kwargs):
+    def handle(self, **kwargs):
         """
         Abstract method to define the logic of the command.
 
         This method must be overridden in subclasses.
 
         Arguments:
-            *args: A list of variable-length arguments.
             **kwargs: Arbitrary keyword arguments.
 
         Raises:

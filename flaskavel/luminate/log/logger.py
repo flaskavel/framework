@@ -34,7 +34,7 @@ class Logguer(ILogger):
     # Thread-safe instance creation
     _lock = threading.Lock()
 
-    def __new__(cls, path: Optional[str] = None, level: int = logging.INFO):
+    def __new__(cls, path: Optional[str] = None, level: int = logging.INFO, filename: Optional[str] = 'flaskavel.log'):
         """
         Creates or returns the singleton instance of the Logguer class.
 
@@ -53,10 +53,10 @@ class Logguer(ILogger):
         with cls._lock:
             if cls._instance is None:
                 cls._instance = super(Logguer, cls).__new__(cls)
-                cls._instance._initialize_logger(path, level)
+                cls._instance._initialize_logger(path, level, filename)
         return cls._instance
 
-    def _initialize_logger(self, path: Optional[str], level: int):
+    def _initialize_logger(self, path: Optional[str], level: int, filename: Optional[str] = 'flaskavel.log'):
         """
         Initializes the logger with the specified log file path and logging level.
 
@@ -75,14 +75,9 @@ class Logguer(ILogger):
 
                 # Check if the log directory exists
                 if log_dir.exists():
-                    path = log_dir / "flaskavel.log"
+                    path = log_dir / filename
                 else:
-                    try:
-                        log_dir.mkdir(parents=True, exist_ok=True)
-                        path = log_dir / "flaskavel.log"
-                    except PermissionError:
-                        # Fallback to current working directory if mkdir fails
-                        path = base_path / "flaskavel.log"
+                    path = base_path / filename
 
             logging.basicConfig(
                 level=level,
@@ -91,7 +86,6 @@ class Logguer(ILogger):
                 encoding="utf-8",
                 handlers=[
                     logging.FileHandler(path)
-                    # logging.StreamHandler()
                 ]
             )
 
