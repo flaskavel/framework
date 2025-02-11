@@ -70,14 +70,23 @@ class Logguer(ILogger):
         try:
 
             if path is None:
-                base_path = os.getcwd() # Path(__file__).resolve().parent
+                base_path = Path(os.getcwd())
                 log_dir = base_path / "storage" / "logs"
-                log_dir.mkdir(parents=True, exist_ok=True)
-                path = log_dir / "LEVEL: log"
+
+                # Check if the log directory exists
+                if log_dir.exists():
+                    path = log_dir / "flaskavel.log"
+                else:
+                    try:
+                        log_dir.mkdir(parents=True, exist_ok=True)
+                        path = log_dir / "flaskavel.log"
+                    except PermissionError:
+                        # Fallback to current working directory if mkdir fails
+                        path = base_path / "flaskavel.log"
 
             logging.basicConfig(
                 level=level,
-                format="%(asctime)s - %(levelname)s - %(message)s",
+                format="%(asctime)s - %(message)s",
                 datefmt="%Y-%m-%d %H:%M:%S",
                 encoding="utf-8",
                 handlers=[
@@ -87,27 +96,26 @@ class Logguer(ILogger):
             )
 
             self.logger = logging.getLogger(__name__)
-            self.logger.info("Logger initialized successfully.")
 
         except Exception as e:
             raise RuntimeError(f"Failed to initialize logger: {e}")
 
     def info(self, message: str) -> None:
         """Logs an informational message."""
-        self.logger.info(f"// Info //: {message}")
+        self.logger.info(f"[INFO] - {message}")
 
     def error(self, message: str) -> None:
         """Logs an error message."""
-        self.logger.error(f"// Error //: {message}")
+        self.logger.error(f"[ERROR] - {message}")
 
     def success(self, message: str) -> None:
         """Logs a success message (treated as info)."""
-        self.logger.info(f"// Success //: {message}")
+        self.logger.info(f"[SUCCESS] - {message}")
 
     def warning(self, message: str) -> None:
         """Logs a warning message."""
-        self.logger.warning(f"// Warning //: {message}")
+        self.logger.warning(f"[WARNING] - {message}")
 
     def debug(self, message: str) -> None:
         """Logs a debug message."""
-        self.logger.debug(f"// Debug //: {message}")
+        self.logger.debug(f"[DEBUG] - {message}")

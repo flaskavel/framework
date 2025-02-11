@@ -12,11 +12,11 @@ class Register(IRegister):
         A dictionary storing registered command classes.
     """
 
-    def __init__(self):
+    def __init__(self, cache=CacheCommands()):
         """
         Initializes the Register instance and prepares the cache commands system.
         """
-        self.cache_commands = CacheCommands()
+        self.cache_commands = cache
 
     def command(self, command_class):
         """

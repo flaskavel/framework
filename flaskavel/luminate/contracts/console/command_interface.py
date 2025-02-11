@@ -1,3 +1,4 @@
+from typing import Any
 from abc import ABC, abstractmethod
 
 class ICommand(ABC):
@@ -9,7 +10,7 @@ class ICommand(ABC):
     """
 
     @abstractmethod
-    def call(signature: str, **kwargs):
+    def call(signature: str, vars: dict[str, Any] = {}, *args: Any, **kwargs: Any) -> Any:
         """
         Calls a registered command from the CacheCommands singleton.
 

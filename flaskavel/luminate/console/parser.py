@@ -1,6 +1,6 @@
-import argparse
 import shlex
 import types
+import argparse
 from io import StringIO
 from contextlib import redirect_stderr
 from flaskavel.luminate.contracts.console.parser_interface import IParser
@@ -37,7 +37,7 @@ class Parser(IParser):
         kwargs : dict
             A dictionary containing keyword arguments.
         """
-        self.argparse = argparse.ArgumentParser(description='Flaskavel Argument Parser')
+        self.argparse = argparse.ArgumentParser(description='Flaskavel Commands Argument Parser')
         self.vars = vars or {}
         self.args = list(args)
         self.kwargs = kwargs or {}

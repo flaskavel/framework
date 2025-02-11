@@ -1,7 +1,7 @@
-from flaskavel.luminate.contracts.console.management_interface import IManagement
-from flaskavel.luminate.installer.upgrade import Upgrade
-from flaskavel.luminate.installer.output import Output
 from flaskavel.luminate.installer.setup import Setup
+from flaskavel.luminate.installer.output import Output
+from flaskavel.luminate.installer.upgrade import Upgrade
+from flaskavel.luminate.contracts.console.management_interface import IManagement
 
 class Management(IManagement):
     """

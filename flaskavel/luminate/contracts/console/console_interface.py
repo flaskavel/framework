@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from flaskavel.luminate.console.output.styles import ANSIColors
 
 class IConsole(ABC):
     """
@@ -10,7 +9,6 @@ class IConsole(ABC):
     """
 
     # ---- SUCCESS ----
-
     @abstractmethod
     def success(message: str = '', timestamp: bool = True):
         """
@@ -36,7 +34,6 @@ class IConsole(ABC):
         pass
 
     # ---- INFO ----
-
     @abstractmethod
     def info(message: str = '', timestamp: bool = True):
         """Prints an informational message with a blue background."""
@@ -53,7 +50,6 @@ class IConsole(ABC):
         pass
 
     # ---- WARNING ----
-
     @abstractmethod
     def warning(message: str = '', timestamp: bool = True):
         """Prints a warning message with a yellow background."""
@@ -70,14 +66,12 @@ class IConsole(ABC):
         pass
 
     # ---- FAIL ----
-
     @abstractmethod
     def fail(message: str = '', timestamp: bool = True):
         """Prints an fail message with a red background."""
         pass
 
     # ---- ERROR ----
-
     @abstractmethod
     def error(message: str = '', timestamp: bool = True):
         """Prints an error message with a red background."""
@@ -94,7 +88,6 @@ class IConsole(ABC):
         pass
 
     # ---- MUTED ----
-
     @abstractmethod
     def textMuted(message: str = ''):
         """Prints a muted (gray) message."""
@@ -106,7 +99,6 @@ class IConsole(ABC):
         pass
 
     # ---- UNDERLINE ----
-
     @abstractmethod
     def textUnderline(message: str = ''):
         """
@@ -120,7 +112,6 @@ class IConsole(ABC):
         pass
 
     # ---- CLEAR CONSOLE ----
-
     @abstractmethod
     def clear():
         """Clears the console screen."""
@@ -132,7 +123,6 @@ class IConsole(ABC):
         pass
 
     # ---- EMPTY LINE CONSOLE ----
-
     @abstractmethod
     def line(message: str = ''):
         """Prints a line of text."""
@@ -156,7 +146,6 @@ class IConsole(ABC):
         pass
 
     # ---- WRITE CONSOLE ----
-
     @abstractmethod
     def write(message: str = ''):
         """

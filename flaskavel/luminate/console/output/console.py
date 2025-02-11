@@ -1,6 +1,6 @@
-import getpass
 import os
 import sys
+import getpass
 import datetime
 from flaskavel.luminate.console.output.styles import ANSIColors
 from flaskavel.luminate.contracts.console.console_interface import IConsole

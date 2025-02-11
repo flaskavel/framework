@@ -12,7 +12,6 @@ class BaseCommand(IBaseCommand):
 
     # Command arguments
     args = {}
-    arg = {}
 
     def success(self, message: str = '', timestamp: bool = True):
         """
@@ -404,8 +403,13 @@ class BaseCommand(IBaseCommand):
         args : argparse.Namespace
             Contain the arguments to be set for the command.
         """
-        self.args = vars(args)
-        self.arg = args
+        try:
+            # Convert arguments to a dictionary using vars(), if possible
+            self.args = vars(args)
+        except TypeError:
+            # Fallback to an empty dictionary if args is not compatible with vars()
+            self.args = {}
+
 
     def handle(self, *args, **kwargs):
         """

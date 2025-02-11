@@ -1,7 +1,7 @@
 import os
 import shutil
-from flaskavel.luminate.console.base.command import BaseCommand
 from flaskavel.luminate.console.register import register
+from flaskavel.luminate.console.base.command import BaseCommand
 
 @register.command
 class CacheClear(BaseCommand):
@@ -45,7 +45,6 @@ class CacheClear(BaseCommand):
                         # Form the path to the __pycache__ directory and remove it
                         pycache_path = os.path.join(root, dir)
                         shutil.rmtree(pycache_path)
-                        self.info(message=f'Cleared cache in: {pycache_path}', timestamp=True)
 
             # Log a success message once all caches are cleared
             self.success(message='The application cache has been successfully cleared.', timestamp=True)
