@@ -2,7 +2,7 @@ from flaskavel.luminate.console.register import register
 from flaskavel.luminate.console.base.command import BaseCommand
 from flaskavel.luminate.console.tasks.scheduler import Schedule
 from app.console.tasks_manager import TaskManager # type: ignore
-from flaskavel.luminate.contracts.console.task_manager import ITaskManager
+from flaskavel.luminate.contracts.console.task_manager_interface import ITaskManager
 
 @register.command
 class ScheduleWork(BaseCommand):

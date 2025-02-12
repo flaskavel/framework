@@ -1,6 +1,8 @@
-from typing import Any, Protocol, Union, List
+from dataclasses import dataclass, field
+from typing import List, Optional, Union, Dict
 
-class ICors(Protocol):
+@dataclass
+class Data:
     """
     Interface that defines the structure for configuring Cross-Origin Resource Sharing (CORS)
     for Starlette's CORSMiddleware.
@@ -22,14 +24,19 @@ class ICors(Protocol):
         A list of headers that the browser can access from the response.
         Example: ["X-Exposed-Header"].
 
-    max_age : int
+    max_age : Optional[int]
         The maximum amount of time (in seconds) that the results of a preflight request can be cached by the browser.
+
+    custom : Dict[str, any]
+        A dictionary for any custom properties or additional configurations related to CORS.
+        This field is initialized with an empty dictionary by default.
 
     Notes
     -----
     - `allowed_methods`, `allowed_headers`, and `exposed_headers` should always be lists of strings.
     - `allowed_origins` can either be a single string or a list of strings.
     - `max_age` should be an integer representing the duration in seconds.
+    - The `custom` attribute is for additional configurations or custom properties.
     """
 
     # List of allowed HTTP methods
@@ -45,4 +52,7 @@ class ICors(Protocol):
     exposed_headers: List[str]
 
     # Time in seconds that the results of preflight requests can be cached
-    max_age: int
+    max_age: Optional[int]
+
+    # Custom properties or configurations for additional flexibility
+    custom: Dict[str, any] = field(default_factory=dict)
