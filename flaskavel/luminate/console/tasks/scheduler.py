@@ -1,14 +1,17 @@
 import re
+import sys
 import time
 import logging
 from typing import Any
+from datetime import datetime
 from apscheduler.triggers.cron import CronTrigger
 from flaskavel.luminate.console.command import Command
 from apscheduler.triggers.interval import IntervalTrigger
 from apscheduler.schedulers.background import BackgroundScheduler
+from flaskavel.luminate.contracts.console.schedule_interface import ISchedule
 from flaskavel.luminate.console.exceptions.cli_exception import CLIFlaskavelScheduleException
 
-class Schedule:
+class Schedule(ISchedule):
     """
     A class that manages the scheduling of tasks using the APScheduler.
 
@@ -40,6 +43,7 @@ class Schedule:
         self.scheduler = BackgroundScheduler()
         self.scheduler.start()
         self.callback = None
+        self.wait = True
 
     def command(self, signature: str, vars: dict[str, Any] = {}, *args: Any, **kwargs: Any) -> 'Schedule':
         """
@@ -62,7 +66,14 @@ class Schedule:
             Returns the Schedule instance itself, allowing method chaining.
         """
         # Store the command logic as a lambda function
-        self.callback = lambda: Command.call(signature, vars, *args, **kwargs)
+        def func():
+            try:
+                Command.call(signature, vars, *args, **kwargs)
+            finally:
+                if not self.scheduler.get_jobs():
+                    self.wait = False
+
+        self.callback = func
         return self
 
     def _checkCommand(self):
@@ -93,461 +104,513 @@ class Schedule:
 
         return at.split(':')
 
-    def everySeconds(self, seconds: int):
+    def _checkDateTime(self, start_date: datetime = None, end_date: datetime = None):
+        """
+        Validates the `start_date` and `end_date` parameters.
+
+        Ensures that both parameters are either `None` or valid `datetime` instances.
+        Additionally, it verifies that `start_date` is earlier than `end_date` if both are provided.
+
+        Parameters
+        ----------
+        start_date : datetime, optional
+            The start time of the scheduled job. Must be a valid `datetime` object if provided.
+        end_date : datetime, optional
+            The end time of the scheduled job. Must be a valid `datetime` object if provided.
+
+        Raises
+        ------
+        CLIFlaskavelScheduleException
+            If `start_date` or `end_date` are not valid `datetime` objects.
+            If `start_date` is later than or equal to `end_date`.
+        """
+
+        # Ensure `start_date` is either None or a valid datetime object
+        if start_date is not None and not isinstance(start_date, datetime):
+            raise CLIFlaskavelScheduleException("start_date must be a valid datetime object.")
+
+        # Ensure `end_date` is either None or a valid datetime object
+        if end_date is not None and not isinstance(end_date, datetime):
+            raise CLIFlaskavelScheduleException("end_date must be a valid datetime object.")
+
+        # Ensure `start_date` is earlier than `end_date` if both are provided
+        if start_date and end_date and start_date >= end_date:
+            raise CLIFlaskavelScheduleException("start_date must be earlier than end_date.")
+
+    def _checkGreterThanZero(self, value: int, identifier: str = 'interval'):
+        """
+        Validates that the value is greater than 0.
+        """
+        if value < 1:
+            raise CLIFlaskavelScheduleException(f"The {identifier} must be greater than 0.")
+
+    def onceAt(self, date: datetime):
         """
         Schedule the defined command to execute every X seconds.
         """
         self._checkCommand()
 
-        if seconds < 1:
-            raise CLIFlaskavelScheduleException("The interval must be greater than 0.")
+        if not isinstance(date, datetime):
+            raise CLIFlaskavelScheduleException("The date must be a valid datetime object.")
 
         self.scheduler.add_job(
             self.callback,
-            IntervalTrigger(seconds=seconds),
+            'date',
+            run_date=date
+        )
+
+        self._resetCallback()
+
+    def everySeconds(self, seconds: int, start_date: datetime = None, end_date: datetime = None):
+        """
+        Schedule the defined command to execute every X seconds.
+        """
+        self._checkCommand()
+        self._checkGreterThanZero(seconds)
+        self._checkDateTime(start_date, end_date)
+
+        self.scheduler.add_job(
+            self.callback,
+            IntervalTrigger(seconds=seconds, start_date=start_date, end_date=end_date),
             replace_existing=True
         )
 
         self._resetCallback()
 
-    def everySecond(self):
+    def everySecond(self, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every second.
         """
-        self.everySeconds(1)
+        self.everySeconds(seconds=1, start_date=start_date, end_date=end_date)
 
-    def everyTwoSeconds(self):
+    def everyTwoSeconds(self, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every two seconds.
         """
-        self.everySeconds(2)
+        self.everySeconds(seconds=2, start_date=start_date, end_date=end_date)
 
-    def everyFiveSeconds(self):
+    def everyFiveSeconds(self, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every five seconds.
         """
-        self.everySeconds(5)
+        self.everySeconds(seconds=5, start_date=start_date, end_date=end_date)
 
-    def everyTenSeconds(self):
+    def everyTenSeconds(self, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every ten seconds.
         """
-        self.everySeconds(10)
+        self.everySeconds(seconds=10, start_date=start_date, end_date=end_date)
 
-    def everyFifteenSeconds(self):
+    def everyFifteenSeconds(self, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every fifteen seconds.
         """
-        self.everySeconds(15)
+        self.everySeconds(seconds=15, start_date=start_date, end_date=end_date)
 
-    def everyTwentySeconds(self):
+    def everyTwentySeconds(self, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every twenty seconds.
         """
-        self.everySeconds(20)
+        self.everySeconds(seconds=20, start_date=start_date, end_date=end_date)
 
-    def everyThirtySeconds(self):
+    def everyThirtySeconds(self, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every thirty seconds.
         """
-        self.everySeconds(30)
+        self.everySeconds(seconds=30, start_date=start_date, end_date=end_date)
 
-    def everyMinutes(self, minutes: int):
+    def everyMinutes(self, minutes: int, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every X minutes.
         """
         self._checkCommand()
-
-        if minutes < 1:
-            raise CLIFlaskavelScheduleException("The interval must be greater than 0.")
+        self._checkGreterThanZero(minutes)
+        self._checkDateTime(start_date, end_date)
 
         self.scheduler.add_job(
             self.callback,
-            IntervalTrigger(minutes=minutes),
+            IntervalTrigger(minutes=minutes, start_date=start_date, end_date=end_date),
             replace_existing=True
         )
 
         self._resetCallback()
 
-    def everyMinute(self):
+    def everyMinute(self, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every minute.
         """
-        self.everyMinutes(1)
+        self.everyMinutes(minutes=1, start_date=start_date, end_date=end_date)
 
-    def everyTwoMinutes(self):
+    def everyTwoMinutes(self, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every two minutes.
         """
-        self.everyMinutes(2)
+        self.everyMinutes(minutes=2, start_date=start_date, end_date=end_date)
 
-    def everyThreeMinutes(self):
+    def everyThreeMinutes(self, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every three minutes.
         """
-        self.everyMinutes(3)
+        self.everyMinutes(minutes=3, start_date=start_date, end_date=end_date)
 
-    def everyFourMinutes(self):
+    def everyFourMinutes(self, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every four minutes.
         """
-        self.everyMinutes(4)
+        self.everyMinutes(minutes=4, start_date=start_date, end_date=end_date)
 
-    def everyFiveMinutes(self):
+    def everyFiveMinutes(self, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every five minutes.
         """
-        self.everyMinutes(5)
+        self.everyMinutes(minutes=5, start_date=start_date, end_date=end_date)
 
-    def everyTenMinutes(self):
+    def everyTenMinutes(self, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every ten minutes.
         """
-        self.everyMinutes(10)
+        self.everyMinutes(minutes=10, start_date=start_date, end_date=end_date)
 
-    def everyFifteenMinutes(self):
+    def everyFifteenMinutes(self, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every fifteen minutes.
         """
-        self.everyMinutes(15)
+        self.everyMinutes(minutes=15, start_date=start_date, end_date=end_date)
 
-    def everyThirtyMinutes(self):
+    def everyThirtyMinutes(self, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every thirty minutes.
         """
-        self.everyMinutes(30)
+        self.everyMinutes(minutes=30, start_date=start_date, end_date=end_date)
 
-    def hours(self, hours: int):
+    def hours(self, hours: int, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every X hours.
         """
         self._checkCommand()
-
-        if hours < 1:
-            raise CLIFlaskavelScheduleException("The interval must be greater than 0.")
+        self._checkGreterThanZero(hours)
+        self._checkDateTime(start_date, end_date)
 
         self.scheduler.add_job(
             self.callback,
-            IntervalTrigger(hours=hours),
+            IntervalTrigger(hours=hours, start_date=start_date, end_date=end_date),
             replace_existing=True
         )
 
         self._resetCallback()
 
-    def hourly(self):
+    def hourly(self, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every hour.
         """
-        self.hours(1)
+        self.hours(hours=1, start_date=start_date, end_date=end_date)
 
-    def hourlyAt(self, minute: int):
+    def hourlyAt(self, minute: int, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every hour at a specific minute.
         """
         self._checkCommand()
-
-        if minute < 1:
-            raise CLIFlaskavelScheduleException("The minute must be greater than 0.")
+        self._checkGreterThanZero(minute)
+        self._checkDateTime(start_date, end_date)
 
         self.scheduler.add_job(
             self.callback,
-            CronTrigger(hour='*', minute=minute),
+            CronTrigger(hour='*', minute=minute, start_date=start_date, end_date=end_date),
             replace_existing=True
         )
 
         self._resetCallback()
 
-    def everyOddHour(self, minute: int):
+    def everyOddHour(self, minute: int, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every odd hour.
         """
         self._checkCommand()
-
-        if minute < 1:
-            raise CLIFlaskavelScheduleException("The minute must be greater than 0.")
+        self._checkGreterThanZero(minute)
+        self._checkDateTime(start_date, end_date)
 
         self.scheduler.add_job(
             self.callback,
-            CronTrigger(hour='1,3,5,7,9,11,13,15,17,19,21,23', minute=minute),
+            CronTrigger(hour='1,3,5,7,9,11,13,15,17,19,21,23', minute=minute, start_date=start_date, end_date=end_date),
             replace_existing=True
         )
 
         self._resetCallback()
 
-    def everyTwoHours(self, minute: int):
+    def everyTwoHours(self, minute: int, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every two hours.
         """
         self._checkCommand()
-
-        if minute < 1:
-            raise CLIFlaskavelScheduleException("The minute must be greater than 0.")
+        self._checkGreterThanZero(minute)
+        self._checkDateTime(start_date, end_date)
 
         self.scheduler.add_job(
             self.callback,
-            CronTrigger(hour='*/2', minute=minute),
+            CronTrigger(hour='*/2', minute=minute, start_date=start_date, end_date=end_date),
             replace_existing=True
         )
 
         self._resetCallback()
 
-    def everyThreeHours(self, minute: int):
+    def everyThreeHours(self, minute: int, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every three hours.
         """
         self._checkCommand()
-
-        if minute < 1:
-            raise CLIFlaskavelScheduleException("The minute must be greater than 0.")
+        self._checkGreterThanZero(minute)
+        self._checkDateTime(start_date, end_date)
 
         self.scheduler.add_job(
             self.callback,
-            CronTrigger(hour='*/3', minute=minute),
+            CronTrigger(hour='*/3', minute=minute, start_date=start_date, end_date=end_date),
             replace_existing=True
         )
 
         self._resetCallback()
 
-    def everyFourHours(self, minute: int):
+    def everyFourHours(self, minute: int, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every four hours.
         """
         self._checkCommand()
-
-        if minute < 1:
-            raise CLIFlaskavelScheduleException("The minute must be greater than 0.")
+        self._checkGreterThanZero(minute)
+        self._checkDateTime(start_date, end_date)
 
         self.scheduler.add_job(
             self.callback,
-            CronTrigger(hour='*/4', minute=minute),
+            CronTrigger(hour='*/4', minute=minute, start_date=start_date, end_date=end_date),
             replace_existing=True
         )
 
         self._resetCallback()
 
-    def everySixHours(self, minute: int):
+    def everySixHours(self, minute: int, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every six hours.
         """
         self._checkCommand()
-
-        if minute < 1:
-            raise CLIFlaskavelScheduleException("The minute must be greater than 0.")
+        self._checkGreterThanZero(minute)
+        self._checkDateTime(start_date, end_date)
 
         self.scheduler.add_job(
             self.callback,
-            CronTrigger(hour='*/6', minute=minute),
+            CronTrigger(hour='*/6', minute=minute, start_date=start_date, end_date=end_date),
             replace_existing=True
         )
 
         self._resetCallback()
 
-    def days(self, days: int):
+    def days(self, days: int, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every X days.
         """
         self._checkCommand()
-
-        if days < 1:
-            raise CLIFlaskavelScheduleException("The days must be greater than 0.")
+        self._checkGreterThanZero(days)
+        self._checkDateTime(start_date, end_date)
 
         self.scheduler.add_job(
             self.callback,
-            IntervalTrigger(days=days),
+            IntervalTrigger(days=days, start_date=start_date, end_date=end_date),
             replace_existing=True
         )
 
         self._resetCallback()
 
-    def daily(self):
+    def daily(self, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute daily at midnight.
         """
         self._checkCommand()
+        self._checkDateTime(start_date, end_date)
 
         self.scheduler.add_job(
             self.callback,
-            CronTrigger(hour=0, minute=0, second=1),
+            CronTrigger(hour=0, minute=0, second=1, start_date=start_date, end_date=end_date),
             replace_existing=True
         )
 
         self._resetCallback()
 
-    def dailyAt(self, at: str):
+    def dailyAt(self, at: str, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute daily at a specific time.
         """
         self._checkCommand()
-
+        self._checkDateTime(start_date, end_date)
         hour, minute = self._hourFormat(at)
 
         self.scheduler.add_job(
             self.callback,
-            CronTrigger(hour=hour, minute=minute),
+            CronTrigger(hour=hour, minute=minute, start_date=start_date, end_date=end_date),
             replace_existing=True
         )
 
         self._resetCallback()
 
-    def twiceDaily(self, first_hour: int, second_hour: int):
+    def twiceDaily(self, first_hour: int, second_hour: int, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute twice a day at specific hours.
         """
         self._checkCommand()
-
-        if first_hour < 1:
-            raise CLIFlaskavelScheduleException("The first hour must be greater than 0.")
-
-        if second_hour < 1:
-            raise CLIFlaskavelScheduleException("The second hour must be greater than 0.")
+        self._checkGreterThanZero(first_hour)
+        self._checkGreterThanZero(second_hour)
+        self._checkDateTime(start_date, end_date)
 
         self.scheduler.add_job(
             self.callback,
-            CronTrigger(hour=f'{first_hour},{second_hour}', minute=0),
+            CronTrigger(hour=f'{first_hour},{second_hour}', minute=0, start_date=start_date, end_date=end_date),
             replace_existing=True
         )
 
         self._resetCallback()
 
-    def monday(self, at: str):
+    def monday(self, at: str, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every Monday at a specific time.
         """
 
         self._checkCommand()
-
+        self._checkDateTime(start_date, end_date)
         hour, minute = self._hourFormat(at)
 
         self.scheduler.add_job(
             self.callback,
-            CronTrigger(day_of_week='mon', hour=hour, minute=minute),
+            CronTrigger(day_of_week='mon', hour=hour, minute=minute, start_date=start_date, end_date=end_date),
             replace_existing=True
         )
 
         self._resetCallback()
 
-    def tuesday(self, at: str):
+    def tuesday(self, at: str, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every tuesday at a specific time.
         """
 
         self._checkCommand()
-
+        self._checkDateTime(start_date, end_date)
         hour, minute = self._hourFormat(at)
 
         self.scheduler.add_job(
             self.callback,
-            CronTrigger(day_of_week='tue', hour=hour, minute=minute),
+            CronTrigger(day_of_week='tue', hour=hour, minute=minute, start_date=start_date, end_date=end_date),
             replace_existing=True
         )
 
         self._resetCallback()
 
-    def wednesday(self, at: str):
+    def wednesday(self, at: str, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every wednesday at a specific time.
         """
 
         self._checkCommand()
-
+        self._checkDateTime(start_date, end_date)
         hour, minute = self._hourFormat(at)
 
         self.scheduler.add_job(
             self.callback,
-            CronTrigger(day_of_week='wed', hour=hour, minute=minute),
+            CronTrigger(day_of_week='wed', hour=hour, minute=minute, start_date=start_date, end_date=end_date),
             replace_existing=True
         )
 
         self._resetCallback()
 
-    def thursday(self, at: str):
+    def thursday(self, at: str, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every thursday at a specific time.
         """
 
         self._checkCommand()
-
+        self._checkDateTime(start_date, end_date)
         hour, minute = self._hourFormat(at)
 
         self.scheduler.add_job(
             self.callback,
-            CronTrigger(day_of_week='thu', hour=hour, minute=minute),
+            CronTrigger(day_of_week='thu', hour=hour, minute=minute, start_date=start_date, end_date=end_date),
             replace_existing=True
         )
 
         self._resetCallback()
 
-    def friday(self, at: str):
+    def friday(self, at: str, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every friday at a specific time.
         """
 
         self._checkCommand()
-
+        self._checkDateTime(start_date, end_date)
         hour, minute = self._hourFormat(at)
 
         self.scheduler.add_job(
             self.callback,
-            CronTrigger(day_of_week='fri', hour=hour, minute=minute),
+            CronTrigger(day_of_week='fri', hour=hour, minute=minute, start_date=start_date, end_date=end_date),
             replace_existing=True
         )
 
         self._resetCallback()
 
-    def saturday(self, at: str):
+    def saturday(self, at: str, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every saturday at a specific time.
         """
 
         self._checkCommand()
-
+        self._checkDateTime(start_date, end_date)
         hour, minute = self._hourFormat(at)
 
         self.scheduler.add_job(
             self.callback,
-            CronTrigger(day_of_week='sat', hour=hour, minute=minute),
+            CronTrigger(day_of_week='sat', hour=hour, minute=minute, start_date=start_date, end_date=end_date),
             replace_existing=True
         )
 
         self._resetCallback()
 
-    def sunday(self, at: str):
+    def sunday(self, at: str, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute every sunday at a specific time.
         """
 
         self._checkCommand()
-
+        self._checkDateTime(start_date, end_date)
         hour, minute = self._hourFormat(at)
 
         self.scheduler.add_job(
             self.callback,
-            CronTrigger(day_of_week='sun', hour=hour, minute=minute),
+            CronTrigger(day_of_week='sun', hour=hour, minute=minute, start_date=start_date, end_date=end_date),
             replace_existing=True
         )
 
         self._resetCallback()
 
-    def weekly(self):
+    def weekly(self, start_date: datetime = None, end_date: datetime = None):
         """
         Schedules the defined command to execute weekly on Sunday at midnight.
         """
+
+        self._checkCommand()
+        self._checkDateTime(start_date, end_date)
+
         self.scheduler.add_job(
             self.callback,
-            CronTrigger(day_of_week='sun', hour=0, minute=0, second=1),
+            CronTrigger(day_of_week='sun', hour=0, minute=0, second=1, start_date=start_date, end_date=end_date),
             replace_existing=True
         )
-        self.callback = None
+
+        self._resetCallback()
 
     def start(self):
         """
-        Keeps the scheduler running in the background.
-
-        This method will run an infinite loop to keep the scheduler active.
-        It will stop when a KeyboardInterrupt or SystemExit exception is raised.
+        Starts the scheduler and stops automatically when there are no more jobs.
         """
         try:
-            while True:
+            # Start the scheduler
+            while self.wait:
                 time.sleep(1)
         except (KeyboardInterrupt, SystemExit):
-            self.scheduler.shutdown()
+            # Stop the scheduler if it is running
+            if self.scheduler.running:
+                self.scheduler.shutdown()
+            # Exit with status code 1 to indicate an error
+            sys.exit(1)
