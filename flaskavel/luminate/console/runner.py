@@ -5,7 +5,7 @@ from flaskavel.luminate.console.output.executor import Executor
 from flaskavel.luminate.pipelines.cli_pipeline import CLIPipeline
 from flaskavel.luminate.contracts.console.runner_interface import ICLIRunner
 
-EXCEPTIONS = ('schedule:work')
+EXCEPTIONS = ('schedule:work',)
 
 class CLIRunner(ICLIRunner):
     """
@@ -75,7 +75,8 @@ class CLIRunner(ICLIRunner):
 
             # Log command execution start
             Log.info(f"Running command: {signature}")
-            Executor.running(program=signature)
+            if signature not in EXCEPTIONS:
+                Executor.running(program=signature)
 
             # Initialize command pipeline
             pipeline = CLIPipeline().getCommand(signature)
