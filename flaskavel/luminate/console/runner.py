@@ -66,12 +66,12 @@ class CLIRunner(ICLIRunner):
 
             # Handle command signature extraction from sys.argv
             if sys_argv:
-                if not args or len(args[0]) <= 2:
+                if not args or len(args[0]) <= 1:
                     raise ValueError("No command signature specified.")
 
                 # Extract command signature and arguments
                 args_list = args[0]
-                signature, *args = args_list[2:]
+                signature, *args = args_list[1:]
 
             # Log command execution start
             Log.info(f"Running command: {signature}")
