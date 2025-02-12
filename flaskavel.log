@@ -1,2 +1,0 @@
-2025-02-12 10:32:41 - [INFO] - Running command: schedule:work
-2025-02-12 10:32:41 - [ERROR] - Command failed: schedule:work, Value Error: Error importing module 'flaskavel.luminate.console.commands.schedule_work': No module named 'app'
