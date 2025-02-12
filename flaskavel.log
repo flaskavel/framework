@@ -1,0 +1,44 @@
+2025-02-11 18:55:47 - [INFO] - Running command: cache:clear
+2025-02-11 18:55:47 - [SUCCESS] - Command executed successfully: cache:clear
+2025-02-11 18:55:48 - [INFO] - Running command: pildoras:stats
+2025-02-11 18:55:48 - [SUCCESS] - Command executed successfully: pildoras:stats
+2025-02-11 18:55:51 - [INFO] - Running command: cache:clear
+2025-02-11 18:55:51 - [SUCCESS] - Command executed successfully: cache:clear
+2025-02-11 18:55:53 - [INFO] - Running command: pildoras:stats
+2025-02-11 18:55:53 - [SUCCESS] - Command executed successfully: pildoras:stats
+2025-02-11 18:55:55 - [INFO] - Running command: cache:clear
+2025-02-11 18:55:55 - [SUCCESS] - Command executed successfully: cache:clear
+2025-02-11 18:55:58 - [INFO] - Running command: pildoras:stats
+2025-02-11 18:55:58 - [SUCCESS] - Command executed successfully: pildoras:stats
+2025-02-11 18:55:59 - [INFO] - Running command: cache:clear
+2025-02-11 18:55:59 - [SUCCESS] - Command executed successfully: cache:clear
+2025-02-11 18:57:17 - [INFO] - Running command: cache:clear
+2025-02-11 18:57:17 - [SUCCESS] - Command executed successfully: cache:clear
+2025-02-11 18:57:17 - Job "Schedule.command.<locals>.<lambda> (trigger: interval[0:00:04], next run at: 2025-02-11 18:57:21 -05)" executed successfully
+2025-02-11 18:57:18 - Looking for jobs to run
+2025-02-11 18:57:18 - Next wakeup is due at 2025-02-11 18:57:21.107587-05:00 (in 2.989225 seconds)
+2025-02-11 18:57:18 - Running job "Schedule.command.<locals>.<lambda> (trigger: interval[0:00:05], next run at: 2025-02-11 18:57:23 -05)" (scheduled at 2025-02-11 18:57:18.107395-05:00)
+2025-02-11 18:57:18 - [INFO] - Running command: pildoras:stats
+2025-02-11 18:57:18 - [SUCCESS] - Command executed successfully: pildoras:stats
+2025-02-11 18:57:18 - Job "Schedule.command.<locals>.<lambda> (trigger: interval[0:00:05], next run at: 2025-02-11 18:57:23 -05)" executed successfully
+2025-02-11 18:57:21 - Looking for jobs to run
+2025-02-11 18:57:21 - Next wakeup is due at 2025-02-11 18:57:23.107395-05:00 (in 1.986884 seconds)
+2025-02-11 18:57:21 - Running job "Schedule.command.<locals>.<lambda> (trigger: interval[0:00:04], next run at: 2025-02-11 18:57:25 -05)" (scheduled at 2025-02-11 18:57:21.107587-05:00)
+2025-02-11 18:57:21 - [INFO] - Running command: cache:clear
+2025-02-11 18:57:21 - [SUCCESS] - Command executed successfully: cache:clear
+2025-02-11 18:57:21 - Job "Schedule.command.<locals>.<lambda> (trigger: interval[0:00:04], next run at: 2025-02-11 18:57:25 -05)" executed successfully
+2025-02-11 18:57:23 - Looking for jobs to run
+2025-02-11 18:57:23 - Next wakeup is due at 2025-02-11 18:57:25.107587-05:00 (in 1.991841 seconds)
+2025-02-11 18:57:23 - Running job "Schedule.command.<locals>.<lambda> (trigger: interval[0:00:05], next run at: 2025-02-11 18:57:28 -05)" (scheduled at 2025-02-11 18:57:23.107395-05:00)
+2025-02-11 18:57:23 - [INFO] - Running command: pildoras:stats
+2025-02-11 18:57:23 - [SUCCESS] - Command executed successfully: pildoras:stats
+2025-02-11 18:57:23 - Job "Schedule.command.<locals>.<lambda> (trigger: interval[0:00:05], next run at: 2025-02-11 18:57:28 -05)" executed successfully
+2025-02-11 18:57:25 - Looking for jobs to run
+2025-02-11 18:57:25 - Next wakeup is due at 2025-02-11 18:57:28.107395-05:00 (in 2.998523 seconds)
+2025-02-11 18:57:25 - Running job "Schedule.command.<locals>.<lambda> (trigger: interval[0:00:04], next run at: 2025-02-11 18:57:29 -05)" (scheduled at 2025-02-11 18:57:25.107587-05:00)
+2025-02-11 18:57:25 - [INFO] - Running command: cache:clear
+2025-02-11 18:57:25 - [SUCCESS] - Command executed successfully: cache:clear
+2025-02-11 18:57:25 - Job "Schedule.command.<locals>.<lambda> (trigger: interval[0:00:04], next run at: 2025-02-11 18:57:29 -05)" executed successfully
+2025-02-11 18:57:26 - Scheduler has been shut down
+2025-02-11 18:57:26 - Looking for jobs to run
+2025-02-11 18:57:26 - No jobs; waiting until a job is added

@@ -19,6 +19,9 @@ setup(
     ],
     python_requires=PYTHON_REQUIRES,
     install_requires=[
+        # New Version
+        "apscheduler>=3.11.0",
+        # Old Version
         "bcrypt>=4.2.0",
         "greenlet>=3.1.0",
         "pyclean>=3.0.0",
