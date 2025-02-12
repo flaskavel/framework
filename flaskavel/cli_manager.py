@@ -1,4 +1,6 @@
 import argparse
+import sys
+from flaskavel.luminate.console.kernel import CLIKernel
 from flaskavel.luminate.console.scripts.management import Management
 
 def main():
@@ -16,7 +18,7 @@ def main():
     parser.add_argument('--upgrade', action='store_true', help="Upgrade Flaskavel to the latest version.")
 
     # Command to create a new Flaskavel app (requires an app name)
-    parser.add_argument('command', nargs='?', choices=['new'], help="Available command: 'new'.")
+    parser.add_argument('command', nargs='?', choices=['new','run'], help="Available command: 'new' and 'run'.")
 
     # Name of the application to be created (defaults to 'example-app')
     parser.add_argument('name', nargs='?', help="The name of the Flaskavel application to create.", default="example-app")
@@ -38,6 +40,10 @@ def main():
     # Handle the 'new' command to create a new app
     elif args.command == 'new':
         cli_manager.createNewApp(args.name or 'example-app')
+
+    # Handle the 'run' command to run commands
+    elif args.command == 'run':
+        CLIKernel().handle(sys.argv)
 
     # If no valid command is provided, show the help message
     else:
