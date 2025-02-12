@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from flaskavel.luminate.console.tasks.scheduler import Schedule
 
-class TaskManager(ABC):
+class ITaskManager(ABC):
     """
     Abstract base class that defines the interface for managing tasks.
 
