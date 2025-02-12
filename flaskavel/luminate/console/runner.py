@@ -5,6 +5,8 @@ from flaskavel.luminate.console.output.executor import Executor
 from flaskavel.luminate.pipelines.cli_pipeline import CLIPipeline
 from flaskavel.luminate.contracts.console.runner_interface import ICLIRunner
 
+EXCEPTIONS = ('schedule:work')
+
 class CLIRunner(ICLIRunner):
     """
     CLIRunner manages the execution of CLI commands in Flaskavel.
@@ -87,31 +89,31 @@ class CLIRunner(ICLIRunner):
             # Execute the command
             output = pipeline.execute()
 
-            # Calculate execution time
-            elapsed_time = round(time.perf_counter() - start_time, 2)
-
             # Log successful execution
             Log.success(f"Command executed successfully: {signature}")
-            Executor.done(program=signature, time=f"{elapsed_time}s")
 
+            # Calculate execution time
+            if signature not in EXCEPTIONS:
+                elapsed_time = round(time.perf_counter() - start_time, 2)
+                Executor.done(program=signature, time=f"{elapsed_time}s")
+
+            # Return command output
             return output
 
         except ValueError as e:
 
             # Handle missing or invalid command signature
-            Console.error(message=f"Value Error: {e}")
             Log.error(f"Command failed: {signature or 'Unknown'}, Value Error: {e}")
-
-            # Ensure execution time is recorded in failure cases
-            elapsed_time = round(time.perf_counter() - start_time, 2)
-            Executor.fail(program=signature or "Unknown", time=f"{elapsed_time}s")
+            if signature not in EXCEPTIONS:
+                Console.error(message=f"Value Error: {e}")
+                elapsed_time = round(time.perf_counter() - start_time, 2)
+                Executor.fail(program=signature or "Unknown", time=f"{elapsed_time}s")
 
         except Exception as e:
 
             # Handle unexpected errors
-            Console.error(message=f"Execution Error: {e}")
             Log.error(f"Command failed: {signature or 'Unknown'}, Execution Error: {e}")
-
-            # Ensure execution time is recorded in failure cases
-            elapsed_time = round(time.perf_counter() - start_time, 2)
-            Executor.fail(program=signature or "Unknown", time=f"{elapsed_time}s")
+            if signature not in EXCEPTIONS:
+                Console.error(message=f"Execution Error: {e}")
+                elapsed_time = round(time.perf_counter() - start_time, 2)
+                Executor.fail(program=signature or "Unknown", time=f"{elapsed_time}s")
