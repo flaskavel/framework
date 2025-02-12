@@ -112,7 +112,7 @@ class CLICache(ICLICache):
                         if file.endswith('.py'):
                             # Construct the module name and path
                             module_name = file[:-3]  # Remove the '.py' extension
-                            module_path = f"{pre_module}.{module_name}"
+                            module_path = f"{pre_module}.{module_name}".replace('venv.Lib.site-packages.', '')
 
                             # Use Reflection to load the module dynamically
                             Reflection(module=module_path)
