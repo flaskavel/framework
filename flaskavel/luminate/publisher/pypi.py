@@ -54,6 +54,7 @@ class PypiPublisher(IPypiPublisher):
         self.project_root = os.getcwd()
         self.clearRepository()
         Console.clear()
+        Console.newLine()
 
     def gitPush(self):
         """
@@ -169,6 +170,7 @@ class PypiPublisher(IPypiPublisher):
         )
         self.clearRepository()
         Console.success(f"✅ [v{VERSION}] - Publishing process completed successfully!")
+        Console.newLine()
 
     def clearRepository(self):
         """
