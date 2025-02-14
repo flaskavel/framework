@@ -33,7 +33,7 @@ class HelpCommand(BaseCommand):
 
             # Display the available commands
             self.newLine()
-            self.textSuccessBold(" Available Commands: ")
+            self.textSuccessBold(" (CLI Interpreter) Available Commands: ")
 
             # Retrieve command cache
             cache = CacheCommands()
