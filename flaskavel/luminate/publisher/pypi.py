@@ -53,6 +53,7 @@ class PypiPublisher(IPypiPublisher):
         self.python_path = sys.executable
         self.project_root = os.getcwd()
         self.clearRepository()
+        Console.clear()
 
     def gitPush(self):
         """
