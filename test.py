@@ -12,7 +12,7 @@ def handle_test_framework():
     test_suite.addFolderTests('tools')
 
     # Execute the test suite and raise an exception if any test fails.
-    test_suite.run()
+    return test_suite.run()
 
 if __name__ == "__main__":
 

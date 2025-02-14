@@ -37,7 +37,10 @@ if __name__ == "__main__":
     try:
 
         # Import the test module to ensure all tests pass before publishing
-        handle_test_framework()
+        result = handle_test_framework()
+
+        if result.get('Failures') > 0 or result.get('Errors') > 0:
+            raise FlaskavelTestFailureException("Tests failed. Publishing aborted.")
 
         # Run the publishing framework when the script is executed directly.
         handle_publishing_framework()

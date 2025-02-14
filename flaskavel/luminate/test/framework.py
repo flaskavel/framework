@@ -1,6 +1,8 @@
+import io
+import re
 import unittest
+from contextlib import redirect_stdout
 from flaskavel.luminate.console.output.console import Console
-from flaskavel.luminate.test.exception import FlaskavelTestFailureException
 from flaskavel.luminate.contracts.test.framework_interface import ITestFlaskavelFramework
 
 class TestFlaskavelFramework(ITestFlaskavelFramework):
@@ -53,7 +55,12 @@ class TestFlaskavelFramework(ITestFlaskavelFramework):
         except Exception as e:
             raise ValueError(f"Error discovering tests in 'tests/{folder_path}': {e}")
 
-    def run(self) -> None:
+    def extract_error_file(self, traceback: str) -> str:
+        """Extracts the file path from a traceback message."""
+        match = re.search(r'File "([^"]+)"', traceback)
+        return match.group(1) if match else None
+
+    def run(self) -> dict:
         """
         Runs all tests added to the test suite.
 
@@ -62,20 +69,38 @@ class TestFlaskavelFramework(ITestFlaskavelFramework):
         FlaskavelTestFailureException
             If one or more tests fail.
         """
-
-        # Display a message indicating that the tests are running
         Console.newLine()
-        Console.info("Running Flaskavel Framework tests...")
+        Console.info("Running Flaskavel Framework Tests... 🔍")
+        Console.newLine()
 
-        # Run the test suite and capture the results
-        runner = unittest.TextTestRunner()
-        result = runner.run(self.suite)
+        # Capture output safely
+        output_buffer = io.StringIO()
+        with redirect_stdout(output_buffer):
+            runner = unittest.TextTestRunner(stream=output_buffer, verbosity=2)
+            result = runner.run(self.suite)
 
-        # Check if any tests failed
+        # Display summary table
+        summary = {
+            "Total Tests": result.testsRun,
+            "Failures": len(result.failures),
+            "Errors": len(result.errors)
+        }
+        Console.table(headers=summary.keys(), rows=[summary.values()])
+        Console.newLine()
+
+        # Display failure details
         if result.failures:
-            Console.error(f"{len(result.failures)} test(s) failed.")
-            raise FlaskavelTestFailureException(f"{len(result.failures)} test(s) failed.")
+            for test_case, traceback in result.failures:
+                title = self.extract_error_file(traceback) or "Error in test"
+                Console.fail(title)
+                Console.write(traceback)
 
-        # Display a success message if all tests passed
-        Console.success("All tests passed successfully.")
-        Console.newLine()
+            Console.error(f"{summary['Failures']} test(s) failed.")
+            Console.newLine()
+
+        else:
+            Console.success("All tests passed successfully.")
+            Console.newLine()
+
+        # Return summary
+        return summary
