@@ -1,7 +1,7 @@
 import os
 import unittest
-from tests.tools.class_example import BaseTestClass, TestClass, TestEnum
 from flaskavel.luminate.tools.reflection import Reflection
+from tests.tools.class_example import BaseTestClass, TestClass, TestEnum
 
 class TestReflection(unittest.TestCase):
 
