@@ -1,5 +1,6 @@
-from flaskavel.luminate.publisher.pypi import PypiPublisher
 from test import run_tests
+from tests.exception import FlaskavelTestFailureException
+from flaskavel.luminate.publisher.pypi import PypiPublisher
 
 if __name__ == "__main__":
     """
@@ -29,4 +30,5 @@ if __name__ == "__main__":
         publisher.build()
         publisher.publish()
     except Exception as e:
-        raise ValueError(f"General Error: {e}")
+        if not type(e) is FlaskavelTestFailureException:
+            raise ValueError(f"General Error: {e}")
