@@ -1,25 +1,20 @@
-import unittest
-from tests.tools.test_reflection import *
-from tests.exception import FlaskavelTestFailureException
+from flaskavel.luminate.test.framework import TestFlaskavelFramework
 
-def run_tests():
+# Ensures that the script runs only when executed directly,
+# preventing it from running if imported as a module.
 
-    # Create a test loader and test suite
-    loader = unittest.TestLoader()
-    suite = unittest.TestSuite()
+def handle_test_framework():
 
-    # Discover all test files (test_*.py) inside the 'tests/tools' folder
-    suite.addTests(loader.discover('tests/tools', pattern='test_*.py'))
+    # Initialize the test suite using the custom testing framework.
+    test_suite = TestFlaskavelFramework()
 
-    # Create a test runner
-    runner = unittest.TextTestRunner()
+    # Add test cases from the 'tools' folder that match the default pattern ('test_*.py').
+    test_suite.addFolderTests('tools')
 
-    # Run the tests
-    result = runner.run(suite)
-
-    # Check how many tests failed
-    if len(result.failures) > 0:
-        raise FlaskavelTestFailureException(f"{len(result.failures)} test(s) failed.")
+    # Execute the test suite and raise an exception if any test fails.
+    test_suite.run()
 
 if __name__ == "__main__":
-    run_tests()
+
+    # Run the test framework when the script is executed directly.
+    handle_test_framework()

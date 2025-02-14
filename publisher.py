@@ -1,6 +1,21 @@
-from test import run_tests
-from tests.exception import FlaskavelTestFailureException
+from test import handle_test_framework
 from flaskavel.luminate.publisher.pypi import PypiPublisher
+from flaskavel.luminate.test.exception import FlaskavelTestFailureException
+
+# Ensures that the script runs only when executed directly,
+def handle_publishing_framework():
+
+    # Import the test module to ensure all tests pass before publishing
+    publisher = PypiPublisher()
+
+    # Publish the package
+    publisher.gitPush()
+
+    # Build the package
+    publisher.build()
+
+    # Publish the package
+    publisher.publish()
 
 if __name__ == "__main__":
     """
@@ -22,13 +37,13 @@ if __name__ == "__main__":
     try:
 
         # Import the test module to ensure all tests pass before publishing
-        run_tests()
+        handle_test_framework()
 
-        # Publish the package
-        publisher = PypiPublisher()
-        publisher.gitPush()
-        publisher.build()
-        publisher.publish()
+        # Run the publishing framework when the script is executed directly.
+        handle_publishing_framework()
+
     except Exception as e:
+
+        # Raise a general error if the exception is not a test failure exception
         if not type(e) is FlaskavelTestFailureException:
             raise ValueError(f"General Error: {e}")
