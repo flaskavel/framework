@@ -4,7 +4,7 @@ from flaskavel.luminate.console.register import register
 from flaskavel.luminate.console.base.command import BaseCommand
 
 @register.command
-class CacheClear(BaseCommand):
+class CacheClearCommand(BaseCommand):
     """
     Clears Python bytecode caches (__pycache__) within the project directory.
 
@@ -35,6 +35,7 @@ class CacheClear(BaseCommand):
         - Logs a success message if the process completes successfully, or an error message if an exception occurs.
         """
         try:
+
             # Get the base project path
             base_path = os.getcwd()
 
@@ -50,5 +51,6 @@ class CacheClear(BaseCommand):
             self.success(message='The application cache has been successfully cleared.', timestamp=True)
 
         except Exception as e:
+
             # Handle any unexpected error and display the error message
-            raise ValueError(f"An unexpected error occurred while clearing the cache: {e}", timestamp=True)
+            raise RuntimeError(f"An unexpected error occurred while clearing the cache: {e}") from e

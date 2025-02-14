@@ -1,5 +1,6 @@
 from typing import Any
 from dataclasses import asdict
+from flaskavel.luminate.contracts.config.config_interface import IConfig
 from flaskavel.luminate.contracts.bootstrap.parser_interface import IParser
 
 class Parser(IParser):
@@ -43,6 +44,11 @@ class Parser(IParser):
             If the `instance.config` is not a valid dataclass or object that supports `asdict()`.
         """
         try:
+
+            # Validate inheritance from 'IConfig'
+            if not issubclass(instance, IConfig):
+                raise TypeError(f"Class {instance.__name__} must inherit from 'IConfig'.")
+
             # Check if the instance has a 'config' attribute and convert it to a dictionary
             if not hasattr(instance, 'config'):
                 raise AttributeError(f"Error: The provided instance does not have a 'config' attribute.")

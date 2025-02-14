@@ -185,6 +185,12 @@ class PypiPublisher(IPypiPublisher):
         Exception
             If any other error occurs during the deletion process.
         """
+
+        # Remove the log file if it exists
+        if os.path.exists('flaskavel.log'):
+            os.remove('flaskavel.log')
+
+        # Remove the build, dist, and egg-info directories
         folders = ["build", "dist", "flaskavel.egg-info"]
         for folder in folders:
             folder_path = os.path.join(self.project_root, folder)

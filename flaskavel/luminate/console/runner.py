@@ -5,7 +5,7 @@ from flaskavel.luminate.console.output.executor import Executor
 from flaskavel.luminate.pipelines.cli_pipeline import CLIPipeline
 from flaskavel.luminate.contracts.console.runner_interface import ICLIRunner
 
-EXCEPTIONS = ('schedule:work',)
+EXCEPTIONS = ('schedule:work','help','version',)
 
 class CLIRunner(ICLIRunner):
     """
