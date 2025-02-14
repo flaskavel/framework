@@ -2,42 +2,49 @@ from dataclasses import dataclass, field
 from typing import Dict
 
 @dataclass
-class Data:
+class App:
     """
-    Represents the application configuration.
+    Represents the application's core configuration.
+
+    This class defines the essential settings for the application, including
+    its name, debugging mode, encryption settings, and server-related properties.
 
     Attributes
     ----------
     name : str
-        The name of the application.
+        The name of the application, used in logs, UI elements, and notifications.
     debug : bool
-        Indicates whether debugging is enabled.
+        Determines whether debugging mode is enabled. Should be `False` in production.
     bytecode : bool
-        Whether bytecode caching is enabled.
+        Indicates whether Python bytecode caching (.pyc files) is enabled.
     timezone : str
-        The timezone for the application.
+        The default timezone for the application, used for logging and scheduled tasks.
     url : str
-        The base URL of the application.
+        The base URL or host address where the application runs.
     port : int
-        The port number to run the application.
+        The port number the application listens on.
+    workers : int
+        The number of worker processes handling requests (affects performance).
+    reload : bool
+        Enables automatic server reloading when code changes (useful for development).
     cipher : str
-        The encryption cipher to be used.
+        The encryption algorithm used for secure data handling (e.g., "AES-256-GCM").
     key : str
-        The encryption key.
+        The encryption key used for cryptographic operations.
     custom : dict
-        A dictionary to store any additional custom properties for the application.
-        This field is initialized with an empty dictionary by default.
+        A dictionary for storing additional custom properties. Defaults to an empty dictionary.
     """
 
-    # Application properties (e.g., name, debug status, etc.)
     name: str
     debug: bool
     bytecode: bool
     timezone: str
     url: str
     port: int
+    workers: int
+    reload: bool
     cipher: str
     key: str
 
-    # Custom dictionary to hold dynamic or extra properties, initialized as an empty dict
+    # Holds additional custom properties, initialized as an empty dictionary
     custom: Dict[str, any] = field(default_factory=dict)

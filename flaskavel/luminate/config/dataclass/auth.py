@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from typing import Dict
 
 @dataclass
-class Data:
+class Auth:
     """
     Represents a class that holds custom properties in a dictionary.
 

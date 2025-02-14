@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from typing import List, Optional, Union, Dict
 
 @dataclass
-class Data:
+class Cors:
     """
     Interface that defines the structure for configuring Cross-Origin Resource Sharing (CORS)
     for Starlette's CORSMiddleware.

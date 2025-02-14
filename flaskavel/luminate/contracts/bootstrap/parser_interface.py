@@ -20,7 +20,7 @@ class IParser(ABC):
     """
 
     @abstractmethod
-    def dataClass(self, instance: Any) -> dict:
+    def toDict(self, instance: Any) -> dict:
         """
         Converts the `config` attribute of the provided instance to a dictionary and returns it.
 

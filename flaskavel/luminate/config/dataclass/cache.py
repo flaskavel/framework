@@ -1,29 +1,51 @@
 from dataclasses import dataclass, field
-from typing import Dict
+from typing import Dict, Any
 
 @dataclass
-class Data:
+class File:
     """
-    Represents a cache system configuration.
+    Represents a file storage path.
+
+    Attributes
+    ----------
+    path : str
+        The file path used for caching.
+    """
+    path: str
+
+@dataclass
+class Stores:
+    """
+    Defines available cache stores.
+
+    Attributes
+    ----------
+    file : File
+        An instance of `File` representing file-based cache storage.
+    """
+    file: File
+
+@dataclass
+class Cache:
+    """
+    Configuration for a cache system.
 
     Attributes
     ----------
     default : str
-        A string representing the default cache storage option (e.g., "ram" or "file").
-    stores : dict
-        A dictionary representing different cache stores. Each key-value pair
-        should define a store type and its associated configuration.
-    custom : dict
-        A dictionary for additional custom properties related to the cache system.
-        This field is initialized with an empty dictionary by default.
+        The default cache storage type (e.g., "ram" or "file").
+    stores : Stores
+        An instance of `Stores` containing cache storage configurations.
+    custom : Dict[str, Any], optional
+        A dictionary containing additional custom properties for cache configuration.
+        Defaults to an empty dictionary.
 
     Notes
     -----
-    The `default` attribute should specify the default cache storage type,
-    and the `stores` attribute should hold the configurations for different cache stores.
-    The `custom` field allows for extra properties to be dynamically added if needed.
+    - The `default` attribute defines the main cache type.
+    - The `stores` attribute holds configurations for different cache stores.
+    - The `custom` attribute allows for dynamic additional properties if needed.
     """
-
     default: str
-    stores: dict
-    custom: Dict[str, any] = field(default_factory=dict)
+    stores: Stores = field(default_factory=lambda: Stores(File("")))
+    custom: Dict[str, Any] = field(default_factory=dict)
