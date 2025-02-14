@@ -1,8 +1,7 @@
 import unittest
 from tests.tools.test_reflection import *
 
-if __name__ == "__main__":
-
+def run_tests():
     # Create a test loader and test suite
     loader = unittest.TestLoader()
     suite = unittest.TestSuite()
@@ -18,6 +17,7 @@ if __name__ == "__main__":
 
     # Check how many tests failed
     if len(result.failures) > 0:
-        print(f"Total failures: {len(result.failures)}")
-    else:
-        print("All tests passed!")
+        raise ValueError(f"{len(result.failures)} test(s) failed.")
+
+if __name__ == "__main__":
+    run_tests()

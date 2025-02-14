@@ -1,4 +1,5 @@
 from flaskavel.luminate.publisher.pypi import PypiPublisher
+from test import run_tests
 
 if __name__ == "__main__":
     """
@@ -18,6 +19,11 @@ if __name__ == "__main__":
         it is caught and raised as a `ValueError` with a descriptive message.
     """
     try:
+
+        # Import the test module to ensure all tests pass before publishing
+        run_tests()
+
+        # Publish the package
         publisher = PypiPublisher()
         publisher.gitPush()
         publisher.build()
