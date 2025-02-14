@@ -3,31 +3,50 @@ from typing import Any, List, Optional
 
 class IReflection(ABC):
     """
-    Interface for Reflection class to dynamically inspect and load classes and their attributes.
-    This interface defines the contract for any class that performs reflection-based operations on Python classes.
+    Abstract base class for reflection operations on a Python class.
+    This interface defines the methods that any reflection class must implement.
     """
+
+    @abstractmethod
+    def safeImport(self):
+        """
+        Safely imports the module and class as specified in the instance.
+        """
+        pass
+
+    @abstractmethod
+    def getFile(self) -> str:
+        """
+        Retrieves the file path where the class is defined.
+
+        Returns
+        -------
+        str
+            The file path of the class definition.
+        """
+        pass
 
     @abstractmethod
     def hasClass(self) -> bool:
         """
-        Checks if the class exists within the module.
+        Checks whether the class object is available.
 
         Returns
         -------
         bool
-            True if the class is defined, False otherwise.
+            True if the class is loaded, False otherwise.
         """
         pass
 
     @abstractmethod
     def hasMethod(self, method_name: str) -> bool:
         """
-        Checks if the class has a method with the specified name.
+        Checks whether the specified method exists in the class.
 
         Parameters
         ----------
         method_name : str
-            The name of the method to check for.
+            The name of the method to check.
 
         Returns
         -------
@@ -39,12 +58,12 @@ class IReflection(ABC):
     @abstractmethod
     def hasProperty(self, prop: str) -> bool:
         """
-        Checks if the class has a property with the specified name.
+        Checks whether the specified property exists in the class.
 
         Parameters
         ----------
         prop : str
-            The name of the property to check for.
+            The name of the property to check.
 
         Returns
         -------
@@ -56,12 +75,12 @@ class IReflection(ABC):
     @abstractmethod
     def hasConstant(self, constant: str) -> bool:
         """
-        Checks if the class or module contains a constant with the specified name.
+        Checks whether the specified constant exists in the class.
 
         Parameters
         ----------
         constant : str
-            The name of the constant to check for.
+            The name of the constant to check.
 
         Returns
         -------
@@ -73,24 +92,24 @@ class IReflection(ABC):
     @abstractmethod
     def getAttributes(self) -> List[str]:
         """
-        Retrieves all attributes of the class.
+        Retrieves a list of all attributes (including methods and properties) of the class.
 
         Returns
         -------
         list
-            A list of attribute names of the class.
+            A list of attribute names in the class.
         """
         pass
 
     @abstractmethod
-    def getConstructor(self) -> Optional[Any]:
+    def getConstructor(self):
         """
         Retrieves the constructor (__init__) of the class.
 
         Returns
         -------
-        callable or None
-            The constructor method if it exists, None otherwise.
+        function or None
+            The constructor method if available, otherwise None.
         """
         pass
 
@@ -102,26 +121,31 @@ class IReflection(ABC):
         Returns
         -------
         str or None
-            The class docstring if available, None otherwise.
+            The docstring of the class if available, otherwise None.
         """
         pass
 
     @abstractmethod
-    def getFileName(self) -> Optional[str]:
+    def getFileName(self, remove_extension: bool = False) -> str:
         """
         Retrieves the file name where the class is defined.
 
+        Parameters
+        ----------
+        remove_extension : bool, optional
+            If True, the file extension will be removed from the filename. Default is False.
+
         Returns
         -------
-        str or None
-            The file name if the class is found, None otherwise.
+        str
+            The file name of the class definition.
         """
         pass
 
     @abstractmethod
-    def getMethod(self, method_name: str) -> Optional[Any]:
+    def getMethod(self, method_name: str):
         """
-        Retrieves the method with the specified name from the class.
+        Retrieves the specified method from the class.
 
         Parameters
         ----------
@@ -130,15 +154,15 @@ class IReflection(ABC):
 
         Returns
         -------
-        callable or None
-            The method if found, None otherwise.
+        function or None
+            The method if it exists, otherwise None.
         """
         pass
 
     @abstractmethod
     def getMethods(self) -> List[str]:
         """
-        Retrieves all methods within the class.
+        Retrieves a list of all methods in the class.
 
         Returns
         -------
@@ -148,33 +172,33 @@ class IReflection(ABC):
         pass
 
     @abstractmethod
-    def getName(self) -> Optional[str]:
+    def getName(self) -> str:
         """
         Retrieves the name of the class.
 
         Returns
         -------
         str or None
-            The name of the class if available, None otherwise.
+            The name of the class if available, otherwise None.
         """
         pass
 
     @abstractmethod
     def getParentClass(self) -> Optional[tuple]:
         """
-        Retrieves the parent class of the class.
+        Retrieves the parent classes (base classes) of the class.
 
         Returns
         -------
         tuple or None
-            A tuple of base classes if available, None otherwise.
+            A tuple of base classes if available, otherwise None.
         """
         pass
 
     @abstractmethod
     def getProperties(self) -> List[str]:
         """
-        Retrieves all properties within the class.
+        Retrieves a list of all properties of the class.
 
         Returns
         -------
@@ -184,9 +208,9 @@ class IReflection(ABC):
         pass
 
     @abstractmethod
-    def getProperty(self, prop: str) -> Optional[Any]:
+    def getProperty(self, prop: str):
         """
-        Retrieves the value of a specified property.
+        Retrieves the specified property from the class.
 
         Parameters
         ----------
@@ -195,15 +219,15 @@ class IReflection(ABC):
 
         Returns
         -------
-        any
-            The value of the property if found, None otherwise.
+        property or None
+            The property if it exists, otherwise None.
         """
         pass
 
     @abstractmethod
     def isAbstract(self) -> bool:
         """
-        Checks if the class is abstract.
+        Checks whether the class is abstract.
 
         Returns
         -------
@@ -215,19 +239,53 @@ class IReflection(ABC):
     @abstractmethod
     def isEnum(self) -> bool:
         """
-        Checks if the class is an Enum.
+        Checks whether the class is an enumeration.
 
         Returns
         -------
         bool
-            True if the class is an Enum, False otherwise.
+            True if the class is a subclass of Enum, False otherwise.
+        """
+        pass
+
+    @abstractmethod
+    def isSubclassOf(self, parent: type) -> bool:
+        """
+        Checks whether the class is a subclass of the specified parent class.
+
+        Parameters
+        ----------
+        parent : type
+            The parent class to check against.
+
+        Returns
+        -------
+        bool
+            True if the class is a subclass of the parent, False otherwise.
+        """
+        pass
+
+    @abstractmethod
+    def isInstanceOf(self, instance: Any) -> bool:
+        """
+        Checks whether the class is an instance of the specified class.
+
+        Parameters
+        ----------
+        parent : type
+            The class to check against.
+
+        Returns
+        -------
+        bool
+            True if the class is a subclass of the parent, False otherwise.
         """
         pass
 
     @abstractmethod
     def isIterable(self) -> bool:
         """
-        Checks if the class is iterable.
+        Checks whether the class is iterable.
 
         Returns
         -------
@@ -239,26 +297,26 @@ class IReflection(ABC):
     @abstractmethod
     def isInstantiable(self) -> bool:
         """
-        Checks if the class can be instantiated.
+        Checks whether the class can be instantiated.
 
         Returns
         -------
         bool
-            True if the class can be instantiated, False otherwise.
+            True if the class is callable and not abstract, False otherwise.
         """
         pass
 
     @abstractmethod
-    def newInstance(self, *args, **kwargs) -> Any:
+    def newInstance(self, *args, **kwargs):
         """
-        Creates a new instance of the class with the provided arguments.
+        Creates a new instance of the class if it is instantiable.
 
         Parameters
         ----------
-        *args : tuple
-            Arguments passed to the class constructor.
-        **kwargs : dict
-            Keyword arguments passed to the class constructor.
+        args : tuple
+            Arguments to pass to the class constructor.
+        kwargs : dict
+            Keyword arguments to pass to the class constructor.
 
         Returns
         -------
@@ -268,7 +326,7 @@ class IReflection(ABC):
         Raises
         ------
         TypeError
-            If the class cannot be instantiated.
+            If the class is not instantiable.
         """
         pass
 
@@ -280,6 +338,6 @@ class IReflection(ABC):
         Returns
         -------
         str
-            The string representation of the Reflection instance.
+            A string describing the class and module.
         """
         pass

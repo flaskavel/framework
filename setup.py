@@ -38,5 +38,6 @@ setup(
             "flaskavel=flaskavel.cli_manager:main",
             "fk=flaskavel.cli_manager:main"
         ]
-    }
+    },
+    test_suite="tests"
 )

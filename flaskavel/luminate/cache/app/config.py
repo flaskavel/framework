@@ -1,4 +1,3 @@
-from flaskavel.luminate.config.sections import SECTIONS
 from typing import Dict, Any
 
 class CacheConfig:
@@ -46,14 +45,8 @@ class CacheConfig:
         Raises
         ------
         ValueError
-            If the section is not in the list of allowed SECTIONS.
             If the section is already registered.
         """
-        if section not in SECTIONS:
-            raise ValueError(
-                f"Invalid configuration section '{section}'. Allowed sections: {SECTIONS}"
-            )
-
         if section in self.config:
             raise ValueError(f"Configuration section '{section}' is already registered.")
 

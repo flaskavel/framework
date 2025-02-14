@@ -1,4 +1,6 @@
 from flaskavel.luminate.bootstrap.parser import Parser
+from flaskavel.luminate.config.sections import SECTIONS
+from flaskavel.luminate.tools.reflection import Reflection
 from flaskavel.luminate.cache.app.config import CacheConfig
 from flaskavel.luminate.contracts.config.config_interface import IConfig
 
@@ -64,19 +66,29 @@ class Register:
             raise ValueError(f"Class {config_class.__name__} must have a 'config' attribute.")
 
         # Extract module name
-        section = config_class.__module__.split('.')[-1]
+        section = Reflection(config_class).getFileName(remove_extension=True)
 
+        # Validate section
+        if section not in SECTIONS:
+            raise ValueError(
+                f"Invalid configuration section '{section}'. Allowed sections: {SECTIONS}"
+            )
+
+        # Validate inheritance
         if not issubclass(config_class, IConfig):
             raise TypeError(f"Class {config_class.__name__} must inherit from 'IConfig'.")
 
+        # Check if section is already registered
         if section in self.cache_config.config:
             raise ValueError(f"Configuration section '{section}' is already registered.")
 
+        # Register configuration
         self.cache_config.register(
             section=section,
             data=Parser.toDict(config_class)
         )
 
+        # Return the original class
         return config_class
 
 # Create a global Register instance
