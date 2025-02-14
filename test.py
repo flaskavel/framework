@@ -14,4 +14,10 @@ if __name__ == "__main__":
     runner = unittest.TextTestRunner()
 
     # Run the tests
-    runner.run(suite)
+    result = runner.run(suite)
+
+    # Check how many tests failed
+    if len(result.failures) > 0:
+        print(f"Total failures: {len(result.failures)}")
+    else:
+        print("All tests passed!")
