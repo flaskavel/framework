@@ -1,20 +1,21 @@
-from flaskavel.luminate.test.unit_test import UnitTest
+from flaskavel.luminate.facades.tests import UnitTests
 
-# Ensures that the script runs only when executed directly,
-# preventing it from running if imported as a module.
+def handle_test_framework() -> dict:
+    """
+    Executes the test framework using the UnitTest facade.
 
-def handle_test_framework():
+    This function serves as a wrapper to execute the UnitTests with the default settings.
 
-    # Initialize the test suite using the custom testing framework.
-    test_suite = UnitTest()
-
-    # Add test cases from the 'tools' folder that match the default pattern ('test_*.py').
-    test_suite.addFolderTests('tools')
-
-    # Execute the test suite and raise an exception if any test fails.
-    return test_suite.run()
+    Returns:
+    - dict: The results of the executed tests.
+    """
+    return UnitTests.execute(pattern="test_*.py")
 
 if __name__ == "__main__":
+    """
+    Ensures the script runs only when executed directly.
 
-    # Run the test framework when the script is executed directly.
+    This condition prevents the script from executing when it is imported as a module
+    into another script.
+    """
     handle_test_framework()
