@@ -1,4 +1,4 @@
-from flaskavel.luminate.test.framework import TestFlaskavelFramework
+from flaskavel.luminate.test.unit_test import UnitTest
 
 # Ensures that the script runs only when executed directly,
 # preventing it from running if imported as a module.
@@ -6,7 +6,7 @@ from flaskavel.luminate.test.framework import TestFlaskavelFramework
 def handle_test_framework():
 
     # Initialize the test suite using the custom testing framework.
-    test_suite = TestFlaskavelFramework()
+    test_suite = UnitTest()
 
     # Add test cases from the 'tools' folder that match the default pattern ('test_*.py').
     test_suite.addFolderTests('tools')

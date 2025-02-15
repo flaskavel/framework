@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-class ITestFlaskavelFramework(ABC):
+class IUnitTest(ABC):
     """
     A testing framework for discovering and running unit tests in a structured way.
 

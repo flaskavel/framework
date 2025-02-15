@@ -3,9 +3,9 @@ import re
 import unittest
 from contextlib import redirect_stdout
 from flaskavel.luminate.console.output.console import Console
-from flaskavel.luminate.contracts.test.framework_interface import ITestFlaskavelFramework
+from flaskavel.luminate.contracts.test.unit_test_interface import IUnitTest
 
-class TestFlaskavelFramework(ITestFlaskavelFramework):
+class UnitTest(IUnitTest):
     """
     A testing framework for discovering and running unit tests in a structured way.
 
@@ -70,7 +70,7 @@ class TestFlaskavelFramework(ITestFlaskavelFramework):
             If one or more tests fail.
         """
         Console.newLine()
-        Console.info("Running Flaskavel Framework Tests... 🔍")
+        Console.info("Running Tests... 🔍")
         Console.newLine()
 
         # Capture output safely
@@ -81,9 +81,9 @@ class TestFlaskavelFramework(ITestFlaskavelFramework):
 
         # Display summary table
         summary = {
-            "Total Tests": result.testsRun,
-            "Failures": len(result.failures),
-            "Errors": len(result.errors)
+            "tests": result.testsRun,
+            "failures": len(result.failures),
+            "errors": len(result.errors)
         }
         Console.table(headers=summary.keys(), rows=[summary.values()])
         Console.newLine()
