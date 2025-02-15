@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Union
 
 @dataclass
 class Single:
@@ -47,20 +47,28 @@ class Chunked:
     """
     Represents a chunked log file configuration.
 
+    This configuration ensures that log files are split into manageable chunks
+    based on size or number of files to prevent excessive file growth.
+
     Attributes
     ----------
     path : str
         The file path where chunked logs are stored.
     level : str
         The logging level (e.g., 'info', 'error', 'debug').
-    lines : int
-        The maximum number of lines per log file before creating a new chunk.
+    max_size : Union[int, str]
+        The maximum file size before creating a new chunk.
+        Can be an integer (bytes) or a string (e.g., '10MB', '500KB').
+    max_files : int
+        The maximum number of log files to retain before older files are deleted.
     stream : bool
         Whether to output logs to the console.
     """
+
     path: str
     level: str
-    lines: int
+    max_size: Union[int, str]  # Supports both numeric and formatted string sizes ('10MB')
+    max_files: int  # Ensures only a certain number of log files are kept
     stream: bool
 
 
