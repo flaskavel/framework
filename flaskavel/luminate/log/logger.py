@@ -86,6 +86,7 @@ class Logguer(ILogger):
                 encoding="utf-8",
                 handlers=[
                     logging.FileHandler(path)
+                    # logging.StreamHandler()
                 ]
             )
 
