@@ -3,10 +3,8 @@ from flaskavel.luminate.facades.log import Log
 from flaskavel.luminate.console.output.console import Console
 from flaskavel.luminate.console.output.executor import Executor
 from flaskavel.luminate.pipelines.cli_pipeline import CLIPipeline
+from flaskavel.luminate.console.command_filter import CommandFilter
 from flaskavel.luminate.contracts.console.runner_interface import ICLIRunner
-
-# Exceptions to the command execution logging
-EXCEPTIONS = ('schedule:work','help','version','tests:run')
 
 class CLIRunner(ICLIRunner):
     """
@@ -59,6 +57,10 @@ class CLIRunner(ICLIRunner):
         """
 
         try:
+
+            # Exclude commands from Printing
+            exclude_running = CommandFilter.isExcluded(signature)
+
             # Determine if command is being executed from sys.argv
             sys_argv = signature is None
 
@@ -67,6 +69,8 @@ class CLIRunner(ICLIRunner):
 
             # Handle command signature extraction from sys.argv
             if sys_argv:
+
+                # Extract command signature and arguments from sys.argv
                 if not args or len(args[0]) <= 1:
                     raise ValueError("No command signature specified.")
 
@@ -76,7 +80,8 @@ class CLIRunner(ICLIRunner):
 
             # Log command execution start
             Log.info(f"Running command: {signature}")
-            if signature not in EXCEPTIONS:
+
+            if not exclude_running:
                 Executor.running(program=signature)
 
             # Initialize command pipeline
@@ -95,7 +100,7 @@ class CLIRunner(ICLIRunner):
             Log.success(f"Command executed successfully: {signature}")
 
             # Calculate execution time
-            if signature not in EXCEPTIONS:
+            if not exclude_running:
                 elapsed_time = round(time.perf_counter() - start_time, 2)
                 Executor.done(program=signature, time=f"{elapsed_time}s")
 
@@ -106,7 +111,7 @@ class CLIRunner(ICLIRunner):
 
             # Handle missing or invalid command signature
             Log.error(f"Command failed: {signature or 'Unknown'}, Value Error: {e}")
-            if signature not in EXCEPTIONS:
+            if not exclude_running:
                 Console.error(message=f"Value Error: {e}")
                 elapsed_time = round(time.perf_counter() - start_time, 2)
                 Executor.fail(program=signature or "Unknown", time=f"{elapsed_time}s")
@@ -115,7 +120,7 @@ class CLIRunner(ICLIRunner):
 
             # Handle unexpected errors
             Log.error(f"Command failed: {signature or 'Unknown'}, Execution Error: {e}")
-            if signature not in EXCEPTIONS:
+            if not exclude_running:
                 Console.error(message=f"Execution Error: {e}")
                 elapsed_time = round(time.perf_counter() - start_time, 2)
                 Executor.fail(program=signature or "Unknown", time=f"{elapsed_time}s")
