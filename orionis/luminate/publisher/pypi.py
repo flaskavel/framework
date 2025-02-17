@@ -160,7 +160,7 @@ class PypiPublisher(IPypiPublisher):
             )
             print(xxx)
         except Exception as e:
-            Console.fail("🔴 Error loading the package. Try changing the version and retry.")
+            Console.fail(f"🔴 Error loading the package. Try changing the version and retry. Error: {e}")
             Console.warning("⛔ If the issue persists, review the script in detail.")
             exit()
 
