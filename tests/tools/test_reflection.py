@@ -126,9 +126,3 @@ class TestReflection(unittest.TestCase):
         str_rep = str(self.reflection)
         self.assertIn("Orionis Reflection class", str_rep)
         self.assertIn("TestClass", str_rep)
-
-
-
-
-
-

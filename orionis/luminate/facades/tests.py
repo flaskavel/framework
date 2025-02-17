@@ -40,9 +40,7 @@ class UnitTests(IUnitTests):
         tests_path = os.path.join(os.getcwd(), 'tests')
 
         # Recursively walk through the 'tests' directory
-        test_suite.addFolderTests(folder_path='/', pattern=pattern)
         for root, dirs, files in os.walk(tests_path):
-            # Add tests from each directory that match the provided pattern
             for dir in dirs:
                 test_suite.addFolderTests(folder_path=dir, pattern=pattern)
 
