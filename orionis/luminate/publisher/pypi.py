@@ -154,11 +154,10 @@ class PypiPublisher(IPypiPublisher):
 
         Console.info("📤 Uploading package to PyPI...")
         try:
-            xxx = subprocess.run(
+            subprocess.run(
                 [twine_path, "upload", "dist/*", "-u", "__token__", "-p", token],
                 check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=self.project_root
             )
-            print(xxx)
         except Exception as e:
             Console.fail(f"🔴 Error loading the package. Try changing the version and retry. Error: {e}")
             Console.warning("⛔ If the issue persists, review the script in detail.")
