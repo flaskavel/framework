@@ -18,6 +18,7 @@ venv/
 build/
 dist/
 *.egg-info/
+pypi.json
 
 # ========================
 # 🔄 Local Runner (Scripts)
