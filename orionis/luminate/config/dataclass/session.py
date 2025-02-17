@@ -22,7 +22,7 @@ class Cookie:
         The SameSite policy for the session cookie ('lax', 'strict', or 'none').
     """
 
-    name: str
+    name: str = "orionis_session"
     path: str
     domain: Optional[str]
     secure: Optional[bool]
