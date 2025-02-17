@@ -1,6 +1,6 @@
 import os
 import unittest
-from flaskavel.luminate.tools.reflection import Reflection
+from orionis.luminate.tools.reflection import Reflection
 from tests.tools.class_example import BaseTestClass, TestClass, TestEnum
 
 class TestReflection(unittest.TestCase):
@@ -124,7 +124,7 @@ class TestReflection(unittest.TestCase):
     def test_str_representation(self):
         """Test the string representation of the reflection instance."""
         str_rep = str(self.reflection)
-        self.assertIn("Flaskavel Reflection class", str_rep)
+        self.assertIn("Orionis Reflection class", str_rep)
         self.assertIn("TestClass", str_rep)
 
 

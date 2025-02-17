@@ -1,19 +1,43 @@
-# Byte-Compiled / Optimized / DLL files
+# ========================
+# 💾 Python-related files
+# ========================
 __pycache__/
 *.py[cod]
 *$py.class
 
-# Local Runner
-cli
+# ========================
+# ⚙️ Virtual Environments & Dependencies
+# ========================
+.env
+venv/
+*.venv/
 
-# Distribution / Packaging
+# ========================
+# 📦 Build & Distribution
+# ========================
 build/
 dist/
 *.egg-info/
 
-# dotenv
-.env
-venv/
+# ========================
+# 🔄 Local Runner (Scripts)
+# ========================
+cli
 
-# VS Code
+# ========================
+# 🛠 IDE & Editor Configs
+# ========================
 .vscode/
+.idea/
+*.iml
+
+# ========================
+# 🚀 Logs & Debugging
+# ========================
+orionis.log
+
+# ========================
+# 📂 Miscellaneous
+# ========================
+.DS_Store
+Thumbs.db

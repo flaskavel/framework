@@ -1,6 +1,6 @@
 from test import handle_test_framework
-from flaskavel.luminate.publisher.pypi import PypiPublisher
-from flaskavel.luminate.test.exception import FlaskavelTestFailureException
+from orionis.luminate.publisher.pypi import PypiPublisher
+from orionis.luminate.test.exception import OrionisTestFailureException
 
 # Ensures that the script runs only when executed directly,
 def handle_publishing_framework():
@@ -40,7 +40,7 @@ if __name__ == "__main__":
         result = handle_test_framework()
 
         if result.get('failures') > 0 or result.get('errors') > 0:
-            raise FlaskavelTestFailureException("Tests failed. Publishing aborted.")
+            raise OrionisTestFailureException("Tests failed. Publishing aborted.")
 
         # Run the publishing framework when the script is executed directly.
         handle_publishing_framework()
@@ -48,5 +48,5 @@ if __name__ == "__main__":
     except Exception as e:
 
         # Raise a general error if the exception is not a test failure exception
-        if not type(e) is FlaskavelTestFailureException:
+        if not type(e) is OrionisTestFailureException:
             raise ValueError(f"General Error: {e}")

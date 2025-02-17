@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-from flaskavel.framework import *
+from orionis.framework import *
 
 setup(
     name=NAME,
@@ -19,24 +19,12 @@ setup(
     ],
     python_requires=PYTHON_REQUIRES,
     install_requires=[
-        # New Version
         "apscheduler>=3.11.0",
-        # Old Version
-        "bcrypt>=4.2.0",
-        "greenlet>=3.1.0",
-        "pyclean>=3.0.0",
-        "schedule>=1.2.2",
-        "SQLAlchemy>=2.0.35",
-        "typing_extensions>=4.12.2",
-        "python-dotenv>=1.0.1",
-        "cryptography>=43.0.3",
-        "Flask>=3.0.3",
-        "Flask-Cors>=5.0.0"
+        "python-dotenv>=1.0.1"
     ],
     entry_points={
         "console_scripts": [
-            "flaskavel=flaskavel.cli_manager:main",
-            "fk=flaskavel.cli_manager:main"
+            "orionis=orionis.cli_manager:main"
         ]
     },
     test_suite="tests"
