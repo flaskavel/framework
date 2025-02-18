@@ -2,6 +2,8 @@
 
 🚀 **Orionis Framework – Elegant, Fast, and Powerful** ⚡
 
+![Orionis Framework Logo](https://raw.githubusercontent.com/orionis-framework/framework/refs/heads/1.x/orionis/luminate/static/logos/OrionisFramework.png)
+
 🔬 **(Currently in Beta – Evolving Towards Perfection!)**
 
 ---
