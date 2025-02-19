@@ -77,7 +77,7 @@ class PypiPublisher(IPypiPublisher):
 
         # Verificamos si el comando fue exitoso
         if result.returncode == 0:
-            Console.info("✔️ Archivos removidos del índice con éxito")
+            Console.info("✅ Archivos removidos del índice con éxito")
 
         # Añadimos un pequeño retraso para evitar problemas de sincronización
         time.sleep(4)
