@@ -71,13 +71,16 @@ class PypiPublisher(IPypiPublisher):
         subprocess.CalledProcessError
             If any of the subprocess calls to Git fail.
         """
-        try:
-            subprocess.run(
-                ["git", "rm", "-r", "--cached", "."], capture_output=True, text=True, cwd=self.project_root
-            )
-            time.sleep(4)
-        except Exception as e:
-            Console.error(f"❌ Error: {e}")
+        result = subprocess.run(
+            ["git", "rm", "-r", "--cached", "."], capture_output=True, text=True, cwd=self.project_root, check=True
+        )
+
+        # Verificamos si el comando fue exitoso
+        if result.returncode == 0:
+            print("✔️ Archivos removidos del índice con éxito")
+
+        # Añadimos un pequeño retraso para evitar problemas de sincronización
+        time.sleep(4)
 
         git_status = subprocess.run(
             ["git", "status", "--short"], capture_output=True, text=True, cwd=self.project_root
@@ -164,6 +167,7 @@ class PypiPublisher(IPypiPublisher):
                 check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=self.project_root
             )
         except Exception as e:
+            print(e.__traceback__)
             Console.fail(f"🔴 Error loading the package. Try changing the version and retry. Error: {e}")
             Console.warning("⛔ If the issue persists, review the script in detail.")
             exit()
