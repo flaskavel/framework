@@ -31,9 +31,7 @@ class OrionisTestFailureException(Exception):
         response : str
             The message describing the test failure.
         """
-        self.response = response
-
-        # Ensures proper initialization of the Exception class
+        # Pass the response to the base Exception class
         super().__init__(response)
 
     def __str__(self) -> str:
@@ -45,4 +43,4 @@ class OrionisTestFailureException(Exception):
         str
             A formatted string containing the exception name and response message.
         """
-        return f"[OrionisTestFailureException]: {self.response}"
+        return f"[OrionisTestFailureException]: {self.args[0]}"

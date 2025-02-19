@@ -4,12 +4,12 @@ class CLIOrionisException(Exception):
 
     Parameters
     ----------
-    response : str
+    message : str
         The response message associated with the exception.
 
     Attributes
     ----------
-    response : str
+    message : str
         Stores the response message passed during initialization.
 
     Methods
@@ -18,16 +18,16 @@ class CLIOrionisException(Exception):
         Returns a string representation of the exception, including the response message.
     """
 
-    def __init__(self, response: str):
+    def __init__(self, message: str):
         """
         Initializes the CLIOrionisException with the given response message.
 
         Parameters
         ----------
-        response : str
+        message : str
             The response message associated with the exception.
         """
-        self.response = response
+        super().__init__(message)
 
     def __str__(self):
         """
@@ -38,20 +38,21 @@ class CLIOrionisException(Exception):
         str
             A string containing the exception name and the response message.
         """
-        return f"[CLIOrionisException]: {self.response}"
+        return f"[CLIOrionisException]: {self.args[0]}"
+
 
 class CLIOrionisValueError(ValueError):
     """
-    Custom exception raised when there is an issue with dumping the Orionis data.
+    Custom exception raised when there is a value error in Orionis data processing.
 
     Parameters
     ----------
-    response : str
+    message : str
         The response message associated with the exception.
 
     Attributes
     ----------
-    response : str
+    message : str
         Stores the response message passed during initialization.
 
     Methods
@@ -60,16 +61,16 @@ class CLIOrionisValueError(ValueError):
         Returns a string representation of the exception, including the response message.
     """
 
-    def __init__(self, response: str):
+    def __init__(self, message: str):
         """
         Initializes the CLIOrionisValueError with the given response message.
 
         Parameters
         ----------
-        response : str
+        message : str
             The response message associated with the exception.
         """
-        self.response = response
+        super().__init__(message)
 
     def __str__(self):
         """
@@ -80,20 +81,21 @@ class CLIOrionisValueError(ValueError):
         str
             A string containing the exception name and the response message.
         """
-        return f"[CLIOrionisValueError]: {self.response}"
+        return f"[CLIOrionisValueError]: {self.args[0]}"
+
 
 class CLIOrionisScheduleException(Exception):
     """
-    Custom exception raised when there is an issue with dumping the Orionis data.
+    Custom exception raised when there is an issue with the Orionis schedule.
 
     Parameters
     ----------
-    response : str
+    message : str
         The response message associated with the exception.
 
     Attributes
     ----------
-    response : str
+    message : str
         Stores the response message passed during initialization.
 
     Methods
@@ -102,16 +104,16 @@ class CLIOrionisScheduleException(Exception):
         Returns a string representation of the exception, including the response message.
     """
 
-    def __init__(self, response: str):
+    def __init__(self, message: str):
         """
         Initializes the CLIOrionisScheduleException with the given response message.
 
         Parameters
         ----------
-        response : str
+        message : str
             The response message associated with the exception.
         """
-        self.response = response
+        super().__init__(message)
 
     def __str__(self):
         """
@@ -122,4 +124,4 @@ class CLIOrionisScheduleException(Exception):
         str
             A string containing the exception name and the response message.
         """
-        return f"[CLIOrionisScheduleException]: {self.response}"
+        return f"[CLIOrionisScheduleException]: {self.args[0]}"
