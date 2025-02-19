@@ -236,15 +236,24 @@ class Container:
             if len(parameters) == 0 or (len(parameters) == 1 and "self" in parameters):
                 return concrete()
 
+            # Resolve the dependencies of the class constructor
             dependencies = {}
             for name, param in parameters.items():
                 if name == "self" or param.kind in (param.VAR_POSITIONAL, param.VAR_KEYWORD):
                     continue
 
+                # If the parameter has a default value, use it directly
                 param_type = param.annotation
+
+                # If the parameter type is not specified, try to resolve it by name
                 if param_type == param.empty:
+                    if param.default != param.empty:
+                        # Use the default value if available
+                        continue
+
                     raise OrionisContainerValueError(f"Parameter type {name} not specified in {concrete.__name__}")
 
+                # If the parameter type is a primitive, use it directly
                 dep_name = param_type.__name__
 
                 # Conditional resolution of dependencies, if registered
