@@ -77,7 +77,7 @@ class PypiPublisher(IPypiPublisher):
 
         # Verificamos si el comando fue exitoso
         if result.returncode == 0:
-            print("✔️ Archivos removidos del índice con éxito")
+            Console.info("✔️ Archivos removidos del índice con éxito")
 
         # Añadimos un pequeño retraso para evitar problemas de sincronización
         time.sleep(4)
@@ -167,7 +167,7 @@ class PypiPublisher(IPypiPublisher):
                 check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=self.project_root
             )
         except Exception as e:
-            print(e.__traceback__)
+            print(e)
             Console.fail(f"🔴 Error loading the package. Try changing the version and retry. Error: {e}")
             Console.warning("⛔ If the issue persists, review the script in detail.")
             exit()
