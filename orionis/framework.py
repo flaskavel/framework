@@ -1,45 +1,35 @@
 #--------------------------------------------------------------------------
-# Name of the project or framework
+# Framework Information
 #--------------------------------------------------------------------------
+# Name of the framework
 NAME = "orionis"
 
-#--------------------------------------------------------------------------
-# Current version of the project or framework
-#--------------------------------------------------------------------------
+# Current version of the framework
 VERSION = "0.6.0"
 
-#--------------------------------------------------------------------------
 # Full name of the author or maintainer of the project
-#--------------------------------------------------------------------------
 AUTHOR = "Raul Mauricio Uñate Castro"
 
-#--------------------------------------------------------------------------
 # Email address of the author or maintainer for contact purposes
-#--------------------------------------------------------------------------
 AUTHOR_EMAIL = "raulmauriciounate@gmail.com"
 
-#--------------------------------------------------------------------------
 # Short description of the project or framework
-#--------------------------------------------------------------------------
 DESCRIPTION = "Orionis Framework – Elegant, Fast, and Powerful."
 
 #--------------------------------------------------------------------------
-# URL to the project's skeleton or template repository
-# This is typically used for initial project setup
+# Project URLs
 #--------------------------------------------------------------------------
+# URL to the project's skeleton or template repository (for initial setup)
 SKELETON = "https://github.com/orionis-framework/skeleton"
 
-#--------------------------------------------------------------------------
-# URL to the project's framework repository
-#--------------------------------------------------------------------------
+# URL to the project's main framework repository
 FRAMEWORK = "https://github.com/orionis-framework/framework"
 
-#--------------------------------------------------------------------------
 # URL to the project's documentation
-#--------------------------------------------------------------------------
 DOCS = "https://github.com/orionis-framework/docs"
 
 #--------------------------------------------------------------------------
-# Minimum Python version required to run the project
+# Python Requirements
 #--------------------------------------------------------------------------
+# Minimum Python version required to run the project
 PYTHON_REQUIRES = ">=3.12"
