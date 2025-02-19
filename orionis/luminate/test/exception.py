@@ -45,4 +45,4 @@ class OrionisTestFailureException(Exception):
         str
             A formatted string containing the exception name and response message.
         """
-        return f"OrionisTestFailureException: {self.response}"
+        return f"[OrionisTestFailureException]: {self.response}"

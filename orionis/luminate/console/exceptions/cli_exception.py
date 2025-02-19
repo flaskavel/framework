@@ -38,9 +38,9 @@ class CLIOrionisException(Exception):
         str
             A string containing the exception name and the response message.
         """
-        return f"CLIOrionisException: {self.response}"
+        return f"[CLIOrionisException]: {self.response}"
 
-class CLIOrionisValueError(Exception):
+class CLIOrionisValueError(ValueError):
     """
     Custom exception raised when there is an issue with dumping the Orionis data.
 
@@ -80,7 +80,7 @@ class CLIOrionisValueError(Exception):
         str
             A string containing the exception name and the response message.
         """
-        return f"CLIOrionisValueError: {self.response}"
+        return f"[CLIOrionisValueError]: {self.response}"
 
 class CLIOrionisScheduleException(Exception):
     """
@@ -104,7 +104,7 @@ class CLIOrionisScheduleException(Exception):
 
     def __init__(self, response: str):
         """
-        Initializes the CLIOrionisValueError with the given response message.
+        Initializes the CLIOrionisScheduleException with the given response message.
 
         Parameters
         ----------
@@ -122,4 +122,4 @@ class CLIOrionisScheduleException(Exception):
         str
             A string containing the exception name and the response message.
         """
-        return f"CLIOrionisValueError: {self.response}"
+        return f"[CLIOrionisScheduleException]: {self.response}"
