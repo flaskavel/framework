@@ -2,6 +2,7 @@ import os
 import sys
 import shutil
 import subprocess
+import time
 from orionis.framework import VERSION
 from orionis.luminate.console.output.console import Console
 from orionis.luminate.contracts.publisher.pypi_publisher_interface import IPypiPublisher
@@ -70,9 +71,13 @@ class PypiPublisher(IPypiPublisher):
         subprocess.CalledProcessError
             If any of the subprocess calls to Git fail.
         """
-        subprocess.run(
-            ["git", "rm", "-r", "--cached", "."], capture_output=True, text=True, cwd=self.project_root
-        )
+        try:
+            subprocess.run(
+                ["git", "rm", "-r", "--cached", "."], capture_output=True, text=True, cwd=self.project_root
+            )
+            time.sleep(4)
+        except Exception as e:
+            Console.error(f"❌ Error: {e}")
 
         git_status = subprocess.run(
             ["git", "status", "--short"], capture_output=True, text=True, cwd=self.project_root
