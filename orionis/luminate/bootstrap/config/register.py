@@ -17,7 +17,7 @@ class Register(IRegister):
         Registers a configuration class and ensures it meets the necessary criteria.
     """
 
-    def __init__(self, cache = CacheConfig) -> None:
+    def __init__(self, cache : CacheConfig) -> None:
         """
         Initializes the Register instance with a cache configuration.
 
