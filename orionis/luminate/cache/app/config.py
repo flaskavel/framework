@@ -10,6 +10,8 @@ class CacheConfig:
     config : dict
         A dictionary storing registered configuration sections.
     """
+    def __init__(self) -> None:
+        self.config = {}
 
     def register(self, section: str, data: Dict[str, Any]) -> None:
         """
