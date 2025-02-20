@@ -28,7 +28,7 @@ class Register(IRegister):
         """
         self.cache = cache
 
-    def config(self, config_class: type) -> type:
+    def config(self, config_class: type) -> None:
         """
         Registers a configuration class and ensures it meets the required structure.
 

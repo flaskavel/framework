@@ -14,12 +14,12 @@ class IRegister(ABC):
 
     Methods
     -------
-    config(config_class: type) -> type
+    config(config_class: type) -> None
         Registers a configuration class and ensures it meets the necessary criteria.
     """
 
     @abstractmethod
-    def config(self, config_class: type) -> type:
+    def config(self, config_class: type) -> None:
         """
         Registers a configuration class and ensures it meets the required structure.
 
