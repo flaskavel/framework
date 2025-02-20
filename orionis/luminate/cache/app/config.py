@@ -11,6 +11,12 @@ class CacheConfig:
         A dictionary storing registered configuration sections.
     """
     def __init__(self) -> None:
+        """
+        Initializes a new instance of the class with an empty configuration dictionary.
+
+        Attributes:
+            config (dict): A dictionary to store configuration settings.
+        """
         self.config = {}
 
     def register(self, section: str, data: Dict[str, Any]) -> None:
