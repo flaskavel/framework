@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from ast import List
 
 class IBootstrapper(ABC):
     """
@@ -22,7 +21,7 @@ class IBootstrapper(ABC):
     """
 
     @abstractmethod
-    def findClasses(self, file_path: str) -> List[str]:
+    def findClasses(self, file_path: str):
         """
         Parses a Python file to extract and return all defined class names.
 
