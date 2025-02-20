@@ -2,151 +2,221 @@ from abc import ABC, abstractmethod
 from typing import Any, Callable
 
 class IContainer(ABC):
-    """Service container and dependency injection."""
 
     @abstractmethod
-    def bind(self, abstract: str, concrete: Callable[..., Any]) -> None:
-        """Registers a service with a specific implementation.
-
-        Args:
-            abstract (str): Name or key of the service to register.
-            concrete (Callable[..., Any]): Concrete implementation of the service.
-
-        Raises:
-            OrionisContainerException: If the service is already registered.
-            TypeError: If the implementation is not a callable or instantiable class.
+    def _newRequest(self) -> None:
+        """
+        Reset scoped instances at the beginning of a new request.
         """
         pass
 
     @abstractmethod
-    def transient(self, abstract: str, concrete: Callable[..., Any]) -> None:
-        """Registers a service as Transient, creating a new instance on each request.
+    def _ensureNotMain(self, concrete: Callable[..., Any]) -> str:
+        """
+        Ensure that a class is not defined in the main script.
 
-        Args:
-            abstract (str): Name or key of the service to register.
-            concrete (Callable[..., Any]): Concrete implementation of the service.
+        Parameters
+        ----------
+        concrete : Callable[..., Any]
+            The class or function to check.
 
-        Raises:
-            OrionisContainerException: If the service is already registered.
-            TypeError: If the implementation is not a callable or instantiable class.
+        Returns
+        -------
+        str
+            The fully qualified name of the class.
+
+        Raises
+        ------
+        OrionisContainerValueError
+            If the class is defined in the main module.
         """
         pass
 
     @abstractmethod
-    def singleton(self, abstract: str, concrete: Callable[..., Any]) -> None:
-        """Registers a service as Singleton, ensuring a single shared instance.
+    def _ensureUniqueService(self, obj: Any) -> None:
+        """
+        Ensure that a service is not already registered.
 
-        Args:
-            abstract (str): Name or key of the service to register.
-            concrete (Callable[..., Any]): Concrete implementation of the service.
+        Parameters
+        ----------
+        obj : Any
+            The service to check.
 
-        Raises:
-            OrionisContainerException: If the service is already registered.
-            TypeError: If the implementation is not a callable or instantiable class.
+        Raises
+        ------
+        OrionisContainerValueError
+            If the service is already registered.
         """
         pass
 
     @abstractmethod
-    def scoped(self, abstract: str, concrete: Callable[..., Any]) -> None:
-        """Registers a service as Scoped, shared within the same request.
+    def _ensureIsCallable(self, concrete: Callable[..., Any]) -> None:
+        """
+        Ensure that the given implementation is callable or instantiable.
 
-        Args:
-            abstract (str): Name or key of the service to register.
-            concrete (Callable[..., Any]): Concrete implementation of the service.
+        Parameters
+        ----------
+        concrete : Callable[..., Any]
+            The implementation to check.
 
-        Raises:
-            OrionisContainerException: If the service is already registered.
-            TypeError: If the implementation is not a callable or instantiable class.
+        Raises
+        ------
+        OrionisContainerTypeError
+            If the implementation is not callable.
         """
         pass
 
     @abstractmethod
-    def instance(self, abstract: str, instance: Any) -> None:
-        """Registers a specific instance in the container, allowing it to be reused.
+    def _ensureIsInstance(self, instance: Any) -> None:
+        """
+        Ensure that the given instance is a valid object.
 
-        Args:
-            abstract (str): Name or key of the service to register.
-            instance (Any): Specific instance of the service to register.
+        Parameters
+        ----------
+        instance : Any
+            The instance to check.
 
-        Raises:
-            OrionisContainerException: If the instance is already registered.
-            ValueError: If the provided instance is of an unexpected or invalid type.
+        Raises
+        ------
+        OrionisContainerValueError
+            If the instance is not a valid object.
         """
         pass
 
     @abstractmethod
-    def has(self, abstract: str) -> bool:
-        """Checks if a service is registered in the container.
-
+    def bind(self, concrete: Callable[..., Any]) -> str:
+        """
+        Bind a callable to the container.
+        This method ensures that the provided callable is not the main function,
+        is unique within the container, and is indeed callable. It then creates
+        a unique key for the callable based on its module and name, and stores
+        the callable in the container's bindings.
         Args:
-            abstract (str): Name or key of the service to check.
-
+            concrete (Callable[..., Any]): The callable to be bound to the container.
         Returns:
-            bool: True if the service is registered, False otherwise.
-
-        Raises:
-            ValueError: If the service name (abstract) is not a valid string.
+            str: The unique key generated for the callable.
         """
         pass
 
     @abstractmethod
-    def alias(self, abstract: str, alias: str) -> None:
-        """Creates an alias for a registered service, allowing access to the service using an alternative name.
-
-        Args:
-            abstract (str): Name or key of the original service.
-            alias (str): The alias to assign to the service.
-
-        Raises:
-            OrionisContainerException: If the original service is not registered.
-            ValueError: If the alias is not a valid string or is already in use.
+    def transient(self, concrete: Callable[..., Any]) -> str:
         """
-        pass
-
-    @abstractmethod
-    def make(self, abstract: str):
-        """Automatically resolves a dependency, handling instances, singletons, scoped, transients, and aliases.
-
-        This method resolves the dependencies of a service and handles the following service types:
-        1. **Instances**: Returns a specific instance.
-        2. **Singletons**: Returns the same unique instance each time.
-        3. **Scoped**: Returns a shared instance within the same request.
-        4. **Transients**: Creates a new instance each time.
-        5. **Aliases**: Resolves an alias to the original service.
-
+        Registers a transient service in the container.
+        A transient service is created each time it is requested.
         Args:
-            abstract (str): Name or key of the service to resolve.
-
+            concrete (Callable[..., Any]): The callable that defines the service.
         Returns:
-            Any: The resolved instance or service.
-
-        Raises:
-            OrionisContainerException: If the service is not found.
+            str: The unique key generated for the callable.
         """
         pass
 
     @abstractmethod
-    def call(self, instance: Any, method_name: str, **overrides):
-        """Llama a un método del objeto resolviendo automáticamente las dependencias registradas.
-
+    def singleton(self, concrete: Callable[..., Any]) -> str:
+        """
+        Registers a callable as a singleton in the container.
+        This method ensures that the provided callable is not the main module,
+        is unique within the container, and is indeed callable. It then registers
+        the callable as a singleton, storing it in the container's singleton registry.
         Args:
-            instance (Any): Instancia del objeto en el cual se ejecutará el método.
-            method_name (str): Nombre del método a llamar.
-            **overrides: Argumentos que se deben pasar manualmente en lugar de resolverlos automáticamente.
-
+            concrete (Callable[..., Any]): The callable to be registered as a singleton.
         Returns:
-            Any: El resultado de ejecutar el método con las dependencias resueltas.
-
-        Raises:
-            AttributeError: Si el método no existe en la instancia.
+            str: The key under which the singleton is registered in the container.
         """
         pass
 
     @abstractmethod
-    def startRequest(self):
-        """Starts a new request and clears the Scoped instances.
+    def scoped(self, concrete: Callable[..., Any]) -> str:
+        """
+        Registers a callable as a scoped service.
+        This method ensures that the provided callable is not the main service,
+        is unique, and is indeed callable. It then registers the callable in the
+        scoped services dictionary with relevant metadata.
+        Args:
+            concrete (Callable[..., Any]): The callable to be registered as a scoped service.
+        Returns:
+            str: The key under which the callable is registered in the scoped services dictionary.
+        """
+        pass
 
-        This method should be called at the beginning of each request to ensure that
-        scoped services do not persist between requests.
+    @abstractmethod
+    def instance(self, instance: Any) -> str:
+        """
+        Registers an instance as a singleton in the container.
+        Args:
+            instance (Any): The instance to be registered as a singleton.
+        Returns:
+            str: The key under which the instance is registered in the container.
+        """
+        pass
+
+    @abstractmethod
+    def alias(self, alias: str, concrete: Any) -> None:
+        """
+        Creates an alias for a registered service.
+        Args:
+            alias (str): The alias name to be used for the service.
+            concrete (Any): The actual service instance or callable to be aliased.
+        Raises:
+            OrionisContainerException: If the concrete instance is not a valid object or if the alias is a primitive type.
+        """
+        pass
+
+    @abstractmethod
+    def has(self, obj: Any) -> bool:
+        """
+        Checks if a service is registered in the container.
+
+        Parameters
+        ----------
+        obj : Any
+            The service class, instance, or alias to check.
+
+        Returns
+        -------
+        bool
+            True if the service is registered, False otherwise.
+        """
+        pass
+
+    @abstractmethod
+    def make(self, abstract: Any) -> Any:
+        """
+        Create and return an instance of a registered service.
+
+        Parameters
+        ----------
+        abstract : Any
+            The service class or alias to instantiate.
+
+        Returns
+        -------
+        Any
+            An instance of the requested service.
+
+        Raises
+        ------
+        OrionisContainerException
+            If the service is not found in the container.
+        """
+        pass
+
+    @abstractmethod
+    def _resolve(self, concrete: Callable[..., Any]) -> Any:
+        """
+        Resolve and instantiate a given service class or function.
+
+        This method analyzes the constructor of the given class (or callable),
+        retrieves its dependencies, and resolves them recursively, while respecting
+        the service lifecycle.
+        """
+        pass
+
+    @abstractmethod
+    def _resolve_dependency(self, dep_type: Any) -> Any:
+        """
+        Resolves a dependency based on the provided type.
+
+        This method looks for the type in the container and returns the instance,
+        respecting the lifecycle of the service (transient, singleton, etc.).
         """
         pass
