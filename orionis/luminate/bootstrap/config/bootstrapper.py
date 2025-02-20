@@ -2,7 +2,7 @@ import ast
 import importlib
 import os
 from orionis.luminate.bootstrap.config.register import Register
-from orionis.luminate.contracts.bootstrap.bootstrapper_interface import IBootstrapper
+from orionis.luminate.contracts.bootstrap.config.bootstrapper_interface import IBootstrapper
 
 class Bootstrapper(IBootstrapper):
     """

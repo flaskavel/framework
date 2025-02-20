@@ -1,6 +1,6 @@
 from typing import Any
 from dataclasses import asdict
-from orionis.luminate.contracts.bootstrap.parser_interface import IParser
+from orionis.luminate.contracts.bootstrap.config.parser_interface import IParser
 
 class Parser(IParser):
     """

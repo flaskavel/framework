@@ -1,6 +1,6 @@
 from orionis.luminate.bootstrap.config.parser import Parser
 from orionis.luminate.container.container import Container
-from orionis.luminate.contracts.bootstrap.register_interface import IRegister
+from orionis.luminate.contracts.bootstrap.config.register_interface import IRegister
 from orionis.luminate.contracts.config.config_interface import IConfig
 from orionis.luminate.tools.reflection import Reflection
 
