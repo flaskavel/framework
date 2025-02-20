@@ -38,11 +38,11 @@ class SkeletonPath(ISkeletonPath):
         base_path = SysPath(os.getcwd())  # Get the directory where the script is executed
         real_path = (base_path / route).resolve()  # Combine base path with the relative route
 
-        # Validate that the path exists and is a directory
-        if not real_path.is_dir():
+        # Validate that the path exists and is a directory or file
+        if real_path.is_dir() or real_path.is_file():
+            self.route = str(real_path)
+        else:
             raise ValueError(f"The requested directory does not exist or is not a directory: {real_path}")
-
-        self.route = str(real_path)
 
     def resolve(self) -> str:
         """

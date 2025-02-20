@@ -1,5 +1,5 @@
-from dataclasses import dataclass
-from typing import Any, Union
+from dataclasses import dataclass, field
+from typing import Any, Dict, Union
 
 @dataclass
 class Single:
@@ -105,3 +105,6 @@ class Logging:
     """
     default: str
     channels: Channels
+
+    # Holds additional custom properties, initialized as an empty dictionary
+    custom: Dict[str, any] = field(default_factory=dict)

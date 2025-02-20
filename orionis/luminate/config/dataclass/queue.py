@@ -1,4 +1,5 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import Dict
 
 @dataclass
 class Database:
@@ -61,3 +62,6 @@ class Queue:
 
     default: str
     connections: Connections
+
+    # Holds additional custom properties, initialized as an empty dictionary
+    custom: Dict[str, any] = field(default_factory=dict)

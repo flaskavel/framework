@@ -1,5 +1,5 @@
-from typing import Optional
-from dataclasses import dataclass
+from typing import Dict, Optional
+from dataclasses import dataclass, field
 
 @dataclass
 class Sqlite:
@@ -201,3 +201,6 @@ class Database:
     """
     default: str
     connections: Connections
+
+    # Holds additional custom properties, initialized as an empty dictionary
+    custom: Dict[str, any] = field(default_factory=dict)

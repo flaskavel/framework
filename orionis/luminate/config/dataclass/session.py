@@ -1,5 +1,5 @@
-from dataclasses import dataclass
-from typing import Optional
+from dataclasses import dataclass, field
+from typing import Dict, Optional
 
 @dataclass
 class Cookie:
@@ -57,3 +57,6 @@ class Session:
     encrypt: bool
     files: str
     cookie: Cookie
+
+    # Holds additional custom properties, initialized as an empty dictionary
+    custom: Dict[str, any] = field(default_factory=dict)

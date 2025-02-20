@@ -1,5 +1,5 @@
-from dataclasses import dataclass
-from typing import Optional
+from dataclasses import dataclass, field
+from typing import Dict, Optional
 
 @dataclass
 class Local:
@@ -100,3 +100,6 @@ class Filesystems:
 
     default: str
     disks: Disks
+
+    # Holds additional custom properties, initialized as an empty dictionary
+    custom: Dict[str, any] = field(default_factory=dict)
