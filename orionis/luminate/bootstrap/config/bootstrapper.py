@@ -3,7 +3,6 @@ import importlib
 import os
 from orionis.luminate.bootstrap.config.register import Register
 from orionis.luminate.contracts.bootstrap.bootstrapper_interface import IBootstrapper
-from typing import List
 
 class Bootstrapper(IBootstrapper):
     """
@@ -43,12 +42,12 @@ class Bootstrapper(IBootstrapper):
         """
         self.register = register
 
-    def findClasses(self, file_path: str) -> List[str]:
+    def findClasses(self, file_path: str):
         """
         Parses a Python file to extract and return all defined class names.
 
-        This method opens the file at the given path, parses it using the Abstract 
-        Syntax Tree (AST) module to extract class definitions, and returns a 
+        This method opens the file at the given path, parses it using the Abstract
+        Syntax Tree (AST) module to extract class definitions, and returns a
         list of class names found within the file.
 
         Parameters
@@ -103,7 +102,7 @@ class Bootstrapper(IBootstrapper):
                     if classes:
                         for class_name in classes:
                             # Construct the module path and import the module
-                            module_path = root.replace(os.getcwd(), "").replace(os.sep, ".")[1:] + "." + file[:-3]
+                            module_path = root.replace(os.getcwd(), "").replace(os.sep, ".") + "." + file[:-3]
                             module = importlib.import_module(module_path)
                             class_obj = getattr(module, class_name)
 
