@@ -21,7 +21,7 @@ class IBootstrapper(ABC):
     """
 
     @abstractmethod
-    def findClasses(self, file_path: str):
+    def _definitions(self, file_path: str):
         """
         Parses a Python file to extract and return all defined class names.
 
@@ -42,7 +42,7 @@ class IBootstrapper(ABC):
         pass
 
     @abstractmethod
-    def autoload(self, directory: str) -> None:
+    def _autoload(self, directory: str) -> None:
         """
         Automatically registers configuration classes found in a given directory.
 

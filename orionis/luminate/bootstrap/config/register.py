@@ -1,5 +1,4 @@
 from orionis.luminate.bootstrap.config.parser import Parser
-from orionis.luminate.config.sections import SECTIONS
 from orionis.luminate.container.container import Container
 from orionis.luminate.contracts.bootstrap.register_interface import IRegister
 from orionis.luminate.contracts.config.config_interface import IConfig
@@ -12,25 +11,20 @@ class Register(IRegister):
     This class ensures that only valid configuration classes are registered
     while enforcing structure and type safety.
 
-    Attributes
-    ----------
-    cache_config : CacheConfig
-        An instance of `CacheConfig` used to store registered configurations.
-
     Methods
     -------
     config(config_class: type) -> type
         Registers a configuration class and ensures it meets the necessary criteria.
     """
 
-    def __init__(self, container: Container) -> None:
+    def __init__(self, container = Container()) -> None:
         """
         Initializes the Register instance with a cache configuration.
 
         Parameters
         ----------
-        cache : CacheConfig, optional
-            The cache configuration instance to be used (default is a new instance of `CacheConfig`).
+        container : Container
+            The container instance to be used for configuration registration.
         """
         self.container = container
 
@@ -60,20 +54,16 @@ class Register(IRegister):
             If `config_class` does not have a `config` attribute or is already registered.
         """
 
+        # Validate input type
         if not isinstance(config_class, type):
             raise TypeError(f"Expected a class, but got {type(config_class).__name__}.")
 
+        # Validate config attribute
         if not hasattr(config_class, 'config'):
             raise ValueError(f"Class {config_class.__name__} must have a 'config' attribute.")
 
         # Extract module name
         section = Reflection(config_class).getFileName(remove_extension=True)
-
-        # Validate section
-        if section not in SECTIONS:
-            raise ValueError(
-                f"Invalid configuration section '{section}'. Allowed sections: {SECTIONS}"
-            )
 
         # Validate inheritance
         if not issubclass(config_class, IConfig):

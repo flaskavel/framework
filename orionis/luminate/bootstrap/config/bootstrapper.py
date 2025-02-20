@@ -23,10 +23,10 @@ class Bootstrapper(IBootstrapper):
     __init__(register: Register) -> None
         Initializes the `Bootstrapper` with a `Register` instance.
 
-    findClasses(file_path: str) -> List[str]
+    _findClasses(file_path: str) -> List[str]
         Parses a Python file to extract and return all defined class names.
 
-    autoload(directory: str) -> None
+    _autoload(directory: str) -> None
         Scans a directory for Python files, imports them, finds configuration classes,
         and registers them using the `Register` instance.
     """
@@ -41,8 +41,9 @@ class Bootstrapper(IBootstrapper):
             An instance of the `Register` class used to register configuration classes.
         """
         self.register = register
+        self._autoload()
 
-    def findClasses(self, file_path: str):
+    def _definitions(self, file_path: str):
         """
         Parses a Python file to extract and return all defined class names.
 
@@ -70,7 +71,7 @@ class Bootstrapper(IBootstrapper):
 
         return classes
 
-    def autoload(self, directory: str = 'config') -> None:
+    def _autoload(self, directory: str = 'config') -> None:
         """
         Automatically registers configuration classes found in a given directory.
 
@@ -97,7 +98,7 @@ class Bootstrapper(IBootstrapper):
                 if file.endswith(".py") and file != "__init__.py":
                     file_path = os.path.join(root, file)
                     # Get the class names defined in the file
-                    classes = self.findClasses(file_path)
+                    classes = self._definitions(file_path)
 
                     if classes:
                         for class_name in classes:
