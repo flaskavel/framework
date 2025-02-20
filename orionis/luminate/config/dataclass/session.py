@@ -23,11 +23,11 @@ class Cookie:
     """
 
     name: str = "orionis_session"
-    path: str
-    domain: Optional[str]
-    secure: Optional[bool]
-    http_only: bool
-    same_site: str
+    path: str = "/"
+    domain: Optional[str] = None
+    secure: Optional[bool] = None
+    http_only: bool = True
+    same_site: str  = "lax"
 
 
 @dataclass
