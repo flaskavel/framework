@@ -70,7 +70,7 @@ class Bootstrapper(IBootstrapper):
 
         return classes
 
-    def autoload(self, directory: str) -> None:
+    def autoload(self, directory: str = 'config') -> None:
         """
         Automatically registers configuration classes found in a given directory.
 
