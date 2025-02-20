@@ -1,6 +1,7 @@
 import inspect
 from typing import Any, Callable
 from orionis.luminate.container.types import Types
+from orionis.luminate.tools.dot_dict import DotDict
 from orionis.luminate.contracts.container.container_interface import IContainer
 from orionis.luminate.container.exception import OrionisContainerException, OrionisContainerValueError
 
@@ -12,6 +13,8 @@ class Container(IContainer):
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
+            cls._config = {}
+            
             cls._instance._bindings = {}
             cls._instance._transients = {}
             cls._instance._singletons = {}
@@ -23,6 +26,28 @@ class Container(IContainer):
             # Initialize the PrimitiveTypes validator
             cls._instance._primitive_types_validator = Types()
         return cls._instance
+
+    def config(self, section: str, data: dict):
+        """
+        Registers a configuration section in the container.
+
+        Args:
+            section (str): _description_
+            data (dict): _description_
+        """
+
+        # Validate that data is a dictionary
+        if not isinstance(data, dict):
+            raise OrionisContainerValueError("The 'data' parameter must be a dictionary.")
+
+        # Validate that the section is a string
+        if not isinstance(section, str):
+            raise OrionisContainerValueError("The 'section' parameter must be a string.")
+
+        if section not in self._config:
+            self._config[section] = data
+        else:
+            self._config[section].update(data)
 
     def bind(self, abstract: str, concrete: Callable[..., Any]) -> None:
         """Registers a service with a specific implementation.

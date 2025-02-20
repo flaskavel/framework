@@ -1,10 +1,11 @@
-from orionis.luminate.bootstrap.parser import Parser
+from orionis.luminate.bootstrap.config.parser import Parser
 from orionis.luminate.config.sections import SECTIONS
-from orionis.luminate.tools.reflection import Reflection
-from orionis.luminate.cache.app.config import CacheConfig
+from orionis.luminate.container.container import Container
+from orionis.luminate.contracts.bootstrap.register_interface import IRegister
 from orionis.luminate.contracts.config.config_interface import IConfig
+from orionis.luminate.tools.reflection import Reflection
 
-class Register:
+class Register(IRegister):
     """
     Handles the registration of configuration classes within the application.
 
@@ -22,7 +23,7 @@ class Register:
         Registers a configuration class and ensures it meets the necessary criteria.
     """
 
-    def __init__(self, cache: CacheConfig = None):
+    def __init__(self, container: Container) -> None:
         """
         Initializes the Register instance with a cache configuration.
 
@@ -31,7 +32,7 @@ class Register:
         cache : CacheConfig, optional
             The cache configuration instance to be used (default is a new instance of `CacheConfig`).
         """
-        self.cache_config = cache or CacheConfig()
+        self.container = container
 
     def config(self, config_class: type) -> type:
         """
@@ -78,18 +79,8 @@ class Register:
         if not issubclass(config_class, IConfig):
             raise TypeError(f"Class {config_class.__name__} must inherit from 'IConfig'.")
 
-        # Check if section is already registered
-        if section in self.cache_config.config:
-            raise ValueError(f"Configuration section '{section}' is already registered.")
-
         # Register configuration
-        self.cache_config.register(
+        self.container.config(
             section=section,
             data=Parser.toDict(config_class)
         )
-
-        # Return the original class
-        return config_class
-
-# Create a global Register instance
-register = Register()

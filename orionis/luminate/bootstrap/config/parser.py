@@ -41,8 +41,12 @@ class Parser(IParser):
             If the `config` attribute cannot be converted to a dictionary.
         """
         try:
-            # Convert dataclass using asdict()
-            return asdict(instance.config)
+            # Check if instance is a dictionary
+            if isinstance(instance.config, dict):
+                return instance
+            # Check if instance is a dataclass
+            elif hasattr(instance.config, '__dataclass_fields__'):
+                return asdict(instance.config)
         except AttributeError as e:
             raise AttributeError("The provided instance does not have a 'config' attribute.") from e
         except TypeError as e:
