@@ -2,34 +2,14 @@ from typing import Dict, Any
 
 class CacheConfig:
     """
-    Singleton class for managing application configuration caching.
-
     This class ensures that configuration sections are registered only once
     and provides methods to register, unregister, and retrieve configurations.
 
     Attributes
     ----------
-    _instance : CacheConfig
-        A private class attribute that holds the singleton instance.
     config : dict
         A dictionary storing registered configuration sections.
     """
-
-    _instance = None
-
-    def __new__(cls, *args, **kwargs):
-        """
-        Ensures a single instance of CacheConfig (Singleton Pattern).
-
-        Returns
-        -------
-        CacheConfig
-            The singleton instance of the class.
-        """
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-            cls._instance.config = {}
-        return cls._instance
 
     def register(self, section: str, data: Dict[str, Any]) -> None:
         """

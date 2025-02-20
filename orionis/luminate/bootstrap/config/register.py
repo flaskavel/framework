@@ -1,5 +1,5 @@
 from orionis.luminate.bootstrap.config.parser import Parser
-from orionis.luminate.container.container import Container
+from orionis.luminate.cache.app.config import CacheConfig
 from orionis.luminate.contracts.bootstrap.config.register_interface import IRegister
 from orionis.luminate.contracts.config.config_interface import IConfig
 from orionis.luminate.tools.reflection import Reflection
@@ -17,7 +17,7 @@ class Register(IRegister):
         Registers a configuration class and ensures it meets the necessary criteria.
     """
 
-    def __init__(self, container = Container()) -> None:
+    def __init__(self, cache = CacheConfig) -> None:
         """
         Initializes the Register instance with a cache configuration.
 
@@ -26,7 +26,7 @@ class Register(IRegister):
         container : Container
             The container instance to be used for configuration registration.
         """
-        self.container = container
+        self.cache = cache
 
     def config(self, config_class: type) -> type:
         """
@@ -70,7 +70,7 @@ class Register(IRegister):
             raise TypeError(f"Class {config_class.__name__} must inherit from 'IConfig'.")
 
         # Register configuration
-        self.container.config(
+        self.cache.register(
             section=section,
             data=Parser.toDict(config_class)
         )
