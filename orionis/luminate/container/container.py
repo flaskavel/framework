@@ -5,7 +5,6 @@ from typing import Callable, Any, Dict
 from orionis.luminate.container.exception import OrionisContainerException, OrionisContainerValueError, OrionisContainerTypeError
 from orionis.luminate.container.types import Types
 from orionis.luminate.contracts.container.container_interface import IContainer
-from orionis.luminate.patterns.singleton import SingletonMeta
 
 BINDING = 'binding'
 TRANSIENT = 'transient'
@@ -13,7 +12,7 @@ SINGLETON = 'singleton'
 SCOPED = 'scoped'
 INSTANCE = 'instance'
 
-class Container(IContainer, metaclass=SingletonMeta):
+class Container(IContainer):
     """
     Service container and dependency injection manager.
 
@@ -21,15 +20,23 @@ class Container(IContainer, metaclass=SingletonMeta):
     and different lifecycle types such as transient, singleton, and scoped.
     """
 
-    def __init__(self):
-        self._bindings = {}
-        self._transients = {}
-        self._singletons = {}
-        self._scoped_services = {}
-        self._instances = {}
-        self._aliases = {}
-        self._scoped_instances = {}
-        self._validate_types = Types()
+    _instance = None
+    _lock = Lock()
+
+    def __new__(cls):
+        if cls._instance is None:
+            with cls._lock:
+                if cls._instance is None:
+                    cls._instance = super().__new__(cls)
+                    cls._instance._bindings = {}
+                    cls._instance._transients = {}
+                    cls._instance._singletons = {}
+                    cls._instance._scoped_services = {}
+                    cls._instance._instances = {}
+                    cls._instance._aliases = {}
+                    cls._instance._scoped_instances = {}
+                    cls._instance._validate_types = Types()
+        return cls._instance
 
     def _newRequest(self) -> None:
         """
