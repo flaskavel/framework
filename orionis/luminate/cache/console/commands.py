@@ -1,33 +1,32 @@
-from orionis.luminate.contracts.cache.cache_commands_interface import ICacheCommands
+from typing import Any, Callable
+from orionis.luminate.contracts.cache.console.commands_interface import ICacheCommands
 
 class CacheCommands(ICacheCommands):
     """
-    Singleton class for managing a cache of commands.
+    CacheCommands is a class that manages the registration, unregistration, and retrieval of command instances.
 
-    This class ensures that only one instance of the command cache exists
-    and provides methods for registering, unregistering, and retrieving commands.
+    Methods
+    -------
+    __init__()
+        Initializes the command cache with an empty dictionary.
+    register(signature: str, description: str, arguments: list, concrete: Callable[..., Any])
+        Register a new command with its signature, description, and class instance.
+    unregister(signature: str)
+        Unregister an existing command by its signature.
+    get(signature: str)
+        Retrieve the information of a registered command by its signature.
     """
 
-    _instance = None
+    def __init__(self):
 
-    def __new__(cls, *args, **kwargs):
         """
-        Create or return the singleton instance of the CacheCommands class.
+        Initializes the command cache.
 
-        Ensures that only one instance of the CacheCommands class exists
-        during the lifetime of the application.
-
-        Returns
-        -------
-        CacheCommands
-            The singleton instance of the class.
+        This constructor sets up an empty dictionary to store commands.
         """
-        if cls._instance is None:
-            cls._instance = super().__new__(cls, *args, **kwargs)
-            cls._instance.commands = {}
-        return cls._instance
+        self.commands = {}
 
-    def register(self, signature: str, description: str, arguments: list, instance):
+    def register(self, signature: str, description: str, arguments: list, concrete: Callable[..., Any]):
         """
         Register a new command with its signature, description, and class instance.
 
@@ -37,7 +36,7 @@ class CacheCommands(ICacheCommands):
             The unique identifier (signature) for the command.
         description : str
             A brief description of what the command does.
-        instance : class
+        concrete : class
             The class or callable instance that defines the command behavior.
 
         Raises
@@ -49,7 +48,7 @@ class CacheCommands(ICacheCommands):
             raise ValueError(f"Command '{signature}' is already registered. Please ensure signatures are unique.")
 
         self.commands[signature] = {
-            'instance':instance,
+            'concrete':concrete,
             'arguments':arguments,
             'description':description,
             'signature':signature

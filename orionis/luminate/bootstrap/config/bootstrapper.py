@@ -1,5 +1,6 @@
 import importlib
 import pathlib
+from orionis.luminate.bootstrap.cli_exception import BootstrapRuntimeError
 from orionis.luminate.bootstrap.config.register import Register
 from orionis.luminate.contracts.bootstrap.config.bootstrapper_interface import IBootstrapper
 
@@ -74,5 +75,5 @@ class Bootstrapper(IBootstrapper):
                 if hasattr(module, "Config"):
                     self.register.config(getattr(module, "Config"))
             except Exception as e:
-                raise RuntimeError(f"Error loading module {module_path}") from e
+                raise BootstrapRuntimeError(f"Error loading module {module_path}") from e
 

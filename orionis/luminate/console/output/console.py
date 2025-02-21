@@ -3,7 +3,7 @@ import sys
 import getpass
 import datetime
 from orionis.luminate.console.output.styles import ANSIColors
-from orionis.luminate.contracts.console.console_interface import IConsole
+from orionis.luminate.contracts.console.output.console_interface import IConsole
 
 class Console(IConsole):
     """

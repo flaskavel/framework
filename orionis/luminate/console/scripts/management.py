@@ -1,7 +1,7 @@
 from orionis.luminate.installer.setup import Setup
 from orionis.luminate.installer.output import Output
 from orionis.luminate.installer.upgrade import Upgrade
-from orionis.luminate.contracts.console.management_interface import IManagement
+from orionis.luminate.contracts.console.scripts.management_interface import IManagement
 
 class Management(IManagement):
     """

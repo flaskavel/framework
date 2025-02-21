@@ -1,7 +1,7 @@
+from abc import ABC, abstractmethod
 from typing import Dict, Any
-from orionis.luminate.contracts.cache.app.config_interface import ICacheConfig
 
-class CacheConfig(ICacheConfig):
+class ICacheConfig(ABC):
     """
     CacheConfig is a class that manages the registration, unregistration, and retrieval of configuration sections.
 
@@ -17,15 +17,7 @@ class CacheConfig(ICacheConfig):
         Retrieves the configuration data for a specific section.
     """
 
-    def __init__(self) -> None:
-        """
-        Initializes a new instance of the class with an empty configuration dictionary.
-
-        Attributes:
-            config (dict): A dictionary to store configuration settings.
-        """
-        self.config = {}
-
+    @abstractmethod
     def register(self, section: str, data: Dict[str, Any]) -> None:
         """
         Registers a configuration section.
@@ -42,11 +34,9 @@ class CacheConfig(ICacheConfig):
         ValueError
             If the section is already registered.
         """
-        if section in self.config:
-            raise ValueError(f"Configuration section '{section}' is already registered.")
+        pass
 
-        self.config[section] = data
-
+    @abstractmethod
     def unregister(self, section: str) -> None:
         """
         Unregisters a previously registered configuration section.
@@ -61,11 +51,9 @@ class CacheConfig(ICacheConfig):
         KeyError
             If the section is not found in the registered configurations.
         """
-        if section not in self.config:
-            raise KeyError(f"Configuration section '{section}' is not registered.")
+        pass
 
-        del self.config[section]
-
+    @abstractmethod
     def get(self, section: str) -> Dict[str, Any]:
         """
         Retrieves the configuration for a specific section.
@@ -85,7 +73,4 @@ class CacheConfig(ICacheConfig):
         KeyError
             If the requested section is not found.
         """
-        if section not in self.config:
-            raise KeyError(f"Configuration section '{section}' is not registered.")
-
-        return self.config[section]
+        pass

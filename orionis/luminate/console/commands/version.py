@@ -1,8 +1,7 @@
 from orionis.framework import VERSION
-from orionis.luminate.console.register import register
 from orionis.luminate.console.base.command import BaseCommand
+from orionis.luminate.console.exceptions.cli_exception import CLIOrionisRuntimeError
 
-@register.command
 class VersionCommand(BaseCommand):
     """
     Command class to display the current version of the Orionis framework.
@@ -35,5 +34,5 @@ class VersionCommand(BaseCommand):
 
         except Exception as e:
 
-            # Raise a ValueError if an unexpected error occurs.
-            raise ValueError(f"An unexpected error occurred: {e}") from e
+            # Handle any unexpected error and display the error message
+            raise CLIOrionisRuntimeError(f"An unexpected error occurred: {e}") from e

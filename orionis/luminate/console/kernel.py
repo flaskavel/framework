@@ -1,4 +1,4 @@
-from typing import Any, Tuple
+from typing import Any
 from orionis.luminate.console.runner import CLIRunner
 from orionis.luminate.contracts.console.kernel_interface import ICLIKernel
 

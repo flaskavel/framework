@@ -1,6 +1,6 @@
 from datetime import datetime
 from orionis.luminate.console.output.styles import ANSIColors
-from orionis.luminate.contracts.console.executor_interface import IExecutor
+from orionis.luminate.contracts.console.output.executor_interface import IExecutor
 
 class Executor(IExecutor):
     """

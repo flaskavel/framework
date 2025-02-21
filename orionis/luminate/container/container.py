@@ -64,10 +64,7 @@ class Container(IContainer):
             If the class is defined in the main module.
         """
         if concrete.__module__ == "__main__":
-            raise OrionisContainerValueError(
-                "Cannot register a class from the main module in the container."
-            )
-        return f"{concrete.__module__}.{concrete.__name__}"
+            raise OrionisContainerValueError("Cannot register a class from the main module in the container.")
 
     def _ensureUniqueService(self, obj: Any) -> None:
         """
@@ -101,9 +98,7 @@ class Container(IContainer):
             If the implementation is not callable.
         """
         if not callable(concrete):
-            raise OrionisContainerTypeError(
-                f"The implementation '{str(concrete)}' must be callable or an instantiable class."
-            )
+            raise OrionisContainerTypeError(f"The implementation '{str(concrete)}' must be callable or an instantiable class.")
 
     def _ensureIsInstance(self, instance: Any) -> None:
         """
@@ -120,9 +115,7 @@ class Container(IContainer):
             If the instance is not a valid object.
         """
         if not isinstance(instance, object) or instance.__class__.__module__ in ['builtins', 'abc']:
-            raise OrionisContainerValueError(
-                f"The instance '{str(instance)}' must be a valid object."
-            )
+            raise OrionisContainerValueError(f"The instance '{str(instance)}' must be a valid object.")
 
     def bind(self, concrete: Callable[..., Any]) -> str:
         """
@@ -142,7 +135,7 @@ class Container(IContainer):
 
         key = f"{concrete.__module__}.{concrete.__name__}"
         self._bindings[key] = {
-            'callback': concrete,
+            'concrete': concrete,
             'module': concrete.__module__,
             'name': concrete.__name__,
             'type': BINDING
@@ -165,7 +158,7 @@ class Container(IContainer):
 
         key = f"{concrete.__module__}.{concrete.__name__}"
         self._transients[key] = {
-            'callback': concrete,
+            'concrete': concrete,
             'module': concrete.__module__,
             'name': concrete.__name__,
             'type': TRANSIENT
@@ -190,7 +183,7 @@ class Container(IContainer):
 
         key = f"{concrete.__module__}.{concrete.__name__}"
         self._singletons[key] = {
-            'callback': concrete,
+            'concrete': concrete,
             'module': concrete.__module__,
             'name': concrete.__name__,
             'type': SINGLETON
@@ -215,7 +208,7 @@ class Container(IContainer):
 
         key = f"{concrete.__module__}.{concrete.__name__}"
         self._scoped_services[key] = {
-            'callback': concrete,
+            'concrete': concrete,
             'module': concrete.__module__,
             'name': concrete.__name__,
             'type': SCOPED
@@ -325,19 +318,19 @@ class Container(IContainer):
             return self._instances[key]['instance']
 
         if key in self._singletons:
-            self._instances[key] = {'instance': self._resolve(self._singletons[key]['callback'])}
+            self._instances[key] = {'instance': self._resolve(self._singletons[key]['concrete'])}
             return self._instances[key]['instance']
 
         if key in self._scoped_services:
             if key not in self._scoped_instances:
-                self._scoped_instances[key] = self._resolve(self._scoped_services[key]['callback'])
+                self._scoped_instances[key] = self._resolve(self._scoped_services[key]['concrete'])
             return self._scoped_instances[key]
 
         if key in self._transients:
-            return self._resolve(self._transients[key]['callback'])
+            return self._resolve(self._transients[key]['concrete'])
 
         if key in self._bindings:
-            return self._resolve(self._bindings[key]['callback'])
+            return self._resolve(self._bindings[key]['concrete'])
 
         raise OrionisContainerException(f"Service '{abstract}' is not registered in the container.")
 
@@ -362,8 +355,9 @@ class Container(IContainer):
 
         # Step 3: Iterate through the parameters of the constructor.
         for param_name, param in signature.parameters.items():
+
+            # Skip 'self' in methods
             if param_name == 'self':
-                # Skip 'self' in methods
                 continue
 
             # If parameter has no annotation and no default value, it's unresolved
@@ -374,15 +368,19 @@ class Container(IContainer):
             # Resolve dependencies based on annotations (excluding primitive types)
             if param.annotation is not param.empty:
                 param_type = param.annotation
+
                 # Check if it's a registered service, if so, resolve it through the container
                 if isinstance(param_type, type) and not isinstance(param_type, (int, str, bool, float)) and not issubclass(param_type, (int, str, bool, float)):
+
                     # Check if the service is registered in the container
                     if self.has(param_type):
                         resolved_dependencies[param_name] = self.make(f"{param_type.__module__}.{param_type.__name__}")
                     else:
                         resolved_dependencies[param_name] = self._resolve_dependency(param_type)
                 else:
-                    resolved_dependencies[param_name] = param_type  # It's a primitive, use as-is
+
+                    # It's a primitive, use as-is
+                    resolved_dependencies[param_name] = param_type
 
             # Resolve parameters with default values (without annotations)
             elif param.default is not param.empty:
@@ -407,8 +405,7 @@ class Container(IContainer):
         This method looks for the type in the container and returns the instance,
         respecting the lifecycle of the service (transient, singleton, etc.).
         """
-        # Check if the dependency exists in the container or create it if necessary
-        # If it's a class type
+        # Check if the dependency exists in the container or create it if necessary, If it's a class type
         if isinstance(dep_type, type):
             if self.has(dep_type):
                 # Resolves the service through the container

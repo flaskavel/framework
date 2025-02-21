@@ -1,15 +1,24 @@
 from abc import ABC, abstractmethod
+from typing import Any, Callable
 
 class ICacheCommands(ABC):
     """
-    Interface for managing a cache of commands.
+    CacheCommands is a class that manages the registration, unregistration, and retrieval of command instances.
 
-    This interface ensures that any class implementing it will provide methods
-    for registering, unregistering, and retrieving commands.
+    Methods
+    -------
+    __init__()
+        Initializes the command cache with an empty dictionary.
+    register(signature: str, description: str, arguments: list, concrete: Callable[..., Any])
+        Register a new command with its signature, description, and class instance.
+    unregister(signature: str)
+        Unregister an existing command by its signature.
+    get(signature: str)
+        Retrieve the information of a registered command by its signature.
     """
 
     @abstractmethod
-    def register(self, signature: str, description: str, instance):
+    def register(self, signature: str, description: str, arguments: list, concrete: Callable[..., Any]):
         """
         Register a new command with its signature, description, and class instance.
 
@@ -19,7 +28,7 @@ class ICacheCommands(ABC):
             The unique identifier (signature) for the command.
         description : str
             A brief description of what the command does.
-        instance : class
+        concrete : class
             The class or callable instance that defines the command behavior.
 
         Raises

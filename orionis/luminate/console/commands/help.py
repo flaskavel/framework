@@ -1,8 +1,7 @@
-from orionis.luminate.console.register import register
 from orionis.luminate.console.base.command import BaseCommand
 from orionis.luminate.cache.console.commands import CacheCommands
+from orionis.luminate.console.exceptions.cli_exception import CLIOrionisRuntimeError
 
-@register.command
 class HelpCommand(BaseCommand):
     """
     Command class to display the list of available commands in the Orionis application.
@@ -55,5 +54,5 @@ class HelpCommand(BaseCommand):
 
         except Exception as e:
 
-            # Raise a ValueError if an unexpected error occurs.
-            raise ValueError(f"An unexpected error occurred: {e}") from e
+            # Handle any unexpected error and display the error message
+            raise CLIOrionisRuntimeError(f"An unexpected error occurred: {e}") from e

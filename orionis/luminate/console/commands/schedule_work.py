@@ -1,9 +1,8 @@
-from orionis.luminate.console.register import register
 from orionis.luminate.console.base.command import BaseCommand
+from orionis.luminate.console.exceptions.cli_exception import CLIOrionisRuntimeError
 from orionis.luminate.console.tasks.scheduler import Schedule
 from orionis.luminate.contracts.console.task_manager_interface import ITaskManager
 
-@register.command
 class ScheduleWorkCommand(BaseCommand):
     """
     Command class to handle scheduled tasks within the Orionis application.
@@ -46,5 +45,5 @@ class ScheduleWorkCommand(BaseCommand):
 
         except Exception as e:
 
-            # Raise a RuntimeError if an unexpected error occurs.
-            raise RuntimeError(f"An unexpected error occurred: {e}") from e
+            # Handle any unexpected error and display the error message
+            raise CLIOrionisRuntimeError(f"An unexpected error occurred: {e}") from e

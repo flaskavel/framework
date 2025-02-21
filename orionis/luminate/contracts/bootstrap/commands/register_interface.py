@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Any, Callable
 
 class IRegister(ABC):
     """
@@ -6,7 +7,7 @@ class IRegister(ABC):
     """
 
     @abstractmethod
-    def command(self, command_class):
+    def command(self, command_class: Callable[..., Any]) -> None:
         """
         Registers a command class after validating its structure.
 

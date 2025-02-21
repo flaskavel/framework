@@ -1,9 +1,8 @@
 import os
 import shutil
-from orionis.luminate.console.register import register
 from orionis.luminate.console.base.command import BaseCommand
+from orionis.luminate.console.exceptions.cli_exception import CLIOrionisRuntimeError
 
-@register.command
 class CacheClearCommand(BaseCommand):
     """
     Clears Python bytecode caches (__pycache__) within the project directory.
@@ -48,9 +47,9 @@ class CacheClearCommand(BaseCommand):
                         shutil.rmtree(pycache_path)
 
             # Log a success message once all caches are cleared
-            self.success(message='The application cache has been successfully cleared.', timestamp=True)
+            self.success(message='The application cache has been successfully cleared.')
 
         except Exception as e:
 
             # Handle any unexpected error and display the error message
-            raise RuntimeError(f"An unexpected error occurred while clearing the cache: {e}") from e
+            raise CLIOrionisRuntimeError(f"An unexpected error occurred while clearing the cache: {e}") from e

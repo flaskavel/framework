@@ -1,6 +1,7 @@
+from typing import Any, Callable
 from orionis.luminate.console.base.command import BaseCommand
 from orionis.luminate.cache.console.commands import CacheCommands
-from orionis.luminate.contracts.console.register_interface import IRegister
+from orionis.luminate.contracts.bootstrap.commands.register_interface import IRegister
 
 class Register(IRegister):
     """
@@ -12,13 +13,13 @@ class Register(IRegister):
         A dictionary storing registered command classes.
     """
 
-    def __init__(self, cache : CacheCommands = None):
+    def __init__(self, cache : CacheCommands):
         """
         Initializes the Register instance and prepares the cache commands system.
         """
-        self.cache_commands = cache or CacheCommands()
+        self.cache_commands = cache
 
-    def command(self, command_class):
+    def command(self, command_class: Callable[..., Any]) -> None:
         """
         Registers a command class after validating its structure.
 
@@ -84,15 +85,8 @@ class Register(IRegister):
 
         # Register the command
         self.cache_commands.register(
-            instance=command_class,
+            concrete=command_class,
             arguments=arguments,
             description=description,
             signature=signature
         )
-
-        # Return Class
-        return command_class
-
-
-# Return Decorator.
-register = Register()
