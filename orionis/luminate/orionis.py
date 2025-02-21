@@ -62,6 +62,7 @@ class Orionis(metaclass=SingletonMeta):
             self.container.make(Bootstrapper)
 
             self.is_started = True
+            OrionisContext().is_started = True
 
             return self
 
@@ -127,11 +128,11 @@ class Orionis(metaclass=SingletonMeta):
 class OrionisContext(metaclass=SingletonMeta):
 
     def __init__(self):
-        self.orionis = Orionis()
+        self.is_started = False
 
     def __enter__(self):
-        if self.orionis.isStarted():
-            return self.orionis.container
+        if self.is_started:
+            return Orionis()
         raise Exception(
             "Error: Not running within a valid Orionis Framework context. "
             "Please ensure that you are using the proper context manager."
