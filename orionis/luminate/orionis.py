@@ -89,7 +89,7 @@ class Orionis(metaclass=SingletonMeta):
             Always returns False so that any exception is propagated.
         """
         try:
-            self.app.finish()
+            self.container = None
         finally:
             self.is_started = False
 
