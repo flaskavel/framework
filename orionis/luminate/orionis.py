@@ -123,3 +123,16 @@ class Orionis(metaclass=SingletonMeta):
             otherwise, None.
         """
         return self.error_info
+
+class OrionisContext(metaclass=SingletonMeta):
+
+    def __init__(self):
+        self.orionis = Orionis()
+
+    def __enter__(self):
+        if self.orionis.isStarted():
+            return self
+        raise Exception(
+            "Error: Not running within a valid Orionis Framework context. "
+            "Please ensure that you are using the proper context manager."
+        )
