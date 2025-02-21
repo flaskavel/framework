@@ -303,3 +303,19 @@ class IConsole(ABC):
         the user will be repeatedly prompted until a valid choice is made.
         """
         pass
+
+    @abstractmethod
+    def exception(e) -> None:
+        """
+        Prints an exception message with detailed information.
+
+        Parameters
+        ----------
+        exception : Exception
+            The exception to print.
+
+        Notes
+        -----
+        This method prints the exception type, message, and a detailed stack trace.
+        """
+        pass

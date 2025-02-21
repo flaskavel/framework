@@ -4,6 +4,7 @@ import getpass
 import datetime
 from orionis.luminate.console.output.styles import ANSIColors
 from orionis.luminate.contracts.console.output.console_interface import IConsole
+from orionis.luminate.tools.exception_to_dict import ExceptionsToDict
 
 class Console(IConsole):
     """
@@ -424,3 +425,39 @@ class Console(IConsole):
             answer = input("Please select a valid number: ").strip()
 
         return choices[int(answer) - 1]
+
+    @staticmethod
+    def exception(e) -> None:
+        """
+        Prints an exception message with detailed information.
+
+        Parameters
+        ----------
+        exception : Exception
+            The exception to print.
+
+        Notes
+        -----
+        This method prints the exception type, message, and a detailed stack trace.
+        """
+
+        errors = ExceptionsToDict.parse(e)
+        error_type = errors.get("error_type")
+        error_message = errors.get("error_message")
+        stack_trace = errors.get("stack_trace")
+
+        # Format the output with a more eye-catching appearance
+        message = f"{ANSIColors.BG_ERROR.value}{ANSIColors.TEXT_WHITE.value} [{error_type}] {ANSIColors.TEXT_RESET.value}: {ANSIColors.TEXT_WARNING.value}{error_message}{ANSIColors.TEXT_RESET.value}"
+        print("-" * len(f" [{error_type}] : {error_message}"))  # separator line
+        print(message)
+
+        for frame in stack_trace:
+            filename = frame["filename"]
+            lineno = frame["lineno"]
+            name = frame["name"]
+            line = frame["line"]
+
+            # Print the stack trace with enhanced styling
+            print(f"{ANSIColors.CYAN.value}{ANSIColors.DIM.value}  {ANSIColors.MAGENTA.value}{ANSIColors.TEXT_BOLD.value}{filename}:{ANSIColors.TEXT_BOLD.value}{lineno}{ANSIColors.TEXT_RESET.value} / {ANSIColors.DIM.value}{ANSIColors.ITALIC.value}{ANSIColors.TEXT_WARNING.value}{name}{ANSIColors.TEXT_RESET.value} / {ANSIColors.CYAN.value}{line}{ANSIColors.TEXT_RESET.value}")
+
+        print("-" * len(f" [{error_type}] : {error_message}"))
