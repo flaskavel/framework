@@ -442,15 +442,17 @@ class Console(IConsole):
         """
 
         errors = ExceptionsToDict.parse(e)
-        error_type = errors.get("error_type")
-        error_message = errors.get("error_message")
+        error_type = errors.get("error_type").split(".")[-1]
+        error_message = errors.get("error_message").replace(error_type, "").replace("[]", "").strip()
         stack_trace = errors.get("stack_trace")
 
         # Format the output with a more eye-catching appearance
-        message = f"{ANSIColors.BG_ERROR.value}{ANSIColors.TEXT_WHITE.value} [{error_type}] {ANSIColors.TEXT_RESET.value}: {ANSIColors.TEXT_WARNING.value}{error_message}{ANSIColors.TEXT_RESET.value}"
-        print("-" * len(f" [{error_type}] : {error_message}"))  # separator line
+        message = f"{ANSIColors.BG_ERROR.value}{ANSIColors.TEXT_WHITE.value}[{error_type}]{ANSIColors.TEXT_RESET.value}: {ANSIColors.TEXT_WARNING.value}{error_message}{ANSIColors.TEXT_RESET.value}"
+        print("▬" * len(f" [{error_type}] : {error_message}"))
         print(message)
 
+        real_count = len(stack_trace)
+        count_error = real_count
         for frame in stack_trace:
             filename = frame["filename"]
             lineno = frame["lineno"]
@@ -458,6 +460,8 @@ class Console(IConsole):
             line = frame["line"]
 
             # Print the stack trace with enhanced styling
-            print(f"{ANSIColors.CYAN.value}{ANSIColors.DIM.value}  {ANSIColors.MAGENTA.value}{ANSIColors.TEXT_BOLD.value}{filename}:{ANSIColors.TEXT_BOLD.value}{lineno}{ANSIColors.TEXT_RESET.value} / {ANSIColors.DIM.value}{ANSIColors.ITALIC.value}{ANSIColors.TEXT_WARNING.value}{name}{ANSIColors.TEXT_RESET.value} / {ANSIColors.CYAN.value}{line}{ANSIColors.TEXT_RESET.value}")
+            print(f"{ANSIColors.TEXT_MUTED.value}Trace Call ({count_error}/{real_count}){ANSIColors.TEXT_RESET.value} - {ANSIColors.TEXT_WHITE.value}{filename}:{lineno}{ANSIColors.TEXT_RESET.value}")
+            print(f"  {ANSIColors.DIM.value}{ANSIColors.ITALIC.value}{ANSIColors.TEXT_WARNING.value}{name}{ANSIColors.TEXT_RESET.value} : {ANSIColors.CYAN.value}{line}{ANSIColors.TEXT_RESET.value}")
+            count_error -= 1
 
-        print("-" * len(f" [{error_type}] : {error_message}"))
+        print("▬" * len(f" [{error_type}] : {error_message}"))

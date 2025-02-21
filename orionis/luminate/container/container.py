@@ -312,7 +312,17 @@ class Container(IContainer):
         OrionisContainerException
             If the service is not found in the container.
         """
-        key = self._aliases.get(abstract, abstract)
+
+        key = abstract
+
+        if isinstance(abstract, str):
+            key = self._aliases.get(key, key)
+
+        if callable(abstract):
+            key = f"{abstract.__module__}.{abstract.__name__}"
+
+        if isinstance(abstract, object) and abstract.__class__.__module__ not in {'builtins', 'abc'}:
+            key = f"{abstract.__class__.__module__}.{abstract.__class__.__name__}"
 
         if key in self._instances:
             return self._instances[key]['instance']
