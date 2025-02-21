@@ -2,8 +2,9 @@ from orionis.luminate.container.container import Container
 from orionis.luminate.cache.app.config import CacheConfig
 from orionis.luminate.bootstrap.config.register import Register
 from orionis.luminate.bootstrap.config.bootstrapper import Bootstrapper
+from orionis.luminate.patterns.singleton import SingletonMeta
 
-class App:
+class App(metaclass=SingletonMeta):
 
     def __init__(self):
         self.container = Container()

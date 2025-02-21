@@ -1,7 +1,8 @@
 import traceback
 from orionis.luminate.app import App
+from orionis.luminate.patterns.singleton import SingletonMeta
 
-class OrionisContext:
+class Orionis(metaclass=SingletonMeta):
     """
     Context manager for the Orionis application that handles startup and cleanup.
 
@@ -87,7 +88,7 @@ class OrionisContext:
             self.error_info = (exc_val, traceback.format_exc())
             return False
 
-    def is_active(self):
+    def isStarted(self):
         """
         Check if the application is currently active.
 
@@ -98,7 +99,7 @@ class OrionisContext:
         """
         return self.is_started
 
-    def get_error(self):
+    def getError(self):
         """
         Retrieve the stored error information.
 
