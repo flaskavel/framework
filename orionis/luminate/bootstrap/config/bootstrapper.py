@@ -1,6 +1,5 @@
-import ast
 import importlib
-import os
+import pathlib
 from orionis.luminate.bootstrap.config.register import Register
 from orionis.luminate.contracts.bootstrap.config.bootstrapper_interface import IBootstrapper
 
@@ -23,9 +22,6 @@ class Bootstrapper(IBootstrapper):
     __init__(register: Register) -> None
         Initializes the `Bootstrapper` with a `Register` instance.
 
-    _findClasses(file_path: str) -> List[str]
-        Parses a Python file to extract and return all defined class names.
-
     _autoload(directory: str) -> None
         Scans a directory for Python files, imports them, finds configuration classes,
         and registers them using the `Register` instance.
@@ -42,34 +38,6 @@ class Bootstrapper(IBootstrapper):
         """
         self.register = register
         self._autoload()
-
-    def _definitions(self, file_path: str):
-        """
-        Parses a Python file to extract and return all defined class names.
-
-        This method opens the file at the given path, parses it using the Abstract
-        Syntax Tree (AST) module to extract class definitions, and returns a
-        list of class names found within the file.
-
-        Parameters
-        ----------
-        file_path : str
-            The path to the Python file to parse.
-
-        Returns
-        -------
-        List[str]
-            A list of class names defined in the provided Python file.
-        """
-        classes = []
-        with open(file_path, "r", encoding="utf-8") as file:
-            tree = ast.parse(file.read())
-
-            for node in ast.walk(tree):
-                if isinstance(node, ast.ClassDef):
-                    classes.append(node.name)
-
-        return classes
 
     def _autoload(self, directory: str = 'config') -> None:
         """
@@ -90,22 +58,21 @@ class Bootstrapper(IBootstrapper):
         FileNotFoundError
             If the provided directory does not exist.
         """
-        if not os.path.isdir(directory):
-            raise FileNotFoundError(f"Directory '{directory}' not found.")
+        base_path = pathlib.Path(directory).resolve()
 
-        for root, _, files in os.walk(directory):
-            for file in files:
-                if file.endswith(".py") and file != "__init__.py":
-                    file_path = os.path.join(root, file)
-                    # Get the class names defined in the file
-                    classes = self._definitions(file_path)
+        if not base_path.exists():
+            raise FileNotFoundError(f"Directory {directory} does not exist.")
 
-                    if classes:
-                        for class_name in classes:
-                            # Construct the module path and import the module
-                            module_path = root.replace(os.getcwd(), "").replace(os.sep, ".") + "." + file[:-3]
-                            module = importlib.import_module(module_path)
-                            class_obj = getattr(module, class_name)
+        for file_path in base_path.rglob("*.py"):
+            if file_path.name == "__init__.py":
+                continue
 
-                            # Register the class in the container using the Register instance
-                            self.register.config(class_obj)
+            module_path = ".".join(file_path.relative_to(base_path).with_suffix("").parts)
+
+            try:
+                module = importlib.import_module(f"{directory}.{module_path}")
+                if hasattr(module, "Config"):
+                    self.register.config(getattr(module, "Config"))
+            except Exception as e:
+                raise RuntimeError(f"Error loading module {module_path}") from e
+

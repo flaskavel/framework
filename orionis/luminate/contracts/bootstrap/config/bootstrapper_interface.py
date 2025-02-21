@@ -12,34 +12,10 @@ class IBootstrapper(ABC):
 
     Methods
     -------
-    findClasses(file_path: str) -> List[str]
-        Parses a Python file to extract and return all defined class names.
-
     autoload(directory: str) -> None
         Scans a directory for Python files, imports them, finds configuration classes,
         and registers them using the `Register` instance.
     """
-
-    @abstractmethod
-    def _definitions(self, file_path: str):
-        """
-        Parses a Python file to extract and return all defined class names.
-
-        This method opens the file at the given path, parses it using the Abstract
-        Syntax Tree (AST) module to extract class definitions, and returns a
-        list of class names found within the file.
-
-        Parameters
-        ----------
-        file_path : str
-            The path to the Python file to parse.
-
-        Returns
-        -------
-        List[str]
-            A list of class names defined in the provided Python file.
-        """
-        pass
 
     @abstractmethod
     def _autoload(self, directory: str) -> None:
