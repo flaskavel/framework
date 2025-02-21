@@ -4,6 +4,7 @@ from orionis.luminate.cache.app.config import CacheConfig
 from orionis.luminate.bootstrap.config.register import Register
 from orionis.luminate.bootstrap.config.bootstrapper import Bootstrapper
 from orionis.luminate.patterns.singleton import SingletonMeta
+
 class Orionis(metaclass=SingletonMeta):
     """
     Context manager for the Orionis application that handles startup and cleanup.
@@ -29,8 +30,8 @@ class Orionis(metaclass=SingletonMeta):
 
         Sets up the application instance and initializes state variables.
         """
-        self.is_started = False
         self.container = Container()
+        self.is_started = False
         self.error_info = None
 
     def __enter__(self):
@@ -61,8 +62,11 @@ class Orionis(metaclass=SingletonMeta):
             self.container.make(Bootstrapper)
 
             self.is_started = True
+
             return self
+
         except Exception as e:
+
             self.error_info = (e, traceback.format_exc())
             raise
 
