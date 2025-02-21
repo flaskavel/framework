@@ -65,7 +65,7 @@ class Bootstrapper(IBootstrapper):
         # Define the command directories to search
         command_dirs = [
             base_path / "app" / "console" / "commands",
-            pathlib.Path(__file__).resolve().parent.parent / "console" / "commands"
+            pathlib.Path(__file__).resolve().parent.parent.parent / "console" / "commands"
         ]
 
         # Iterate over each command directory
@@ -84,10 +84,12 @@ class Bootstrapper(IBootstrapper):
 
                 # Convert file path to a Python module import path
                 module_path = ".".join(file_path.relative_to(base_path).with_suffix("").parts)
+                if 'site-packages.' in module_path:
+                    module_path = module_path.split('site-packages.')[1]
 
                 try:
                     # Dynamically import the module
-                    module = importlib.import_module(module_path)
+                    module = importlib.import_module(module_path.strip())
 
                     # Find classes that inherit from `BaseCommand`
                     for name, obj in inspect.getmembers(module, inspect.isclass):
