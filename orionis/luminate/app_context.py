@@ -35,7 +35,7 @@ class AppContext:
                 "Error: Not running within a valid Orionis Framework context. "
                 "Ensure that the Orionis application is correctly initialized."
             )
-        return app.container
+        return app
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """
