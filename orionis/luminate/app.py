@@ -1,4 +1,3 @@
-import traceback
 from orionis.luminate.container.container import Container
 from orionis.luminate.bootstrap.config_bootstrapper import ConfigBootstrapper
 from orionis.luminate.patterns.singleton import SingletonMeta
