@@ -26,9 +26,9 @@ def env(key: str, default=None) -> str:
         The value of the environment variable, or the default value if the variable
         does not exist.
     """
-    return Environment().get(key, default)
+    return Env().get(key, default)
 
-class Environment(IEnv):
+class Env(IEnv):
     """
     A thread-safe singleton class that manages environment variables from a .env file.
     """
