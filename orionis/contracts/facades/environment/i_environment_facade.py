@@ -1,40 +1,74 @@
-
 from abc import ABC, abstractmethod
 
 class IEnv(ABC):
-    """
-    A facade class for accessing environment variables.
-
-    This class provides a static method to retrieve environment variables
-    stored in the application context. It implements the `IEnv` interface.
-
-    Methods
-    -------
-    get(key: str, default=None) -> str
-        Retrieves the value of an environment variable.
-    """
 
     @abstractmethod
-    def get(key: str, default=None) -> str:
+    def _initialize(self, path: str = None):
         """
-        Retrieves the value of an environment variable.
+        Initializes the instance by setting the path to the .env file.
+        If no path is provided, defaults to a `.env` file in the current directory.
 
-        This method provides a convenient way to access environment variables
-        stored in the application context. If the variable does not exist, it
-        returns the specified default value.
+        Parameters
+        ----------
+        path : str, optional
+            Path to the .env file. Defaults to None.
+        """
+        pass
+
+    @abstractmethod
+    def get(self, key: str, default=None) -> str:
+        """
+        Retrieves the value of an environment variable from the .env file
+        or from system environment variables if not found.
 
         Parameters
         ----------
         key : str
-            The name of the environment variable to retrieve.
-        default : Any, optional
-            The default value to return if the environment variable does not exist.
-            Defaults to None.
+            The key of the environment variable.
+        default : optional
+            Default value if the key does not exist. Defaults to None.
 
         Returns
         -------
         str
-            The value of the environment variable, or the default value if the variable
-            does not exist.
+            The value of the environment variable or the default value.
+        """
+        pass
+
+    @abstractmethod
+    def set(self, key: str, value: str) -> None:
+        """
+        Sets the value of an environment variable in the .env file.
+
+        Parameters
+        ----------
+        key : str
+            The key of the environment variable.
+        value : str
+            The value to set.
+        """
+        pass
+
+    @abstractmethod
+    def unset(self, key: str) -> None:
+        """
+        Removes an environment variable from the .env file.
+
+        Parameters
+        ----------
+        key : str
+            The key of the environment variable to remove.
+        """
+        pass
+
+    @abstractmethod
+    def all(self) -> dict:
+        """
+        Retrieves all environment variable values from the .env file.
+
+        Returns
+        -------
+        dict
+            A dictionary of all environment variables and their values.
         """
         pass

@@ -1,6 +1,5 @@
 import os
 from orionis.contracts.facades.files.i_path_facade import IPath
-from orionis.luminate.app_context import AppContext
 from orionis.luminate.services.files.path_service import PathService
 
 class Path(IPath):
@@ -66,9 +65,7 @@ class Path(IPath):
         route = os.path.normpath(route)
 
         # Obtain the path service from the container
-        with AppContext() as app:
-            path_service : PathService = app.container.make(PathService)
-            return path_service.resolve(route)
+        PathService().resolve(route)
 
     @staticmethod
     def app(file: str = None):

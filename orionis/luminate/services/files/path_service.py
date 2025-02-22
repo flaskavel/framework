@@ -1,10 +1,11 @@
 import os
+import threading
 from pathlib import Path
 from orionis.contracts.services.files.i_path_service import IPathService
 
 class PathService(IPathService):
     """
-    A service class for resolving and validating absolute paths.
+    A thread-safe singleton class for resolving and validating absolute paths.
 
     This class resolves the absolute path for a given relative directory or file path
     based on the script's execution directory. It ensures that the requested path is valid
@@ -12,28 +13,36 @@ class PathService(IPathService):
 
     Attributes
     ----------
+    base_path : Path
+        The base path (current working directory) used for resolving relative paths.
     route : str
         The resolved absolute path to the directory or file.
-
-    Methods
-    -------
-    __init__(route: str)
-        Initializes the `PathService` and resolves the absolute path.
-    resolve() -> str
-        Returns the resolved absolute path as a string.
-    __str__() -> str
-        Returns the resolved absolute path as a string (dunder method).
     """
 
-    def __init__(self) -> None:
-        """
-        Initializes the `PathService` and resolves the absolute path for a given relative path.
+    _instance = None
+    _lock = threading.Lock()
 
-        The path is resolved relative to the script's execution directory. It validates
-        that the resolved path exists and is either a directory or a file.
+    def __new__(cls):
+        """
+        Override the __new__ method to ensure only one instance of the class is created.
+
+        Returns
+        -------
+        PathService
+            The singleton instance of the PathService class.
+        """
+        # Use the lock to ensure thread-safe instantiation
+        with cls._lock:
+            if cls._instance is None:
+                cls._instance = super().__new__(cls)
+                cls._instance._initialize()
+        return cls._instance
+
+    def _initialize(self):
+        """
+        Initializes the instance by setting the base path to the current working directory.
         """
         self.base_path = Path(os.getcwd())
-
 
     def resolve(self, route: str) -> str:
         """
@@ -58,7 +67,6 @@ class PathService(IPathService):
         ValueError
             If the resolved path does not exist or is neither a directory nor a file.
         """
-
         # Combine base path with the relative route
         real_path = (self.base_path / route).resolve()
 
@@ -69,3 +77,15 @@ class PathService(IPathService):
             raise ValueError(f"The requested path is neither a directory nor a file: {real_path}")
 
         self.route = str(real_path)
+        return self.route
+
+    def __str__(self) -> str:
+        """
+        Returns the resolved absolute path as a string (dunder method).
+
+        Returns
+        -------
+        str
+            The absolute path to the directory or file.
+        """
+        return self.route
