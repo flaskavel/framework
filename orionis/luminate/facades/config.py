@@ -1,6 +1,6 @@
 from orionis.luminate.container.container import Container
 from orionis.luminate.cache.app.config import CacheConfig
-from orionis.luminate.orionis import OrionisContext
+from orionis.luminate.app import OrionisContext
 
 class Config:
 
