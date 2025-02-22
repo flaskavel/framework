@@ -56,7 +56,6 @@ class InstallerOutput(IInstallerOutput):
 
         If the ASCII art file is found, placeholders are replaced with dynamic content such as version, docs, and year.
         """
-        print("\n")
 
         try:
             # Try loading and printing ASCII art from the file
@@ -80,8 +79,6 @@ class InstallerOutput(IInstallerOutput):
             print(f"Version: {VERSION}")
             print(f"Docs: {DOCS}")
 
-        print("\n")
-
     @staticmethod
     def asciiInfo():
         """
@@ -91,8 +88,6 @@ class InstallerOutput(IInstallerOutput):
 
         Similar to `asciiIco()`, but with different ASCII art.
         """
-        print("\n")
-
         try:
             # Try loading and printing ASCII art from the file
             dir_path = os.path.dirname(__file__)
@@ -125,8 +120,6 @@ class InstallerOutput(IInstallerOutput):
             print(f"Version: {VERSION}")
             print(f"Docs: {DOCS}")
 
-        print("\n")
-
     @staticmethod
     def startInstallation():
         """
@@ -134,7 +127,7 @@ class InstallerOutput(IInstallerOutput):
         This includes a welcoming message and the ASCII art.
         """
         InstallerOutput.asciiIco()
-        print(f'\u001b[32m{NAME}\u001b[0m: Thank you for using the framework!')
+        print(f'\u001b[32mThank you for using the framework!\u001b[0m')
 
     @staticmethod
     def endInstallation():
@@ -142,8 +135,8 @@ class InstallerOutput(IInstallerOutput):
         Displays the ending message after the installation is complete.
         Provides a message of encouragement to start using the framework.
         """
-        print(f'\u001b[32m{NAME}\u001b[0m: Welcome aboard, the journey starts now. Let your imagination soar!')
-        print("\n")
+        print(f'\u001b[32mWelcome aboard, the journey starts now. Let your imagination soar!\u001b[0m')
+        print("-------------------------------------------")
 
     @staticmethod
     def info(message: str = ''):
