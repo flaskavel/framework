@@ -166,3 +166,44 @@ class ConfigBootstrapper(IConfigBootstrapper):
         if section in self._config:
             raise ValueError(f"Configuration section '{section}' is already registered.")
         self._config[section] = data
+
+    def get(self, key: str = None, default: Any = None) -> Any:
+        """
+        Retrieves configuration data.
+
+        If a key is provided, it retrieves the value associated with the key using dot notation.
+        If no key is provided, it returns the entire configuration dictionary.
+
+        Parameters
+        ----------
+        key : str, optional
+            The key to retrieve the value for, using dot notation (default is None).
+        default : Any, optional
+            The default value to return if the key is not found (default is None).
+
+        Returns
+        -------
+        Any
+            The configuration value associated with the key, or the entire configuration dictionary
+            if no key is provided. If the key is not found, returns the default value.
+
+        Raises
+        ------
+        KeyError
+            If the key is not found and no default value is provided.
+        """
+        if key is None:
+            return self._config
+
+        keys = key.split('.')
+        value = self._config
+
+        try:
+            for k in keys:
+                value = value[k]
+        except KeyError:
+            if default is not None:
+                return default
+            raise KeyError(f"Key '{key}' not found in configuration.")
+
+        return value
