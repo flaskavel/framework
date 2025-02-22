@@ -17,8 +17,10 @@ venv/
 # ========================
 build/
 dist/
+storage/
 *.egg-info/
 pypi.json
+publisher.py
 
 # ========================
 # 🔄 Local Runner (Scripts)
@@ -31,11 +33,6 @@ cli
 .vscode/
 .idea/
 *.iml
-
-# ========================
-# 🚀 Logs & Debugging
-# ========================
-orionis.log
 
 # ========================
 # 📂 Miscellaneous

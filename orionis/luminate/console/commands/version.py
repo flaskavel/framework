@@ -28,11 +28,6 @@ class VersionCommand(BaseCommand):
             with the original exception message.
         """
         try:
-
-            # Print the version number
             self.textSuccessBold(f"Orionis Framework v{VERSION}")
-
         except Exception as e:
-
-            # Handle any unexpected error and display the error message
             raise CLIOrionisRuntimeError(f"An unexpected error occurred: {e}") from e

@@ -38,13 +38,25 @@ class CacheClearCommand(BaseCommand):
             # Get the base project path
             base_path = os.getcwd()
 
+            # Normalize the base path to ensure consistent formatting
+            base_path = os.path.normpath(base_path)
+
             # Recursively traverse directories starting from the base path
-            for root, dirs, files in os.walk(base_path):
-                for dir in dirs:
-                    if dir == '__pycache__':
-                        # Form the path to the __pycache__ directory and remove it
-                        pycache_path = os.path.join(root, dir)
+            for root, dirs, files in os.walk(base_path, topdown=True):
+
+                # Skip the 'venv' directory and its subdirectories
+                if 'venv' in dirs:
+                    dirs.remove('venv')
+
+                # Check for __pycache__ directories
+                if '__pycache__' in dirs:
+                    pycache_path = os.path.join(root, '__pycache__')
+
+                    # Attempt to remove the __pycache__ directory
+                    try:
                         shutil.rmtree(pycache_path)
+                    except OSError as e:
+                        self.fail(f"Error removing {pycache_path}: {e}")
 
             # Log a success message once all caches are cleared
             self.success(message='The application cache has been successfully cleared.')

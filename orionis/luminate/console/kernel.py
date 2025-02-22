@@ -1,6 +1,6 @@
 from typing import Any
+from orionis.contracts.console.i_kernel import ICLIKernel
 from orionis.luminate.console.runner import CLIRunner
-from orionis.luminate.contracts.console.kernel_interface import ICLIKernel
 
 class CLIKernel(ICLIKernel):
     """
@@ -29,4 +29,4 @@ class CLIKernel(ICLIKernel):
         Any
             The result of the executed command.
         """
-        return CLIRunner.handle(None, {}, *args)
+        pass

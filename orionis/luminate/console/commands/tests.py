@@ -1,6 +1,6 @@
 from orionis.luminate.console.exceptions.cli_exception import CLIOrionisRuntimeError
-from orionis.luminate.facades.tests import UnitTests
 from orionis.luminate.console.base.command import BaseCommand
+from orionis.luminate.facades.tests.tests_facade import UnitTests
 
 class TestsCommand(BaseCommand):
     """
@@ -29,11 +29,6 @@ class TestsCommand(BaseCommand):
             with the original exception message.
         """
         try:
-
-            # Initialize the test suite using the custom testing framework.
             return UnitTests.execute()
-
         except Exception as e:
-
-            # Handle any unexpected error and display the error message
             raise CLIOrionisRuntimeError(f"An unexpected error occurred: {e}") from e

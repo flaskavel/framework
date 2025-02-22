@@ -3,9 +3,8 @@ import re
 import unittest
 from contextlib import redirect_stdout
 from orionis.luminate.console.output.console import Console
-from orionis.luminate.contracts.test.unit_test_interface import IUnitTest
 
-class UnitTest(IUnitTest):
+class UnitTest:
     """
     A testing framework for discovering and running unit tests in a structured way.
 

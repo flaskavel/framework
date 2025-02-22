@@ -1,8 +1,6 @@
 import traceback
 from orionis.luminate.container.container import Container
-from orionis.luminate.cache.app.config import CacheConfig
-from orionis.luminate.bootstrap.config.register import Register
-from orionis.luminate.bootstrap.config.bootstrapper import Bootstrapper
+from orionis.luminate.bootstrap.config_bootstrapper import Bootstrapper as BootstrapperConfig
 from orionis.luminate.patterns.singleton import SingletonMeta
 
 class Application(metaclass=SingletonMeta):
@@ -37,6 +35,16 @@ class Application(metaclass=SingletonMeta):
         self.booted = False
         self.error_info = None
 
+        self._config = {}
+
+    def register(self):
+        """
+        Registers all necessary service bindings with the application container.
+
+        This method is intended to be overridden by the user to define custom service bindings.
+        """
+        pass
+
     def boot(self):
         """
         Boots the application and registers necessary dependencies.
@@ -58,14 +66,10 @@ class Application(metaclass=SingletonMeta):
             return self
 
         try:
-            # Register core services as singletons
-            self.container.singleton(CacheConfig)
-            self.container.singleton(Register)
-            self.container.singleton(Bootstrapper)
-
-            # Resolve the registered dependencies
-            self.container.make(Register)
-            self.container.make(Bootstrapper)
+            # Config Bootstrapper and retrieve application configuration
+            boot_config = self.container.singleton(BootstrapperConfig)
+            app_config = self.container.make(boot_config)
+            self._config = app_config.get()
 
             self.booted = True
             return self

@@ -2,9 +2,9 @@ import os
 import sys
 import getpass
 import datetime
+from orionis.contracts.console.output.i_console import IConsole
 from orionis.luminate.console.output.styles import ANSIColors
-from orionis.luminate.contracts.console.output.console_interface import IConsole
-from orionis.luminate.tools.exception_to_dict import ExceptionsToDict
+from orionis.luminate.support.exception_to_dict import ExceptionsToDict
 
 class Console(IConsole):
     """

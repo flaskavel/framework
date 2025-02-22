@@ -1,3 +1,4 @@
+from orionis.luminate.app_context import AppContext
 from orionis.luminate.console.base.command import BaseCommand
 from orionis.luminate.cache.console.commands import CacheCommands
 from orionis.luminate.console.exceptions.cli_exception import CLIOrionisRuntimeError
@@ -34,23 +35,28 @@ class HelpCommand(BaseCommand):
             self.newLine()
             self.textSuccessBold(" (CLI Interpreter) Available Commands: ")
 
-            # Retrieve command cache
-            cache = CacheCommands()
+            # Fetch the commands from the container IoC
+            with AppContext() as app:
 
-            # Fetch and store commands in a structured format
-            rows = [[command, cache.get(command)['description']] for command in cache.commands]
+                # Get the list of commands from the container
+                commands : dict = app.container._commands
 
-            # Sort commands alphabetically
-            rows_sorted = sorted(rows, key=lambda x: x[0])
+                # Initialize an empty list to store the rows.
+                rows = []
+                for signature, command_data in commands.items():
+                    rows.append([signature, command_data['description']])
 
-            # Display the commands in a table format
-            self.table(
-                ["Signature", "Description"],
-                rows_sorted
-            )
+                # Sort commands alphabetically
+                rows_sorted = sorted(rows, key=lambda x: x[0])
 
-            # Add a new line after the table
-            self.newLine()
+                # Display the commands in a table format
+                self.table(
+                    ["Signature", "Description"],
+                    rows_sorted
+                )
+
+                # Add a new line after the table
+                self.newLine()
 
         except Exception as e:
 

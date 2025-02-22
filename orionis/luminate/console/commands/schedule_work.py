@@ -1,7 +1,9 @@
+import importlib
+from orionis.luminate.app_context import AppContext
 from orionis.luminate.console.base.command import BaseCommand
 from orionis.luminate.console.exceptions.cli_exception import CLIOrionisRuntimeError
 from orionis.luminate.console.tasks.scheduler import Schedule
-from orionis.luminate.contracts.console.task_manager_interface import ITaskManager
+from orionis.contracts.console.i_task_manager import ITaskManager
 
 class ScheduleWorkCommand(BaseCommand):
     """
@@ -36,7 +38,8 @@ class ScheduleWorkCommand(BaseCommand):
             schedule = Schedule()
 
             # Create an instance of the TaskManager to manage the scheduling.
-            from app.console.tasks_manager import TaskManager  # type: ignore
+            tasks_manager = importlib.import_module("app.console.tasks_manager")
+            TaskManager = getattr(tasks_manager, "TaskManager")
             kernel: ITaskManager = TaskManager()
             kernel.schedule(schedule)
 

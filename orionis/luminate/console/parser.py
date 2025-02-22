@@ -1,9 +1,9 @@
 import shlex
 import types
 import argparse
-from io import StringIO
 from contextlib import redirect_stderr
-from orionis.luminate.contracts.console.parser_interface import IParser
+from io import StringIO
+from orionis.contracts.console.i_parser import IParser
 
 class Parser(IParser):
     """

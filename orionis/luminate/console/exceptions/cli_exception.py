@@ -40,7 +40,6 @@ class CLIOrionisException(Exception):
         """
         return f"[CLIOrionisException]: {self.args[0]}"
 
-
 class CLIOrionisValueError(ValueError):
     """
     Custom exception raised when there is a value error in Orionis data processing.
@@ -83,7 +82,6 @@ class CLIOrionisValueError(ValueError):
         """
         return f"[CLIOrionisValueError]: {self.args[0]}"
 
-
 class CLIOrionisScheduleException(Exception):
     """
     Custom exception raised when there is an issue with the Orionis schedule.
@@ -125,7 +123,6 @@ class CLIOrionisScheduleException(Exception):
             A string containing the exception name and the response message.
         """
         return f"[CLIOrionisScheduleException]: {self.args[0]}"
-
 
 class CLIOrionisRuntimeError(RuntimeError):
     """

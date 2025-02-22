@@ -1,6 +1,6 @@
-from orionis.luminate.contracts.console.command_filter_interface import ICommandFilter
+from orionis.contracts.console.i_command_filter import ICommandFilter
 
-# List of commands that should be excluded from output formatting
+# List of commands to exclude from output formatting
 EXCLUDED_COMMANDS = [
     'schedule:work',   # Command to handle scheduled work
     'help',            # Command to show help information

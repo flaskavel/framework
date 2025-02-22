@@ -1,6 +1,6 @@
+from orionis.contracts.console.base.i_command import IBaseCommand
 from orionis.luminate.console.output.console import Console
 from orionis.luminate.console.output.progress_bar import ProgressBar
-from orionis.luminate.contracts.console.base.base_command_interface import IBaseCommand
 
 class BaseCommand(IBaseCommand):
     """
@@ -404,10 +404,8 @@ class BaseCommand(IBaseCommand):
             Contain the arguments to be set for the command.
         """
         try:
-            # Convert arguments to a dictionary using vars(), if possible
             self.args = vars(args)
         except TypeError:
-            # Fallback to an empty dictionary if args is not compatible with vars()
             self.args = {}
 
 

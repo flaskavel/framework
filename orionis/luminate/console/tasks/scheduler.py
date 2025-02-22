@@ -1,14 +1,15 @@
+import logging
 import re
 import sys
 import time
-import logging
-from typing import Any
 from datetime import datetime
-from apscheduler.triggers.cron import CronTrigger
-from orionis.luminate.console.command import Command
-from apscheduler.triggers.interval import IntervalTrigger
+from typing import Any
 from apscheduler.schedulers.background import BackgroundScheduler
-from orionis.luminate.contracts.console.tasks.schedule_interface import ISchedule
+from apscheduler.triggers.cron import CronTrigger
+from apscheduler.triggers.interval import IntervalTrigger
+from orionis.contracts.console.tasks.i_schedule import ISchedule
+from orionis.luminate.app_context import AppContext
+from orionis.luminate.console.command import Command
 from orionis.luminate.console.exceptions.cli_exception import CLIOrionisScheduleException
 
 class Schedule(ISchedule):
@@ -65,10 +66,10 @@ class Schedule(ISchedule):
         Schedule
             Returns the Schedule instance itself, allowing method chaining.
         """
-        # Store the command logic as a lambda function
         def func():
             try:
-                Command.call(signature, vars, *args, **kwargs)
+                with AppContext() as app:
+                    app.container.makeCommand(signature, vars, *args, **kwargs)
             finally:
                 if not self.scheduler.get_jobs():
                     self.wait = False

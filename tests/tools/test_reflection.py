@@ -1,6 +1,6 @@
 import os
 import unittest
-from orionis.luminate.tools.reflection import Reflection
+from orionis.luminate.support.reflection import Reflection
 from tests.tools.class_example import BaseTestClass, TestClass, TestEnum
 
 class TestReflection(unittest.TestCase):
