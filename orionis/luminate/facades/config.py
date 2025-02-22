@@ -7,4 +7,4 @@ class Config:
     @staticmethod
     def get():
         with OrionisContext() as ctx:
-            return ctx.make(CacheConfig).config
+            return ctx.container.make(CacheConfig).config
