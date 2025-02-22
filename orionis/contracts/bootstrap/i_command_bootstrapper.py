@@ -57,3 +57,25 @@ class ICommandsBootstrapper(ABC):
             If the class does not have required attributes or methods.
         """
         pass
+
+    @abstractmethod
+    def get(self, signature: str = None) -> Dict[str, Any]:
+        """
+        Retrieves a registered command by its signature.
+
+        Parameters
+        ----------
+        signature : str
+            The command signature to retrieve.
+
+        Returns
+        -------
+        Dict[str, Any]
+            A dictionary containing the command class, arguments, description, and signature.
+
+        Raises
+        ------
+        KeyError
+            If the command signature is not found.
+        """
+        pass
