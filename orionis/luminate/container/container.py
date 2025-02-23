@@ -248,13 +248,16 @@ class Container(IContainer):
         Raises:
             OrionisContainerException: If the concrete instance is not a valid object or if the alias is a primitive type.
         """
-        if not callable(concrete) and not isinstance(concrete, object):
-            raise OrionisContainerException(f"The instance '{str(concrete)}' must be a valid object.")
 
         if self._instance._validate_types.isPrimitive(alias):
             raise OrionisContainerException(f"Cannot use primitive type '{alias}' as an alias.")
 
-        if isinstance(concrete, object) and concrete.__class__.__module__ not in ['builtins', 'abc']:
+        if isinstance(concrete, str):
+            if self.has(concrete):
+                current_key = concrete
+            else:
+                raise OrionisContainerException(f"Service '{concrete}' is not registered in the container.")
+        elif isinstance(concrete, object) and concrete.__class__.__module__ not in ['builtins', 'abc']:
             cls_concrete = concrete.__class__
             current_key = f"{cls_concrete.__module__}.{cls_concrete.__name__}"
         elif callable(concrete):

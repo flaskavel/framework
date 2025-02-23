@@ -7,22 +7,25 @@ from orionis.luminate.providers.environment.environment_provider import Environm
 
 class Application(metaclass=SingletonMeta):
 
-    def __init__(self):
+    def __init__(self, container: Container):
 
         # Atributos de la clase
         self._config = {}
         self._commands = {}
-        self._environment = {}
+        self._environment_vars = {}
 
         # Inicializar el contenedor de la aplicacion
-        self.container = Container()
-        self.container.instance(self.container)
+        self.container = container
+        self.container.instance(container)
 
         # Cargar el servidor de entorno
         self._loadServiceProviderEnvironment()
 
         # Cargar dinamicamente la configurcion de la aplicacion.
         self._bootstraping()
+
+        # Registrrar los comandos en el contenedor
+        self._registerCommands()
 
     def _loadServiceProviderEnvironment(self):
 
@@ -46,6 +49,11 @@ class Application(metaclass=SingletonMeta):
         # Cargar las variables de entorno solo desde el archivo .env (No se carga desde el sistema operativo, por seguridad)
         environment_bootstrapper_key = self.container.singleton(EnvironmentBootstrapper)
         environment_bootstrapper: EnvironmentBootstrapper = self.container.make(environment_bootstrapper_key)
-        self._environment = environment_bootstrapper.get()
+        self._environment_vars = environment_bootstrapper.get()
 
-        print(self._config)
+    def _registerCommands(self):
+
+        # Registrar los comandos en el contenedor
+        for command in self._commands:
+            _key_instance_container = self.container.bind(self._commands[command].get('concrete'))
+            self.container.alias(alias=command, concrete=_key_instance_container)
