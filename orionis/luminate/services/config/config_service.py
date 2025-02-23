@@ -1,3 +1,4 @@
+import copy
 from typing import Any, Optional
 from orionis.contracts.services.config.i_config_service import IConfigService
 from orionis.luminate.bootstrap.config_bootstrapper import ConfigBootstrapper
@@ -11,7 +12,8 @@ class ConfigService(IConfigService):
         Args:
             config (dict): A dictionary containing configuration settings.
         """
-        self._config = config_bootstrapper.get()
+        real_config : dict = config_bootstrapper.get()
+        self._config = copy.deepcopy(real_config)
 
     def set(self, key: str, value: Any) -> None:
         """
