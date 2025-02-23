@@ -139,12 +139,12 @@ class Channels:
     chunked : Chunked
         Configuration for chunked log file storage.
     """
-    stack = Stack
-    hourly = Hourly
-    daily = Daily
-    weekly = Weekly
-    monthly = Monthly
-    chunked = Chunked
+    stack : Stack
+    hourly : Hourly
+    daily : Daily
+    weekly : Weekly
+    monthly : Monthly
+    chunked : Chunked
 
 
 @dataclass

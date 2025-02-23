@@ -49,19 +49,6 @@ class LogguerService(ILogguerService):
         self.config_service = config_service
         self._initialize_logger()
 
-    def _path_resolver(self, filename: str):
-        """
-        Resolves the log file path based on the specified filename.
-        """
-        base_path = Path(os.getcwd())
-        log_dir = base_path / "storage" / "logs"
-
-        # Create the log directory if it does not exist
-        if not log_dir.exists():
-            log_dir.mkdir(parents=True, exist_ok=True)
-
-        return log_dir / filename
-
     def _initialize_logger(self):
         """
         Configures the logger with the specified settings.
@@ -82,6 +69,8 @@ class LogguerService(ILogguerService):
         """
         try:
 
+            handlers = []
+
             channel : str = self.config_service.get("logging.default")
             config : dict = self.config_service.get(f"logging.channels.{channel}", {})
             path : str = config.get("path", 'logs/orionis.log')
@@ -91,7 +80,7 @@ class LogguerService(ILogguerService):
 
                 handlers = [
                     logging.FileHandler(
-                        filename=self._path_resolver(path),
+                        filename=path,
                         encoding="utf-8"
                     )
                 ]
@@ -100,7 +89,7 @@ class LogguerService(ILogguerService):
 
                 handlers = [
                     TimedRotatingFileHandler(
-                        filename=self._path_resolver(path),
+                        filename=path,
                         when="h",
                         interval=1,
                         backupCount=config.get('retention_hours', 24),
@@ -111,16 +100,16 @@ class LogguerService(ILogguerService):
 
             elif channel == "daily":
 
-                backup_count : str = config.get('retention_days', 30)
-                hour_at : str = config.get('at', "00:00")
-                if backup_count < 1 or not backup_count.isdigit():
+                backup_count = config.get('retention_days', 30)
+                hour_at:str = config.get('at', "00:00")
+                if backup_count < 1:
                     raise ValueError("The 'retention_days' value must be an integer greater than 0.")
                 if not bool(re.match(r"^(?:[01]?\d|2[0-3]):[0-5]?\d$", hour_at)):
                     raise ValueError("The 'at' value must be a valid time in the format HH:MM.")
 
                 handlers = [
                     TimedRotatingFileHandler(
-                        filename=self._path_resolver(path),
+                        filename=path,
                         when="d",
                         interval=1,
                         backupCount=backup_count,
@@ -132,12 +121,12 @@ class LogguerService(ILogguerService):
 
             elif channel == "weekly":
 
-                backup_count : str = config.get('retention_weeks', 4)
-                if backup_count < 1 or not backup_count.isdigit():
+                backup_count = config.get('retention_weeks', 4)
+                if backup_count < 1:
                     raise ValueError("The 'retention_weeks' value must be an integer greater than 0.")
                 handlers = [
                     TimedRotatingFileHandler(
-                        filename=self._path_resolver(path),
+                        filename=path,
                         when="w0",
                         interval=1,
                         backupCount=backup_count,
@@ -148,12 +137,12 @@ class LogguerService(ILogguerService):
 
             elif channel == "monthly":
 
-                backup_count : str = config.get('retention_months', 2)
-                if backup_count < 1 or not backup_count.isdigit():
+                backup_count = config.get('retention_months', 2)
+                if backup_count < 1:
                     raise ValueError("The 'retention_months' value must be an integer greater than 0.")
                 handlers = [
                     TimedRotatingFileHandler(
-                        filename=self._path_resolver(path),
+                        filename=path,
                         when="midnight",
                         interval=30,
                         backupCount=backup_count,
@@ -164,15 +153,15 @@ class LogguerService(ILogguerService):
 
             elif channel == "chunked":
 
-                max_bytes : str = config.get('mb_size', 5).replace("MB", "")
-                if max_bytes < 1 or not max_bytes.isdigit():
+                max_bytes = config.get('mb_size', 5)
+                if max_bytes < 1:
                     raise ValueError("The 'mb_size' value must be an integer greater than 0.")
-                backup_count : str = config.get('max_files', 5)
-                if backup_count < 1 or not backup_count.isdigit():
+                backup_count = config.get('max_files', 5)
+                if backup_count < 1:
                     raise ValueError("The 'max_files' value must be an integer greater than 0.")
                 handlers = [
                     RotatingFileHandler(
-                        filename=self._path_resolver(path),
+                        filename=path,
                         maxBytes= max_bytes * 1024 * 1024,
                         backupCount=backup_count,
                         encoding="utf-8"

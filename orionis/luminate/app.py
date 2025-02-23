@@ -5,7 +5,8 @@ from orionis.luminate.bootstrap.environment_bootstrapper import EnvironmentBoots
 from orionis.luminate.patterns.singleton import SingletonMeta
 from orionis.luminate.providers.environment.environment__service_provider import EnvironmentServiceProvider
 from orionis.luminate.providers.config.config_service_provider import ConfigServiceProvider
-from orionis.luminate.services.config.config_service import ConfigService
+from orionis.luminate.providers.log.log_service_provider import LogServiceProvider
+from orionis.luminate.facades.log.log_facade import Log
 
 class Application(metaclass=SingletonMeta):
 
@@ -67,5 +68,12 @@ class Application(metaclass=SingletonMeta):
 
         # Cargar el proveedor de configuracion
         _environment_provider = ConfigServiceProvider(app=self.container)
-        _environment_provider.register(config=self._config)
+        _environment_provider.register()
         _environment_provider.boot()
+
+        # Cargar el proveedor de log
+        _log_provider = LogServiceProvider(app=self.container)
+        _log_provider.register()
+        _log_provider.boot()
+
+        Log.info('Application is ready to run')
