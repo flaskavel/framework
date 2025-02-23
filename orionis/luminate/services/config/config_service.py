@@ -1,16 +1,17 @@
 from typing import Any, Optional
 from orionis.contracts.services.config.i_config_service import IConfigService
+from orionis.luminate.bootstrap.config_bootstrapper import ConfigBootstrapper
 
 class ConfigService(IConfigService):
 
-    def __init__(self, config: dict = {}) -> None:
+    def __init__(self,  config_bootstrapper: ConfigBootstrapper) -> None:
         """
         Initializes the ConfigService with the provided configuration.
 
         Args:
             config (dict): A dictionary containing configuration settings.
         """
-        self._config = config
+        self._config = config_bootstrapper.get()
 
     def set(self, key: str, value: Any) -> None:
         """

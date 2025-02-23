@@ -3,12 +3,11 @@ from orionis.luminate.services.config.config_service import ConfigService
 
 class ConfigServiceProvider(ServiceProvider):
 
-    def register(self, config: dict = {}) -> None:
+    def register(self) -> None:
         """
         Registers services or bindings into the given container.
         """
-        config = ConfigService(config)
-        self._container_id = self.app.instance(config)
+        self._container_id = self.app.scoped(ConfigService)
 
     def boot(self,) -> None:
         """
@@ -17,4 +16,4 @@ class ConfigServiceProvider(ServiceProvider):
         This method is intended to be overridden by subclasses to perform
         any necessary bootstrapping or initialization tasks.
         """
-        pass
+        self.app.make(self._container_id)

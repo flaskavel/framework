@@ -3,7 +3,9 @@ from orionis.luminate.bootstrap.config_bootstrapper import ConfigBootstrapper
 from orionis.luminate.bootstrap.command_bootstrapper import CommandsBootstrapper
 from orionis.luminate.bootstrap.environment_bootstrapper import EnvironmentBootstrapper
 from orionis.luminate.patterns.singleton import SingletonMeta
-from orionis.luminate.providers.environment.environment__service_provider import EnvironmentProvider
+from orionis.luminate.providers.environment.environment__service_provider import EnvironmentServiceProvider
+from orionis.luminate.providers.config.config_service_provider import ConfigServiceProvider
+from orionis.luminate.services.config.config_service import ConfigService
 
 class Application(metaclass=SingletonMeta):
 
@@ -27,10 +29,13 @@ class Application(metaclass=SingletonMeta):
         # Registrrar los comandos en el contenedor
         self._registerCommands()
 
+        # Cargar de provedores core
+        self._loadServiceProviderCore()
+
     def _loadServiceProviderEnvironment(self):
 
         # Cargar el proveedor de entorno
-        _environment_provider = EnvironmentProvider(app=self.container)
+        _environment_provider = EnvironmentServiceProvider(app=self.container)
         _environment_provider.register()
         _environment_provider.boot()
 
@@ -57,3 +62,10 @@ class Application(metaclass=SingletonMeta):
         for command in self._commands:
             _key_instance_container = self.container.bind(self._commands[command].get('concrete'))
             self.container.alias(alias=command, concrete=_key_instance_container)
+
+    def _loadServiceProviderCore(self):
+
+        # Cargar el proveedor de configuracion
+        _environment_provider = ConfigServiceProvider(app=self.container)
+        _environment_provider.register(config=self._config)
+        _environment_provider.boot()
