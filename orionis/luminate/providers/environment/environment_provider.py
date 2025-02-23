@@ -1,15 +1,15 @@
 from orionis.luminate.providers.service_provider import ServiceProvider
-from orionis.luminate.services.config.config_service import ConfigService
+from orionis.luminate.services.environment.environment_service import EnvironmentService
 
-class ConfigServiceProvider(ServiceProvider):
+class EnvironmentProvider(ServiceProvider):
 
-    def register(self,) -> None:
+    def register(self) -> None:
         """
         Registers services or bindings into the given container.
         """
-        self._container_id = self.app.scoped(ConfigService)
+        self._container_id = self.app.singleton(EnvironmentService)
 
-    def boot(self,) -> None:
+    def boot(self) -> None:
         """
         Boot the service provider.
 

@@ -1,6 +1,6 @@
 from typing import Any, Optional
 from orionis.contracts.facades.config.i_config_facade import IConfig
-from orionis.luminate.app_context import AppContext
+from orionis.luminate.facades.app import app
 from orionis.luminate.services.config.config_service import ConfigService
 
 class Config(IConfig):
@@ -17,9 +17,8 @@ class Config(IConfig):
         value : Any
             The value to set.
         """
-        with AppContext() as app:
-            config_service : ConfigService = app.container.make(ConfigService)
-            config_service.set(key, value)
+        _config_service_provider : ConfigService = app(ConfigService)
+        return _config_service_provider.set(key, value)
 
     @staticmethod
     def get(key: str, default: Optional[Any] = None) -> Any:
@@ -38,6 +37,5 @@ class Config(IConfig):
         Any
             The configuration value or the default value if the key is not found.
         """
-        with AppContext() as app:
-            config_service : ConfigService = app.container.make(ConfigService)
-            return config_service.get(key, default)
+        _config_service_provider : ConfigService = app(ConfigService)
+        return _config_service_provider.get(key, default)

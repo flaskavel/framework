@@ -1,26 +1,19 @@
-from orionis.contracts.providers.i_service_provider import IServiceProvider
-from orionis.luminate.container.container import Container
+from orionis.luminate.providers.service_provider import ServiceProvider
 from orionis.luminate.services.log.log_service import LogguerService
 
-class LogServiceProvider(IServiceProvider):
+class LogServiceProvider(ServiceProvider):
 
-    def register(self, container: Container) -> None:
+    def register(self) -> None:
         """
         Registers services or bindings into the given container.
-
-        Args:
-            container (Container): The container to register services or bindings into.
         """
-        self.key_sp = container.singleton(LogguerService)
+        self._container_id = self.app.singleton(LogguerService)
 
-    def boot(self, container: Container) -> None:
+    def boot(self) -> None:
         """
         Boot the service provider.
 
         This method is intended to be overridden by subclasses to perform
         any necessary bootstrapping or initialization tasks.
-
-        Args:
-            container (Container): The service container instance.
         """
-        container.make(self.key_sp)
+        self.app.make(self._container_id)

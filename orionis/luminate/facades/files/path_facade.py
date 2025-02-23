@@ -1,6 +1,6 @@
 import os
 from orionis.contracts.facades.files.i_path_facade import IPath
-from orionis.luminate.services.files.path_service import PathService
+from orionis.luminate.services.files.path_resolver_service import PathResolverService
 
 class Path(IPath):
     """
@@ -64,8 +64,9 @@ class Path(IPath):
         # Normalize path (removes redundant slashes)
         route = os.path.normpath(route)
 
-        # Obtain the path service from the container
-        PathService().resolve(route)
+        # Resolve path (Note: The service container is not used here)
+        path_resolver_service = PathResolverService()
+        return path_resolver_service.resolve(route)
 
     @staticmethod
     def app(file: str = None):

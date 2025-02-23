@@ -1,8 +1,6 @@
-import os
-from pathlib import Path
 from abc import ABC, abstractmethod
 
-class IPathService(ABC):
+class IPathResolverService(ABC):
 
     @abstractmethod
     def resolve(self, route: str) -> str:

@@ -1,5 +1,5 @@
 from orionis.contracts.facades.log.i_log_facade import ILog
-from orionis.luminate.container.container import Container
+from orionis.luminate.facades.app import app
 from orionis.luminate.services.log.log_service import LogguerService
 
 class Log(ILog):
@@ -34,7 +34,8 @@ class Log(ILog):
         message : str
             The message to log.
         """
-        Container().make(LogguerService).info(message)
+        _log_service : LogguerService = app(LogguerService)
+        return _log_service.info(message)
 
     @staticmethod
     def error(message: str) -> None:
@@ -46,7 +47,8 @@ class Log(ILog):
         message : str
             The message to log.
         """
-        Container().make(LogguerService).error(message)
+        _log_service : LogguerService = app(LogguerService)
+        return _log_service.error(message)
 
     @staticmethod
     def success(message: str) -> None:
@@ -58,7 +60,8 @@ class Log(ILog):
         message : str
             The message to log.
         """
-        Container().make(LogguerService).success(message)
+        _log_service : LogguerService = app(LogguerService)
+        return _log_service.success(message)
 
     @staticmethod
     def warning(message: str) -> None:
@@ -70,7 +73,8 @@ class Log(ILog):
         message : str
             The message to log.
         """
-        Container().make(LogguerService).warning(message)
+        _log_service : LogguerService = app(LogguerService)
+        return _log_service.warning(message)
 
     @staticmethod
     def debug(message: str) -> None:
@@ -82,4 +86,5 @@ class Log(ILog):
         message : str
             The message to log.
         """
-        Container().make(LogguerService).debug(message)
+        _log_service : LogguerService = app(LogguerService)
+        return _log_service.debug(message)
