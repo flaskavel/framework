@@ -1,8 +1,11 @@
-import os
 import logging
+import os
+import re
+from datetime import datetime
+from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
 from pathlib import Path
-from typing import Optional
 from orionis.contracts.services.log.i_log_service import ILogguerService
+from orionis.luminate.services.config.config_service import ConfigService
 
 class LogguerService(ILogguerService):
     """
@@ -18,10 +21,10 @@ class LogguerService(ILogguerService):
 
     Methods
     -------
-    __init__(path: Optional[str] = None, level: int = logging.INFO, filename: Optional[str] = 'orionis.log')
-        Initializes the logger with the specified path, log level, and filename.
-    _initialize_logger(path: Optional[str], level: int, filename: Optional[str] = 'orionis.log')
-        Configures the logger with the specified settings.
+    __init__(config_service: ConfigService)
+        Initializes the logger with ConfigService
+    _initialize_logger(config_service: ConfigService)
+        Configures the logger with ConfigService settings.
     info(message: str) -> None
         Logs an informational message.
     error(message: str) -> None
@@ -34,24 +37,32 @@ class LogguerService(ILogguerService):
         Logs a debug message.
     """
 
-    def __init__(self, path: Optional[str] = None, level: int = logging.INFO, filename: Optional[str] = 'orionis.log'):
+    def __init__(self, config_service : ConfigService):
         """
         Initializes the logger with the specified path, log level, and filename.
 
         Parameters
         ----------
-        path : Optional[str]
-            The directory path where the log file will be stored. If not provided,
-            it defaults to a 'logs' directory inside the 'storage' folder of the
-            current working directory.
-        level : int
-            The logging level (e.g., logging.INFO, logging.ERROR). Defaults to logging.INFO.
-        filename : Optional[str]
-            The name of the log file. Defaults to 'orionis.log'.
+        config_service : ConfigService
+            The configuration service instance.
         """
-        self._initialize_logger(path, level, filename)
+        self.config_service = config_service
+        self._initialize_logger()
 
-    def _initialize_logger(self, path: Optional[str], level: int, filename: Optional[str] = 'orionis.log'):
+    def _path_resolver(self, filename: str):
+        """
+        Resolves the log file path based on the specified filename.
+        """
+        base_path = Path(os.getcwd())
+        log_dir = base_path / "storage" / "logs"
+
+        # Create the log directory if it does not exist
+        if not log_dir.exists():
+            log_dir.mkdir(parents=True, exist_ok=True)
+
+        return log_dir / filename
+
+    def _initialize_logger(self):
         """
         Configures the logger with the specified settings.
 
@@ -61,12 +72,8 @@ class LogguerService(ILogguerService):
 
         Parameters
         ----------
-        path : Optional[str]
-            The directory path where the log file will be stored.
-        level : int
-            The logging level (e.g., logging.INFO, logging.ERROR).
-        filename : Optional[str]
-            The name of the log file.
+        config_service : ConfigService
+            The configuration service instance.
 
         Raises
         ------
@@ -74,27 +81,112 @@ class LogguerService(ILogguerService):
             If the logger cannot be initialized due to an error.
         """
         try:
-            # Resolve the log directory and file path
-            if path is None:
-                base_path = Path(os.getcwd())
-                log_dir = base_path / "storage" / "logs"
 
-                # Create the log directory if it does not exist
-                if not log_dir.exists():
-                    log_dir.mkdir(parents=True, exist_ok=True)
+            channel : str = self.config_service.get("logging.default")
+            config : dict = self.config_service.get(f"logging.channels.{channel}", {})
+            path : str = config.get("path", 'logs/orionis.log')
+            app_timezone : str = self.config_service.get("app.timezone", "UTC")
 
-                path = log_dir / filename
+            if channel == "stack":
+
+                handlers = [
+                    logging.FileHandler(
+                        filename=self._path_resolver(path),
+                        encoding="utf-8"
+                    )
+                ]
+
+            elif channel == "hourly":
+
+                handlers = [
+                    TimedRotatingFileHandler(
+                        filename=self._path_resolver(path),
+                        when="h",
+                        interval=1,
+                        backupCount=config.get('retention_hours', 24),
+                        encoding="utf-8",
+                        utc= True if app_timezone == "UTC" else False
+                    )
+                ]
+
+            elif channel == "daily":
+
+                backup_count : str = config.get('retention_days', 30)
+                hour_at : str = config.get('at', "00:00")
+                if backup_count < 1 or not backup_count.isdigit():
+                    raise ValueError("The 'retention_days' value must be an integer greater than 0.")
+                if not bool(re.match(r"^(?:[01]?\d|2[0-3]):[0-5]?\d$", hour_at)):
+                    raise ValueError("The 'at' value must be a valid time in the format HH:MM.")
+
+                handlers = [
+                    TimedRotatingFileHandler(
+                        filename=self._path_resolver(path),
+                        when="d",
+                        interval=1,
+                        backupCount=backup_count,
+                        encoding="utf-8",
+                        atTime=datetime.strptime(hour_at, "%H:%M").time(),
+                        utc= True if app_timezone == "UTC" else False
+                    )
+                ]
+
+            elif channel == "weekly":
+
+                backup_count : str = config.get('retention_weeks', 4)
+                if backup_count < 1 or not backup_count.isdigit():
+                    raise ValueError("The 'retention_weeks' value must be an integer greater than 0.")
+                handlers = [
+                    TimedRotatingFileHandler(
+                        filename=self._path_resolver(path),
+                        when="w0",
+                        interval=1,
+                        backupCount=backup_count,
+                        encoding="utf-8",
+                        utc= True if app_timezone == "UTC" else False
+                    )
+                ]
+
+            elif channel == "monthly":
+
+                backup_count : str = config.get('retention_months', 2)
+                if backup_count < 1 or not backup_count.isdigit():
+                    raise ValueError("The 'retention_months' value must be an integer greater than 0.")
+                handlers = [
+                    TimedRotatingFileHandler(
+                        filename=self._path_resolver(path),
+                        when="midnight",
+                        interval=30,
+                        backupCount=backup_count,
+                        encoding="utf-8",
+                        utc= True if app_timezone == "UTC" else False
+                    )
+                ]
+
+            elif channel == "chunked":
+
+                max_bytes : str = config.get('mb_size', 5).replace("MB", "")
+                if max_bytes < 1 or not max_bytes.isdigit():
+                    raise ValueError("The 'mb_size' value must be an integer greater than 0.")
+                backup_count : str = config.get('max_files', 5)
+                if backup_count < 1 or not backup_count.isdigit():
+                    raise ValueError("The 'max_files' value must be an integer greater than 0.")
+                handlers = [
+                    RotatingFileHandler(
+                        filename=self._path_resolver(path),
+                        maxBytes= max_bytes * 1024 * 1024,
+                        backupCount=backup_count,
+                        encoding="utf-8"
+                    )
+                ]
+
 
             # Configure the logger
             logging.basicConfig(
-                level=level,
+                level=config.get("level", "INFO").upper(),
                 format="%(asctime)s - %(message)s",
                 datefmt="%Y-%m-%d %H:%M:%S",
                 encoding="utf-8",
-                handlers=[
-                    logging.FileHandler(path, encoding="utf-8")
-                    # logging.StreamHandler()  # Uncomment to also log to the console
-                ]
+                handlers=handlers
             )
 
             # Get the logger instance

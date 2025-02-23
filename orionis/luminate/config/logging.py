@@ -1,8 +1,9 @@
 from dataclasses import dataclass, field
-from typing import Any, Dict, Union
+from datetime import time
+from typing import Dict, Union
 
 @dataclass
-class Single:
+class Stack:
     """
     Represents a single log file configuration.
 
@@ -17,7 +18,25 @@ class Single:
     """
     path: str
     level: str
-    stream: bool
+
+
+@dataclass
+class Hourly:
+    """
+    Represents an hourly log file rotation configuration.
+
+    Attributes
+    ----------
+    path : str
+        The file path where hourly logs are stored.
+    level : str
+        The logging level (e.g., 'info', 'error', 'debug').
+    retention_hours : int
+        The number of hours to retain log files before deletion.
+    """
+    path: str
+    level: str
+    retention_hours: int
 
 
 @dataclass
@@ -31,15 +50,53 @@ class Daily:
         The file path where daily logs are stored.
     level : str
         The logging level (e.g., 'info', 'error', 'debug').
-    days : int
+    retention_days : int
         The number of days to retain log files before deletion.
-    stream : bool
-        Whether to output logs to the console.
+    at_time : time
+        The time of day when the log rotation should occur.
     """
     path: str
     level: str
-    days: int
-    stream: bool
+    retention_days: int
+    at: time
+
+
+@dataclass
+class Weekly:
+    """
+    Represents a weekly log file rotation configuration.
+
+    Attributes
+    ----------
+    path : str
+        The file path where weekly logs are stored.
+    level : str
+        The logging level (e.g., 'info', 'error', 'debug').
+    retention_weeks : int
+        The number of weeks to retain log files before deletion.
+    """
+    path: str
+    level: str
+    retention_weeks: int
+
+
+@dataclass
+class Monthly:
+    """
+    Represents a monthly log file rotation configuration.
+
+    Attributes
+    ----------
+    path : str
+        The file path where monthly logs are stored.
+    level : str
+        The logging level (e.g., 'info', 'error', 'debug').
+    retention_months : int
+        The number of months to retain log files before deletion.
+    """
+    path: str
+    level: str
+    retention_months: int
 
 
 @dataclass
@@ -56,20 +113,16 @@ class Chunked:
         The file path where chunked logs are stored.
     level : str
         The logging level (e.g., 'info', 'error', 'debug').
-    max_size : Union[int, str]
+    max_mb_size : Union[int, str]
         The maximum file size before creating a new chunk.
         Can be an integer (bytes) or a string (e.g., '10MB', '500KB').
     max_files : int
         The maximum number of log files to retain before older files are deleted.
-    stream : bool
-        Whether to output logs to the console.
     """
-
     path: str
     level: str
-    max_size: Union[int, str]  # Supports both numeric and formatted string sizes ('10MB')
-    max_files: int  # Ensures only a certain number of log files are kept
-    stream: bool
+    mb_size: Union[int, str]
+    files: int
 
 
 @dataclass
@@ -86,9 +139,12 @@ class Channels:
     chunked : Chunked
         Configuration for chunked log file storage.
     """
-    single: Single
-    daily: Daily
-    chunked: Chunked
+    stack = Stack
+    hourly = Hourly
+    daily = Daily
+    weekly = Weekly
+    monthly = Monthly
+    chunked = Chunked
 
 
 @dataclass
