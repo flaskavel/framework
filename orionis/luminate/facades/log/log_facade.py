@@ -34,9 +34,7 @@ class Log(ILog):
         message : str
             The message to log.
         """
-        with AppContext() as app:
-            log_service: LogguerService = app.container.make(LogguerService)
-            log_service.info(message)
+        LogguerService().info(message)
 
     @staticmethod
     def error(message: str) -> None:
@@ -48,9 +46,7 @@ class Log(ILog):
         message : str
             The message to log.
         """
-        with AppContext() as app:
-            log_service: LogguerService = app.container.make(LogguerService)
-            log_service.error(message)
+        LogguerService().error(message)
 
     @staticmethod
     def success(message: str) -> None:
@@ -62,9 +58,7 @@ class Log(ILog):
         message : str
             The message to log.
         """
-        with AppContext() as app:
-            log_service: LogguerService = app.container.make(LogguerService)
-            log_service.success(message)
+        LogguerService().success(message)
 
     @staticmethod
     def warning(message: str) -> None:
@@ -76,9 +70,7 @@ class Log(ILog):
         message : str
             The message to log.
         """
-        with AppContext() as app:
-            log_service: LogguerService = app.container.make(LogguerService)
-            log_service.warning(message)
+        LogguerService().warning(message)
 
     @staticmethod
     def debug(message: str) -> None:
@@ -90,6 +82,4 @@ class Log(ILog):
         message : str
             The message to log.
         """
-        with AppContext() as app:
-            log_service: LogguerService = app.container.make(LogguerService)
-            log_service.debug(message)
+        LogguerService().debug(message)
