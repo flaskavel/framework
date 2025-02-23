@@ -1,7 +1,7 @@
 from orionis.luminate.providers.service_provider import ServiceProvider
 from orionis.luminate.services.environment.environment_service import EnvironmentService
 
-class EnvironmentProvider(ServiceProvider):
+class EnvironmentServiceProvider(ServiceProvider):
 
     def register(self) -> None:
         """

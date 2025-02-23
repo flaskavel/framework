@@ -3,7 +3,7 @@ from orionis.luminate.bootstrap.config_bootstrapper import ConfigBootstrapper
 from orionis.luminate.bootstrap.command_bootstrapper import CommandsBootstrapper
 from orionis.luminate.bootstrap.environment_bootstrapper import EnvironmentBootstrapper
 from orionis.luminate.patterns.singleton import SingletonMeta
-from orionis.luminate.providers.environment.environment_provider import EnvironmentProvider
+from orionis.luminate.providers.environment.environment__service_provider import EnvironmentProvider
 
 class Application(metaclass=SingletonMeta):
 
