@@ -1,3 +1,4 @@
+import ast
 import os
 from pathlib import Path
 from typing import Dict
@@ -62,9 +63,51 @@ class EnvironmentBootstrapper(IEnvironmentBootstrapper):
                 raise PermissionError(f"Cannot create `.env` file at {path}: {str(e)}")
 
         try:
-            self._environment_vars = dotenv_values(path)  # Load environment variables
+            all_vars = dotenv_values(path)
+            for key, value in all_vars.items():
+                self._environment_vars[key] = self._parse_value(value)
         except Exception as e:
             raise BootstrapRuntimeError(f"Error loading environment variables from {path}: {str(e)}")
+
+    def _parse_value(self, value):
+        """
+        Parse and convert a string value into its appropriate Python data type.
+
+        This function handles conversion for common types such as `None`, booleans (`True`/`False`),
+        integers, and Python literals (e.g., lists, dictionaries). If the value cannot be parsed
+        into a specific type, it is returned as-is.
+
+        Parameters
+        ----------
+        value : str or None
+            The value to be parsed. If `None`, it is returned as `None`.
+
+        Returns
+        -------
+        any
+            The parsed value. Possible return types include:
+            - `None` if the value is empty, `None`, `'None'`, or `'null'`.
+            - `bool` if the value is `'True'`, `'true'`, `'False'`, or `'false'`.
+            - `int` if the value is a digit string (e.g., `'123'`).
+            - Python literals (e.g., lists, dictionaries) if the value can be evaluated as such.
+            - The original value if no conversion is applicable.
+        """
+        # Strip leading and trailing whitespace from the value
+        value = str(value).strip() if value is not None else None
+
+        # Parse common types and Python literals
+        if not value or value.lower() in {'none', 'null'}:
+            return None
+        if value.lower() in {'true', 'false'}:
+            return value.lower() == 'true'
+        if value.isdigit():
+            return int(value)
+
+        # Attempt to parse Python literals (e.g., lists, dictionaries)
+        try:
+            return ast.literal_eval(value)
+        except (ValueError, SyntaxError):
+            return value
 
     def get(self, key: str = None) -> str:
         """
