@@ -65,3 +65,31 @@ class EnvironmentBootstrapper(IEnvironmentBootstrapper):
             self._environment_vars = dotenv_values(path)  # Load environment variables
         except Exception as e:
             raise BootstrapRuntimeError(f"Error loading environment variables from {path}: {str(e)}")
+
+    def get(self, key: str = None) -> str:
+        """
+        Retrieves the value of an environment variable by its key.
+
+        Parameters
+        ----------
+        key : str
+            The key of the environment variable to retrieve.
+
+        Returns
+        -------
+        str
+            The value of the environment variable.
+
+        Raises
+        ------
+        KeyError
+            If the environment variable does not exist.
+        """
+
+        if not key:
+            return self._environment_vars
+
+        if key not in self._environment_vars:
+            raise KeyError(f"Environment variable {key} not found")
+
+        return self._environment_vars[key]
