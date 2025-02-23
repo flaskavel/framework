@@ -58,7 +58,7 @@ class CommandsBootstrapper(ICommandsBootstrapper):
         # Define the directories to scan for commands
         command_dirs = [
             base_path / "app" / "console" / "commands",  # Developer-defined commands
-            pathlib.Path(__file__).resolve().parent.parent.parent / "console" / "commands"  # Core commands
+            pathlib.Path(__file__).resolve().parent.parent / "console" / "commands"  # Core commands
         ]
 
         for cmd_dir in command_dirs:

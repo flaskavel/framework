@@ -9,7 +9,6 @@ from apscheduler.triggers.cron import CronTrigger
 from apscheduler.triggers.interval import IntervalTrigger
 from orionis.contracts.console.tasks.i_schedule import ISchedule
 from orionis.luminate.app_context import AppContext
-from orionis.luminate.console.command import Command
 from orionis.luminate.console.exceptions.cli_exception import CLIOrionisScheduleException
 
 class Schedule(ISchedule):

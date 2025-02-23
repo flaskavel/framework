@@ -1,6 +1,5 @@
 from orionis.luminate.app_context import AppContext
 from orionis.luminate.console.base.command import BaseCommand
-from orionis.luminate.cache.console.commands import CacheCommands
 from orionis.luminate.console.exceptions.cli_exception import CLIOrionisRuntimeError
 
 class HelpCommand(BaseCommand):
@@ -39,7 +38,7 @@ class HelpCommand(BaseCommand):
             with AppContext() as app:
 
                 # Get the list of commands from the container
-                commands : dict = app.container._commands
+                commands : dict = app._commands
 
                 # Initialize an empty list to store the rows.
                 rows = []
