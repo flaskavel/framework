@@ -1,7 +1,7 @@
 import inspect
 from collections import deque
 from threading import Lock
-from typing import Callable, Any, Dict
+from typing import Callable, Any, Dict, get_args, get_origin
 from orionis.contracts.container.i_container import IContainer
 from orionis.luminate.container.exception import OrionisContainerException, OrionisContainerValueError, OrionisContainerTypeError
 from orionis.luminate.container.types import Types
@@ -375,26 +375,26 @@ class Container(IContainer):
                 unresolved_dependencies.append(param_name)
                 continue
 
+            # Resolve parameters with default values (without annotations)
+            if param.default is not param.empty:
+                resolved_dependencies[param_name] = param.default
+                continue
+
             # Resolve dependencies based on annotations (excluding primitive types)
             if param.annotation is not param.empty:
                 param_type = param.annotation
 
-                # Check if it's a registered service, if so, resolve it through the container
-                if isinstance(param_type, type) and not isinstance(param_type, (int, str, bool, float)) and not issubclass(param_type, (int, str, bool, float)):
+                # Check if it's a generic type, get the origin type
+                if get_origin(param_type) is not None:
+                    param_type = get_args(param_type)[0]
 
-                    # Check if the service is registered in the container
+                if isinstance(param_type, type) and not issubclass(param_type, (int, str, bool, float)):
                     if self.has(param_type):
                         resolved_dependencies[param_name] = self.make(f"{param_type.__module__}.{param_type.__name__}")
                     else:
                         resolved_dependencies[param_name] = self._resolve_dependency(param_type)
                 else:
-
-                    # It's a primitive, use as-is
                     resolved_dependencies[param_name] = param_type
-
-            # Resolve parameters with default values (without annotations)
-            elif param.default is not param.empty:
-                resolved_dependencies[param_name] = param.default
 
         # Step 4: Resolve any remaining unresolved dependencies.
         while unresolved_dependencies:

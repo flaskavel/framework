@@ -92,7 +92,7 @@ class LogguerService(ILogguerService):
                 datefmt="%Y-%m-%d %H:%M:%S",
                 encoding="utf-8",
                 handlers=[
-                    logging.FileHandler(path)  # Log to a file
+                    logging.FileHandler(path, encoding="utf-8")
                     # logging.StreamHandler()  # Uncomment to also log to the console
                 ]
             )
