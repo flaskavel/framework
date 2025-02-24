@@ -1,4 +1,4 @@
-from orionis.luminate.app_context import AppContext
+from orionis.luminate.app_context import app_context
 from orionis.luminate.console.base.command import BaseCommand
 from orionis.luminate.console.exceptions.cli_exception import CLIOrionisRuntimeError
 
@@ -35,7 +35,7 @@ class HelpCommand(BaseCommand):
             self.textSuccessBold(" (CLI Interpreter) Available Commands: ")
 
             # Fetch the commands from the container IoC
-            with AppContext() as app:
+            with app_context() as app:
 
                 # Get the list of commands from the container
                 commands : dict = app._commands

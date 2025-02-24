@@ -1,5 +1,4 @@
 import importlib
-from orionis.luminate.app_context import AppContext
 from orionis.luminate.console.base.command import BaseCommand
 from orionis.luminate.console.exceptions.cli_exception import CLIOrionisRuntimeError
 from orionis.luminate.console.tasks.scheduler import Schedule

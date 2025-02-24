@@ -8,8 +8,8 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from apscheduler.triggers.interval import IntervalTrigger
 from orionis.contracts.console.tasks.i_schedule import ISchedule
-from orionis.luminate.app_context import AppContext
 from orionis.luminate.console.exceptions.cli_exception import CLIOrionisScheduleException
+from orionis.luminate.facades.commands.commands_facade import Command
 
 class Schedule(ISchedule):
     """
@@ -67,8 +67,7 @@ class Schedule(ISchedule):
         """
         def func():
             try:
-                with AppContext() as app:
-                    app.container.makeCommand(signature, vars, *args, **kwargs)
+                Command.call(signature, vars, *args, **kwargs)
             finally:
                 if not self.scheduler.get_jobs():
                     self.wait = False
