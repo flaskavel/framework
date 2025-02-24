@@ -1,8 +1,8 @@
 import importlib
 from orionis.luminate.console.base.command import BaseCommand
 from orionis.luminate.console.exceptions.cli_exception import CLIOrionisRuntimeError
-from orionis.luminate.console.tasks.scheduler import Schedule
 from orionis.contracts.console.i_task_manager import ITaskManager
+from orionis.luminate.services.commands.scheduler_service import ScheduleService
 
 class ScheduleWorkCommand(BaseCommand):
     """
@@ -17,6 +17,15 @@ class ScheduleWorkCommand(BaseCommand):
 
     # A brief description of the command.
     description = "Starts the scheduled tasks."
+
+    def __init__(self, schedule:ScheduleService) -> None:
+        """
+        Initialize a new instance of the ScheduleWorkCommand class.
+
+        Args:
+            schedule (ScheduleService): The schedule instance to use for scheduling tasks.
+        """
+        self.schedule = schedule
 
     def handle(self) -> None:
         """
@@ -33,17 +42,14 @@ class ScheduleWorkCommand(BaseCommand):
         """
         try:
 
-            # Initialize a new Schedule instance.
-            schedule = Schedule()
-
             # Create an instance of the TaskManager to manage the scheduling.
             tasks_manager = importlib.import_module("app.console.tasks_manager")
             TaskManager = getattr(tasks_manager, "TaskManager")
             kernel: ITaskManager = TaskManager()
-            kernel.schedule(schedule)
+            kernel.schedule(self.schedule)
 
             # Start running the scheduled tasks using the schedule runner.
-            schedule.start()
+            self.schedule.start()
 
         except Exception as e:
 

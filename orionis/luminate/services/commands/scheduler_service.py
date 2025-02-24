@@ -7,11 +7,11 @@ from typing import Any
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from apscheduler.triggers.interval import IntervalTrigger
-from orionis.contracts.console.tasks.i_schedule import ISchedule
+from orionis.contracts.services.commands.i_schedule_service import IScheduleService
 from orionis.luminate.console.exceptions.cli_exception import CLIOrionisScheduleException
 from orionis.luminate.facades.commands.commands_facade import Command
 
-class Schedule(ISchedule):
+class ScheduleService(IScheduleService):
     """
     A class that manages the scheduling of tasks using the APScheduler.
 
@@ -28,7 +28,7 @@ class Schedule(ISchedule):
         Defines a command to execute.
     """
 
-    def __init__(self, logger_level=logging.CRITICAL):
+    def __init__(self, apscheduler_background : BackgroundScheduler, logger_level=logging.CRITICAL):
         """
         Initializes the Schedule object.
 
@@ -40,12 +40,12 @@ class Schedule(ISchedule):
             The logging level for the APScheduler logger. Default is `logging.CRITICAL` to suppress most logs.
         """
         logging.getLogger("apscheduler").setLevel(logger_level)
-        self.scheduler = BackgroundScheduler()
+        self.scheduler = apscheduler_background
         self.scheduler.start()
         self.callback = None
         self.wait = True
 
-    def command(self, signature: str, vars: dict[str, Any] = {}, *args: Any, **kwargs: Any) -> 'Schedule':
+    def command(self, signature: str, vars: dict[str, Any] = {}, *args: Any, **kwargs: Any) -> 'ScheduleService':
         """
         Defines a Orionis command to be executed.
 
@@ -604,12 +604,9 @@ class Schedule(ISchedule):
         Starts the scheduler and stops automatically when there are no more jobs.
         """
         try:
-            # Start the scheduler
             while self.wait:
                 time.sleep(1)
         except (KeyboardInterrupt, SystemExit):
-            # Stop the scheduler if it is running
             if self.scheduler.running:
                 self.scheduler.shutdown()
-            # Exit with status code 1 to indicate an error
             sys.exit(1)

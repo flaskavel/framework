@@ -3,7 +3,7 @@ from typing import Any
 from datetime import datetime
 from abc import ABC, abstractmethod
 
-class ISchedule(ABC):
+class IScheduleService(ABC):
     """
     A class that manages the scheduling of tasks using the APScheduler.
 

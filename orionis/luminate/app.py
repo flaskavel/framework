@@ -5,6 +5,7 @@ from orionis.luminate.bootstrap.command_bootstrapper import CommandsBootstrapper
 from orionis.luminate.bootstrap.environment_bootstrapper import EnvironmentBootstrapper
 from orionis.luminate.patterns.singleton import SingletonMeta
 from orionis.luminate.providers.commands.reactor_commands_service_provider import ReactorCommandsServiceProvider
+from orionis.luminate.providers.commands.scheduler_provider import ScheduleServiceProvider
 from orionis.luminate.providers.environment.environment__service_provider import EnvironmentServiceProvider
 from orionis.luminate.providers.config.config_service_provider import ConfigServiceProvider
 from orionis.luminate.providers.log.log_service_provider import LogServiceProvider
@@ -264,6 +265,11 @@ class Application(metaclass=SingletonMeta):
         _log_provider = LogServiceProvider(app=self.container)
         _log_provider.register()
         _log_provider.boot()
+
+        # Load the scheduler provider, which is responsible for managing scheduled tasks.
+        _schedule_provider = ScheduleServiceProvider(app=self.container)
+        _schedule_provider.register()
+        _schedule_provider.boot()
 
         # Load the commands provider, which is responsible for executing and managing CLI commands.
         # Developers can interact with it through the facade "orionis.luminate.facades.commands.commands_facade.Commands".
