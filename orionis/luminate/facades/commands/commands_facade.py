@@ -1,6 +1,6 @@
 from typing import Any
 from orionis.contracts.facades.commands.i_commands_facade import ICommand
-from orionis.luminate.facades.app import app
+from orionis.luminate.facades.app_facade import app
 from orionis.luminate.services.commands.reactor_commands_service import ReactorCommandsService
 
 class Command(ICommand):

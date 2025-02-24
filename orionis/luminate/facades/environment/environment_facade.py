@@ -1,5 +1,5 @@
 from orionis.contracts.facades.environment.i_environment_facade import IEnv
-from orionis.luminate.facades.app import app
+from orionis.luminate.facades.app_facade import app
 from orionis.luminate.services.environment.environment_service import EnvironmentService
 
 def env(key: str, default=None) -> str:

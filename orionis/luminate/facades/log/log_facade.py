@@ -1,5 +1,5 @@
 from orionis.contracts.facades.log.i_log_facade import ILog
-from orionis.luminate.facades.app import app
+from orionis.luminate.facades.app_facade import app
 from orionis.luminate.services.log.log_service import LogguerService
 
 class Log(ILog):

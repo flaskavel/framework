@@ -8,7 +8,7 @@ from orionis.luminate.console.exceptions.cli_exception import CLIOrionisExceptio
 from orionis.luminate.console.output.console import Console
 from orionis.luminate.console.output.executor import Executor
 from orionis.luminate.console.parser import Parser
-from orionis.luminate.facades.app import app
+from orionis.luminate.facades.app_facade import app
 from orionis.luminate.facades.log.log_facade import Log
 
 class ReactorCommandsService(IReactorCommandsService):
