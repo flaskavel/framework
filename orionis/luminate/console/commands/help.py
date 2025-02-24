@@ -1,4 +1,4 @@
-from orionis.luminate.app_context import app_context
+from orionis.luminate.application import app_context
 from orionis.luminate.console.base.command import BaseCommand
 from orionis.luminate.console.exceptions.cli_exception import CLIOrionisRuntimeError
 

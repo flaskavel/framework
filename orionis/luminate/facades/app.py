@@ -1,5 +1,5 @@
 from typing import Any
-from orionis.luminate.app_context import app_booted
+from orionis.luminate.application import app_booted
 from orionis.luminate.console.output.console import Console
 from orionis.luminate.container.container import Container
 from orionis.luminate.container.exception import OrionisContainerException, OrionisContainerTypeError
