@@ -8,6 +8,7 @@ from orionis.luminate.providers.commands.reactor_commands_service_provider impor
 from orionis.luminate.providers.environment.environment__service_provider import EnvironmentServiceProvider
 from orionis.luminate.providers.config.config_service_provider import ConfigServiceProvider
 from orionis.luminate.providers.log.log_service_provider import LogServiceProvider
+from orionis.luminate.facades.commands.commands_facade import Command
 
 class Application(metaclass=SingletonMeta):
     """
@@ -56,6 +57,7 @@ class Application(metaclass=SingletonMeta):
         # Initialize the application container
         self.container = container
         self.container.instance(container)
+        self.boot()
 
     def isBooted(self) -> bool:
         """
@@ -80,7 +82,7 @@ class Application(metaclass=SingletonMeta):
         Returns:
             str: The unique key generated for the callable.
         """
-        self.container.bind(concrete)
+        return self.container.bind(concrete)
 
     def transient(self, concrete: Callable[..., Any]) -> str:
         """
@@ -91,7 +93,7 @@ class Application(metaclass=SingletonMeta):
         Returns:
             str: The unique key generated for the callable.
         """
-        self.container.transient(concrete)
+        return self.container.transient(concrete)
 
     def singleton(self, concrete: Callable[..., Any]) -> str:
         """
@@ -104,7 +106,7 @@ class Application(metaclass=SingletonMeta):
         Returns:
             str: The key under which the singleton is registered in the container.
         """
-        self.container.singleton(concrete)
+        return self.container.singleton(concrete)
 
     def scoped(self, concrete: Callable[..., Any]) -> str:
         """
@@ -117,7 +119,7 @@ class Application(metaclass=SingletonMeta):
         Returns:
             str: The key under which the callable is registered in the scoped services dictionary.
         """
-        self.container.scoped(concrete)
+        return self.container.scoped(concrete)
 
     def instance(self, instance: Any) -> str:
         """
@@ -127,7 +129,7 @@ class Application(metaclass=SingletonMeta):
         Returns:
             str: The key under which the instance is registered in the container.
         """
-        self.container.instance(instance)
+        return self.container.instance(instance)
 
     def alias(self, alias: str, concrete: Any) -> None:
         """
@@ -138,7 +140,7 @@ class Application(metaclass=SingletonMeta):
         Raises:
             OrionisContainerException: If the concrete instance is not a valid object or if the alias is a primitive type.
         """
-        self.container.alias(alias, concrete)
+        return self.container.alias(alias, concrete)
 
     def has(self, obj: Any) -> bool:
         """
@@ -154,7 +156,7 @@ class Application(metaclass=SingletonMeta):
         bool
             True if the service is registered, False otherwise.
         """
-        self.container.has(obj)
+        return self.container.has(obj)
 
     def make(self, abstract: Any) -> Any:
         """
@@ -175,13 +177,13 @@ class Application(metaclass=SingletonMeta):
         OrionisContainerException
             If the service is not found in the container.
         """
-        self.container.make(abstract)
+        return self.container.make(abstract)
 
     def forgetScopedInstances(self) -> None:
         """
         Reset scoped instances at the beginning of a new request.
         """
-        self.container.forgetScopedInstances()
+        return self.container.forgetScopedInstances()
 
     def boot(self):
         """
@@ -257,6 +259,7 @@ class Application(metaclass=SingletonMeta):
         _environment_provider = ConfigServiceProvider(app=self.container)
         _environment_provider.register()
         _environment_provider.boot()
+
 
         # Load the log provider based on the application configuration defined by the developer.
         # Developers can interact with it through the facade "orionis.luminate.facades.log.log_facade.Log".

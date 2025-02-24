@@ -58,6 +58,36 @@ class ReactorCommandsService(IReactorCommandsService):
         except Exception as e:
             raise ValueError(f"Error parsing arguments: {e}")
 
+    def _extract_arguments(self, args_dict:Any):
+        """
+        Extracts the arguments from the provided dictionary.
+
+        Parameters
+        ----------
+        args_dict : Any
+            A dictionary containing the arguments to extract.
+        """
+        try:
+            return vars(args_dict)
+        except Exception as e:
+            raise ValueError(f"Error parsing arguments: {e}")
+
+    def _call(self, signature: str, args_dict: Any) -> Any:
+        """
+        Executes the specified command with the provided arguments.
+
+        Parameters
+        ----------
+        signature : str
+            The command signature (name) to execute.
+        args_dict : Any
+            A dictionary containing named arguments for the command.
+        """
+
+        command_instance: BaseCommand = app(signature)
+        command_instance.setArgs(args_dict)
+        return command_instance.handle(**self._extract_arguments(args_dict))
+
     def execute(self, signature: Optional[str] = None, vars: dict = {}, *args, **kwargs):
         """
         Processes and executes a CLI command.
@@ -94,10 +124,8 @@ class ReactorCommandsService(IReactorCommandsService):
             # Parse command arguments dynamically based on execution context
             args_dict = self._parse_arguments(command.get('arguments', []), vars, *args, **kwargs)
 
-            # Instantiate command and execute it
-            command_instance: BaseCommand = app(signature)
-            command_instance.setArgs(args_dict)
-            output = command_instance.handle(**vars(args_dict))
+            # Exception handling for command execution
+            output = self._call(signature, args_dict)
 
             # Log successful command execution
             self.log.success(f"Command executed successfully: {signature}")
