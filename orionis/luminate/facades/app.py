@@ -1,6 +1,8 @@
 from typing import Any
+from orionis.luminate.app_context import app_booted
+from orionis.luminate.console.output.console import Console
 from orionis.luminate.container.container import Container
-from orionis.luminate.container.exception import OrionisContainerTypeError
+from orionis.luminate.container.exception import OrionisContainerException, OrionisContainerTypeError
 
 def app(concrete: Any = None):
     """
@@ -27,6 +29,9 @@ def app(concrete: Any = None):
     OrionisContainerException
         If `concrete` is not bound to the container.
     """
+    if not app_booted():
+        Console.error("The application context is not valid.")
+        raise OrionisContainerException("The application context is not valid.")
 
     # Create a new container instance
     container : Container = Container()

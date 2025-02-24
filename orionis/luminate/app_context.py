@@ -5,10 +5,10 @@ from orionis.luminate.container.container import Container
 @contextmanager
 def app_context():
     """
-    Context manager for resolving dependencies within a valid Orionis application context.
+    Context manager for creating an instance of the Orionis application.
 
-    This function ensures that Orionis is properly initialized before resolving dependencies,
-    similar to how Laravel’s `app()` helper works.
+    This function initializes the Orionis application with a new container,
+    ensuring that the application is properly set up before use.
 
     Yields
     ------
@@ -20,16 +20,41 @@ def app_context():
     RuntimeError
         If the application has not been properly initialized.
     """
-    container = Container()
-    app = Application(container)
-
-    if not app.isBooted():
-        raise RuntimeError(
-            "Error: Not running within a valid Orionis Framework context. "
-            "Ensure that the Orionis application is correctly initialized."
-        )
-
     try:
+
+        # Check if the application has been booted
+        if not Application.booted:
+            # Create a new application instance
+            app = Application(Container())
+            app.boot()
+        else:
+            # Get the current application instance
+            app = Application.getCurrentInstance()
+
+        # Yield the application instance
         yield app
+
     finally:
+
+        # Close Context Manager
         pass
+
+
+def app_booted():
+    """
+    Context manager for creating an instance of the Orionis application.
+
+    This function initializes the Orionis application with a new container,
+    ensuring that the application is properly set up before use.
+
+    Yields
+    ------
+    Application
+        The initialized Orionis application instance.
+
+    Raises
+    ------
+    RuntimeError
+        If the application has not been properly initialized.
+    """
+    return Application.booted

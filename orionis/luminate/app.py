@@ -37,6 +37,33 @@ class Application(metaclass=SingletonMeta):
     _afterBootstrapProviders()
         Registers and boots additional providers after bootstrapping.
     """
+    booted = False
+
+    @classmethod
+    def started(cls):
+        """
+        Marks the application as booted.
+        """
+        cls.booted = True
+
+    @classmethod
+    def getCurrentInstance(cls):
+        """
+        Returns the existing application instance if available.
+
+        Returns
+        -------
+        Application
+            The current singleton instance of the application.
+
+        Raises
+        ------
+        RuntimeError
+            If no instance has been initialized yet.
+        """
+        if cls not in SingletonMeta._instances:
+            raise RuntimeError("Application has not been initialized yet. Please create an instance first.")
+        return SingletonMeta._instances[cls]
 
     def __init__(self, container: Container):
         """
@@ -58,10 +85,6 @@ class Application(metaclass=SingletonMeta):
         # Initialize the application container
         self.container = container
         self.container.instance(container)
-        try:
-            self._boot()
-        except Exception as e:
-            Console.exception(e)
 
     def isBooted(self) -> bool:
         """
@@ -189,7 +212,7 @@ class Application(metaclass=SingletonMeta):
         """
         return self.container.forgetScopedInstances()
 
-    def _boot(self):
+    def boot(self):
         """
         Bootstraps the application by loading environment configuration and core providers.
         Notes
@@ -207,7 +230,9 @@ class Application(metaclass=SingletonMeta):
         self._bootstrapping()
         self._afterBootstrapProviders()
         self._loadCommands()
-        self._booted = True
+
+        # Mark the application as booted
+        Application.started()
 
     def _bootServices(self):
         """
