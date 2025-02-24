@@ -260,7 +260,6 @@ class Application(metaclass=SingletonMeta):
         _environment_provider.register()
         _environment_provider.boot()
 
-
         # Load the log provider based on the application configuration defined by the developer.
         # Developers can interact with it through the facade "orionis.luminate.facades.log.log_facade.Log".
         _log_provider = LogServiceProvider(app=self.container)
