@@ -1,18 +1,12 @@
 from typing import Any, Callable
 from orionis.contracts.foundation.i_bootstraper import IBootstrapper
-from orionis.luminate.console.base.command import BaseCommand
+from orionis.luminate.console.output.console import Console
 from orionis.luminate.container.container import Container
 from orionis.luminate.foundation.config.config_bootstrapper import ConfigBootstrapper
 from orionis.luminate.foundation.console.command_bootstrapper import CommandsBootstrapper
 from orionis.luminate.foundation.environment.environment_bootstrapper import EnvironmentBootstrapper
 from orionis.luminate.foundation.providers.service_providers_bootstrapper import ServiceProvidersBootstrapper
 from orionis.luminate.patterns.singleton import SingletonMeta
-from orionis.luminate.providers.commands.reactor_commands_service_provider import ReactorCommandsServiceProvider
-from orionis.luminate.providers.commands.scheduler_provider import ScheduleServiceProvider
-from orionis.luminate.providers.environment.environment__service_provider import EnvironmentServiceProvider
-from orionis.luminate.providers.config.config_service_provider import ConfigServiceProvider
-from orionis.luminate.providers.files.paths_provider import PathResolverProvider
-from orionis.luminate.providers.log.log_service_provider import LogServiceProvider
 from orionis.luminate.providers.service_provider import ServiceProvider
 
 class Application(metaclass=SingletonMeta):
@@ -64,7 +58,10 @@ class Application(metaclass=SingletonMeta):
         # Initialize the application container
         self.container = container
         self.container.instance(container)
-        self._boot()
+        try:
+            self._boot()
+        except Exception as e:
+            Console.exception(e)
 
     def isBooted(self) -> bool:
         """

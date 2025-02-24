@@ -75,7 +75,7 @@ class Container(IContainer):
             If the service is already registered.
         """
         if self.has(obj):
-            raise OrionisContainerValueError("The service is already registered in the container.")
+            raise OrionisContainerValueError(f"The service ({str(obj)}) is already registered in the container.")
 
     def _ensureIsCallable(self, concrete: Callable[..., Any]) -> None:
         """

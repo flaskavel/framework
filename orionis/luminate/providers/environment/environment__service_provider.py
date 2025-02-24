@@ -10,9 +10,6 @@ class EnvironmentServiceProvider(ServiceProvider):
         """
         Registers services or bindings into the given container.
         """
-        if not self.app.bound(PathResolverService):
-            self.app.singleton(PathResolverService)
-
         self._container_id = self.app.singleton(EnvironmentService)
 
     def boot(self) -> None:
