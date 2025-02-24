@@ -204,7 +204,7 @@ class Application(metaclass=SingletonMeta):
         """
         self._bootServices()
         self._beforeBootstrapProviders()
-        self._bootstraping()
+        self._bootstrapping()
         self._afterBootstrapProviders()
         self._loadCommands()
         self._booted = True
@@ -244,7 +244,7 @@ class Application(metaclass=SingletonMeta):
             _environment_provider.register()
             _environment_provider.boot()
 
-    def _bootstraping(self):
+    def _bootstrapping(self):
         """
         Loads configuration, commands, environment variables, and other bootstrappers.
 
