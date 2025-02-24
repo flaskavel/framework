@@ -296,6 +296,22 @@ class Container(IContainer):
 
         return False
 
+    def bound(self, abstract: Any) -> bool:
+        """
+        Checks if a service is bound in the container.
+
+        Parameters
+        ----------
+        abstract : Any
+            The service class or alias to check.
+
+        Returns
+        -------
+        bool
+            True if the service is bound, False otherwise.
+        """
+        return self.has(abstract)
+
     def make(self, abstract: Any) -> Any:
         """
         Create and return an instance of a registered service.

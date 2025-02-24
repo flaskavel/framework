@@ -1,13 +1,14 @@
 from typing import Any, Callable
 from orionis.luminate.container.container import Container
-from orionis.luminate.bootstrap.config_bootstrapper import ConfigBootstrapper
-from orionis.luminate.bootstrap.command_bootstrapper import CommandsBootstrapper
-from orionis.luminate.bootstrap.environment_bootstrapper import EnvironmentBootstrapper
+from orionis.luminate.foundation.config.config_bootstrapper import ConfigBootstrapper
+from orionis.luminate.foundation.console.command_bootstrapper import CommandsBootstrapper
+from orionis.luminate.foundation.environment.environment_bootstrapper import EnvironmentBootstrapper
 from orionis.luminate.patterns.singleton import SingletonMeta
 from orionis.luminate.providers.commands.reactor_commands_service_provider import ReactorCommandsServiceProvider
 from orionis.luminate.providers.commands.scheduler_provider import ScheduleServiceProvider
 from orionis.luminate.providers.environment.environment__service_provider import EnvironmentServiceProvider
 from orionis.luminate.providers.config.config_service_provider import ConfigServiceProvider
+from orionis.luminate.providers.files.paths_provider import PathResolverProvider
 from orionis.luminate.providers.log.log_service_provider import LogServiceProvider
 
 class Application(metaclass=SingletonMeta):
@@ -211,6 +212,12 @@ class Application(metaclass=SingletonMeta):
         This method ensures that environment variables are loaded and available
         for use during the bootstrapping process.
         """
+        # Load the path provider, which is responsible for resolving file paths.
+        # Developers can interact with it through the facade "orionis.luminate.facades.files.paths.paths_facade.Paths".
+        _path_provider = PathResolverProvider(app=self.container)
+        _path_provider.register()
+        _path_provider.boot()
+
         # Load the environment provider, which is responsible for returning values from the .env file.
         # This provider is essential as it must be loaded first to resolve environment variables.
         # Developers can interact with it through the facade "orionis.luminate.facades.environment.environment_facade.Env".

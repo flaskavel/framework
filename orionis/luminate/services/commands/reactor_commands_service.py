@@ -1,7 +1,7 @@
 import time
 from typing import Any, Dict, Optional
 from orionis.contracts.services.commands.i_reactor_commands_service import IReactorCommandsService
-from orionis.luminate.bootstrap.command_bootstrapper import CommandsBootstrapper
+from orionis.luminate.foundation.console.command_bootstrapper import CommandsBootstrapper
 from orionis.luminate.console.base.command import BaseCommand
 from orionis.luminate.console.command_filter import CommandFilter
 from orionis.luminate.console.exceptions.cli_exception import CLIOrionisException

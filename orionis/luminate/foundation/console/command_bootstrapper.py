@@ -3,7 +3,7 @@ import importlib
 import inspect
 from typing import Any, Callable, Dict, List
 from orionis.contracts.bootstrap.i_command_bootstrapper import ICommandsBootstrapper
-from orionis.luminate.bootstrap.exception_bootstrapper import BootstrapRuntimeError
+from orionis.luminate.foundation.exceptions.exception_bootstrapper import BootstrapRuntimeError
 from orionis.luminate.console.base.command import BaseCommand
 
 class CommandsBootstrapper(ICommandsBootstrapper):
@@ -58,7 +58,7 @@ class CommandsBootstrapper(ICommandsBootstrapper):
         # Define the directories to scan for commands
         command_dirs = [
             base_path / "app" / "console" / "commands",  # Developer-defined commands
-            pathlib.Path(__file__).resolve().parent.parent / "console" / "commands"  # Core commands
+            pathlib.Path(__file__).resolve().parent.parent.parent / "console" / "commands"  # Core commands
         ]
 
         for cmd_dir in command_dirs:

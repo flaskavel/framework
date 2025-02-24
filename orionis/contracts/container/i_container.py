@@ -179,6 +179,23 @@ class IContainer(ABC):
         pass
 
     @abstractmethod
+    def bound(self, abstract: Any) -> bool:
+        """
+        Checks if a service is bound in the container.
+
+        Parameters
+        ----------
+        abstract : Any
+            The service class or alias to check.
+
+        Returns
+        -------
+        bool
+            True if the service is bound, False otherwise.
+        """
+        pass
+
+    @abstractmethod
     def make(self, abstract: Any) -> Any:
         """
         Create and return an instance of a registered service.

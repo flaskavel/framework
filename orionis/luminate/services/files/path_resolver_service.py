@@ -1,14 +1,10 @@
 import os
-import threading
 from pathlib import Path
 from orionis.contracts.services.files.i_path_resolver_service import IPathResolverService
 
 class PathResolverService(IPathResolverService):
 
-    _lock = threading.Lock()
-    _instance = None
-
-    def __new__(cls):
+    def __init__(self):
         """
         Override the __new__ method to ensure only one instance of the class is created.
 
@@ -17,12 +13,7 @@ class PathResolverService(IPathResolverService):
         PathResolverService
             The singleton instance of the PathResolverService class.
         """
-        # Use the lock to ensure thread-safe instantiation
-        with cls._lock:
-            if cls._instance is None:
-                cls._instance = super().__new__(cls)
-                cls._instance.base_path = Path(os.getcwd())
-        return cls._instance
+        self.base_path = Path(os.getcwd())
 
     def resolve(self, route: str) -> str:
         """
@@ -51,9 +42,10 @@ class PathResolverService(IPathResolverService):
         real_path = (self.base_path / route).resolve()
 
         # Validate that the path exists and is either a directory or a file
-        if not real_path.exists():
-            raise Exception(f"The requested path does not exist or is invalid: {real_path}")
-        if not (real_path.is_dir() or real_path.is_file()):
-            raise Exception(f"The requested path does not exist or is invalid: {real_path}")
+        if not str(real_path).endswith('.log'):
+            if not real_path.exists():
+                raise Exception(f"The requested path does not exist or is invalid: {real_path}")
+            if not (real_path.is_dir() or real_path.is_file()):
+                raise Exception(f"The requested path does not exist or is invalid: {real_path}")
 
         return str(real_path)

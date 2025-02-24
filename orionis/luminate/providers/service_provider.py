@@ -21,6 +21,7 @@ class ServiceProvider(IServiceProvider):
             The container instance to be used by the service provider.
         """
         self.app = app
+        self.beferoBootstrapping = False
 
     def register(self) -> None:
         """
