@@ -31,12 +31,12 @@ def app(concrete: Any = None):
     if not app_booted():
 
         # Error message
-        message = "The application context is invalid. Use <with app_context() as cxt:> or ensure that the application is running before using the facades."
+        message = "The application context is invalid. Use <with app_context() as cxt:> or ensure that the application is running."
 
         # Print error in console
-        Console.writeLine("▬" * 40)
+        Console.textMuted("-" * 50)
         Console.error(message)
-        Console.writeLine("▬" * 40)
+        Console.textMuted("-" * 50)
 
         # Raise exception
         raise RuntimeError(message)
