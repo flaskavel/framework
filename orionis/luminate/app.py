@@ -267,6 +267,7 @@ class Application(metaclass=SingletonMeta):
         _log_provider.boot()
 
         # Load the scheduler provider, which is responsible for managing scheduled tasks.
+        # Developers can interact with it through the facade "orionis.luminate.facades.scheduler.scheduler_facade.Schedule".
         _schedule_provider = ScheduleServiceProvider(app=self.container)
         _schedule_provider.register()
         _schedule_provider.boot()
