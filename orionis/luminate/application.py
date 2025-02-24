@@ -370,19 +370,9 @@ def app_context():
 
 def app_booted():
     """
-    Context manager for creating an instance of the Orionis application.
+    Check if the application has been booted.
 
-    This function initializes the Orionis application with a new container,
-    ensuring that the application is properly set up before use.
-
-    Yields
-    ------
-    Application
-        The initialized Orionis application instance.
-
-    Raises
-    ------
-    RuntimeError
-        If the application has not been properly initialized.
+    Returns:
+        bool: True if the application has been booted, False otherwise.
     """
     return Application.booted

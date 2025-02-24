@@ -29,8 +29,17 @@ def app(concrete: Any = None):
         If `concrete` is not bound to the container.
     """
     if not app_booted():
-        Console.error("The application context is invalid. Use <with app_context() as cxt:> or ensure that the application is running before using the facades.")
-        raise SystemExit(1)
+
+        # Error message
+        message = "The application context is invalid. Use <with app_context() as cxt:> or ensure that the application is running before using the facades."
+
+        # Print error in console
+        Console.newLine()
+        Console.error(message)
+        Console.newLine()
+
+        # Raise exception
+        raise RuntimeError(message)
 
     # Call the container instance
     container = Container()
