@@ -1,6 +1,5 @@
 from typing import Dict
 from orionis.contracts.foundation.environment.i_environment_bootstrapper import IEnvironmentBootstrapper
-from orionis.luminate.facades.app_facade import app
 from orionis.luminate.services.environment.environment_service import EnvironmentService
 
 class EnvironmentBootstrapper(IEnvironmentBootstrapper):
@@ -44,7 +43,7 @@ class EnvironmentBootstrapper(IEnvironmentBootstrapper):
         If the file does not exist, it creates an empty `.env` file. If the file exists,
         it loads the environment variables into the `_environment_vars` dictionary.
         """
-        environment_service : EnvironmentService = app(EnvironmentService)
+        environment_service = EnvironmentService()
         self._environment_vars = environment_service.all()
 
     def get(self, key: str = None) -> str:
