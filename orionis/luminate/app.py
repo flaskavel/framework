@@ -8,7 +8,6 @@ from orionis.luminate.providers.commands.reactor_commands_service_provider impor
 from orionis.luminate.providers.environment.environment__service_provider import EnvironmentServiceProvider
 from orionis.luminate.providers.config.config_service_provider import ConfigServiceProvider
 from orionis.luminate.providers.log.log_service_provider import LogServiceProvider
-from orionis.luminate.facades.commands.commands_facade import Command
 
 class Application(metaclass=SingletonMeta):
     """

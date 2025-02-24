@@ -145,6 +145,7 @@ class ReactorCommandsService(IReactorCommandsService):
                 self.console_output.error(message=f"Value Error: {e}")
                 elapsed_time = round(time.perf_counter() - start_time, 2)
                 self.console_executor.fail(program=signature or "Unknown", time=f"{elapsed_time}s")
+            self.console_output.exception(e)
 
         except Exception as e:
             # Handle unexpected execution errors
@@ -153,3 +154,5 @@ class ReactorCommandsService(IReactorCommandsService):
                 self.console_output.error(message=f"Execution Error: {e}")
                 elapsed_time = round(time.perf_counter() - start_time, 2)
                 self.console_executor.fail(program=signature or "Unknown", time=f"{elapsed_time}s")
+            self.console_output.exception(e)
+
