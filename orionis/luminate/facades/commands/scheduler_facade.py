@@ -28,3 +28,11 @@ class Schedule(ISchedule):
         """
         _scheduler_provider : ScheduleService = app(ScheduleService)
         return _scheduler_provider.command(signature, vars, *args, **kwargs)
+
+    @staticmethod
+    def start():
+        """
+        Starts the scheduler and stops automatically when there are no more jobs.
+        """
+        _scheduler_provider : ScheduleService = app(ScheduleService)
+        return _scheduler_provider.start()

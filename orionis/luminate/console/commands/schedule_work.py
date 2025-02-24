@@ -2,7 +2,8 @@ import importlib
 from orionis.luminate.console.base.command import BaseCommand
 from orionis.luminate.console.exceptions.cli_exception import CLIOrionisRuntimeError
 from orionis.contracts.console.i_task_manager import ITaskManager
-from orionis.luminate.services.commands.scheduler_service import ScheduleService
+from orionis.luminate.facades.commands.scheduler_facade import Schedule
+
 
 class ScheduleWorkCommand(BaseCommand):
     """
@@ -18,14 +19,14 @@ class ScheduleWorkCommand(BaseCommand):
     # A brief description of the command.
     description = "Starts the scheduled tasks."
 
-    def __init__(self, schedule:ScheduleService) -> None:
+    def __init__(self, schedule:Schedule) -> None:
         """
         Initialize a new instance of the ScheduleWorkCommand class.
 
         Args:
             schedule (ScheduleService): The schedule instance to use for scheduling tasks.
         """
-        self.schedule = schedule
+        self.schedule : Schedule = schedule
 
     def handle(self) -> None:
         """

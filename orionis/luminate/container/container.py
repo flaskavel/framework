@@ -373,6 +373,10 @@ class Container(IContainer):
             if param_name == 'self':
                 continue
 
+            # Handle parameters that are VAR_POSITIONAL or VAR_KEYWORD
+            if param.kind in (param.VAR_POSITIONAL, param.VAR_KEYWORD):
+                continue
+
             # If parameter has no annotation and no default value, it's unresolved
             if param.annotation is param.empty and param.default is param.empty:
                 unresolved_dependencies.append(param_name)
