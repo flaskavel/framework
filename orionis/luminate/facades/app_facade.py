@@ -33,7 +33,7 @@ def app(concrete: Any = None):
         raise SystemExit(1)
 
     # Create a new container instance
-    container : Container = Container()
+    container = Container()
 
     # If concrete is provided (not None), attempt to resolve it from the container
     if concrete is not None:
