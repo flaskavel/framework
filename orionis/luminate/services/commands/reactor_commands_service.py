@@ -119,7 +119,9 @@ class ReactorCommandsService(IReactorCommandsService):
                 self.console_executor.running(program=signature)
 
             # Retrieve command from bootstrapper
-            command = self.commands_bootstrapper.get(signature)
+            command = self.commands_bootstrapper.get(signature, None)
+            if not command:
+                raise CLIOrionisException(f"Command not found: {signature}")
 
             # Parse command arguments dynamically based on execution context
             args_dict = self._parse_arguments(command.get('arguments', []), vars, *args, **kwargs)
