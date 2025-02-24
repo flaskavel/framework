@@ -7,7 +7,7 @@ class ScheduleServiceProvider(ServiceProvider):
         """
         Registers services or bindings into the given container.
         """
-        self._container_id = self.app.bind(ScheduleService)
+        self._container_id = self.app.scoped(ScheduleService)
 
     def boot(self,) -> None:
         """
