@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from orionis.luminate.console.tasks.scheduler import Schedule
+from orionis.luminate.facades.commands.scheduler_facade import Schedule
 
 class ITaskManager(ABC):
     """
