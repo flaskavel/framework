@@ -225,14 +225,15 @@ class Application(metaclass=SingletonMeta):
         5. Loading command-line interface commands.
         After these steps, the application is marked as booted.
         """
+        # Mark the application as booted
+        Application.started()
+
+        # Bootstrapping process
         self._bootServices()
         self._beforeBootstrapProviders()
         self._bootstrapping()
         self._afterBootstrapProviders()
         self._loadCommands()
-
-        # Mark the application as booted
-        Application.started()
 
     def _bootServices(self):
         """
