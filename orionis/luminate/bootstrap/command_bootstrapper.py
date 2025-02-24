@@ -170,4 +170,6 @@ class CommandsBootstrapper(ICommandsBootstrapper):
         """
         if signature is None:
             return self._commands
-        return self._commands[signature] or {}
+        if signature not in self._commands:
+            raise KeyError(f"Command '{signature}' not found.")
+        return self._commands[signature]
