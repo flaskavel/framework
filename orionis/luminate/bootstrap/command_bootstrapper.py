@@ -170,4 +170,4 @@ class CommandsBootstrapper(ICommandsBootstrapper):
         """
         if signature is None:
             return self._commands
-        return self._commands[signature]
+        return self._commands[signature] or {}

@@ -4,13 +4,6 @@ from typing import Any, Callable
 class IContainer(ABC):
 
     @abstractmethod
-    def _newRequest(self) -> None:
-        """
-        Reset scoped instances at the beginning of a new request.
-        """
-        pass
-
-    @abstractmethod
     def _ensureNotMain(self, concrete: Callable[..., Any]) -> str:
         """
         Ensure that a class is not defined in the main script.
@@ -82,6 +75,13 @@ class IContainer(ABC):
             If the instance is not a valid object.
         """
         pass
+
+    @abstractmethod
+    def forgetScopedInstances(self) -> None:
+        """
+        Reset scoped instances at the beginning of a new request.
+        """
+        self._scoped_instances = {}
 
     @abstractmethod
     def bind(self, concrete: Callable[..., Any]) -> str:

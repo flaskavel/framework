@@ -1,6 +1,6 @@
 from typing import Any
 from orionis.luminate.container.container import Container
-from orionis.luminate.container.exception import OrionisContainerException, OrionisContainerTypeError
+from orionis.luminate.container.exception import OrionisContainerTypeError
 
 def app(concrete: Any = None):
     """
@@ -33,8 +33,6 @@ def app(concrete: Any = None):
 
     # If concrete is provided (not None), attempt to resolve it from the container
     if concrete is not None:
-        if not isinstance(concrete, type):
-            raise OrionisContainerTypeError(f"The provided concrete must be a class or service, got {type(concrete)}.")
         return container.make(concrete)
 
     # If concrete is None, return the container instance

@@ -38,12 +38,6 @@ class Container(IContainer):
                     cls._instance._validate_types = Types()
         return cls._instance
 
-    def _newRequest(self) -> None:
-        """
-        Reset scoped instances at the beginning of a new request.
-        """
-        self._scoped_instances = {}
-
     def _ensureNotMain(self, concrete: Callable[..., Any]) -> str:
         """
         Ensure that a class is not defined in the main script.
@@ -116,6 +110,12 @@ class Container(IContainer):
         """
         if not isinstance(instance, object) or instance.__class__.__module__ in ['builtins', 'abc']:
             raise OrionisContainerValueError(f"The instance '{str(instance)}' must be a valid object.")
+
+    def forgetScopedInstances(self) -> None:
+        """
+        Reset scoped instances at the beginning of a new request.
+        """
+        self._scoped_instances = {}
 
     def bind(self, concrete: Callable[..., Any]) -> str:
         """
