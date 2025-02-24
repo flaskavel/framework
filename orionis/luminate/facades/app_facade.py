@@ -32,7 +32,7 @@ def app(concrete: Any = None):
         Console.error("The application context is invalid. Use <with app_context() as cxt:> or ensure that the application is running before using the facades.")
         raise SystemExit(1)
 
-    # Create a new container instance
+    # Call the container instance
     container = Container()
 
     # If concrete is provided (not None), attempt to resolve it from the container
