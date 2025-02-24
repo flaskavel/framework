@@ -11,6 +11,10 @@ class ServiceProvider(IServiceProvider):
         The container instance to be used by the service provider.
     """
 
+    # Indicates whether the service provider is a bootstrapper.
+    beferoBootstrapping = False
+
+
     def __init__(self, app : Container) -> None:
         """
         Initialize the service provider with the given container.
@@ -21,7 +25,6 @@ class ServiceProvider(IServiceProvider):
             The container instance to be used by the service provider.
         """
         self.app = app
-        self.beferoBootstrapping = False
 
     def register(self) -> None:
         """

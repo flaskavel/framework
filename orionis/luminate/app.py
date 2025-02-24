@@ -1,8 +1,11 @@
 from typing import Any, Callable
+from orionis.contracts.foundation.i_bootstraper import IBootstrapper
+from orionis.luminate.console.base.command import BaseCommand
 from orionis.luminate.container.container import Container
 from orionis.luminate.foundation.config.config_bootstrapper import ConfigBootstrapper
 from orionis.luminate.foundation.console.command_bootstrapper import CommandsBootstrapper
 from orionis.luminate.foundation.environment.environment_bootstrapper import EnvironmentBootstrapper
+from orionis.luminate.foundation.providers.service_providers_bootstrapper import ServiceProvidersBootstrapper
 from orionis.luminate.patterns.singleton import SingletonMeta
 from orionis.luminate.providers.commands.reactor_commands_service_provider import ReactorCommandsServiceProvider
 from orionis.luminate.providers.commands.scheduler_provider import ScheduleServiceProvider
@@ -10,6 +13,7 @@ from orionis.luminate.providers.environment.environment__service_provider import
 from orionis.luminate.providers.config.config_service_provider import ConfigServiceProvider
 from orionis.luminate.providers.files.paths_provider import PathResolverProvider
 from orionis.luminate.providers.log.log_service_provider import LogServiceProvider
+from orionis.luminate.providers.service_provider import ServiceProvider
 
 class Application(metaclass=SingletonMeta):
     """
@@ -50,6 +54,8 @@ class Application(metaclass=SingletonMeta):
             The dependency injection container for the application.
         """
         # Class attributes
+        self._before_boot_service_providers: list = []
+        self._after_boot_service_providers: list = []
         self._config: dict = {}
         self._commands: dict = {}
         self._environment_vars: dict = {}
@@ -58,7 +64,7 @@ class Application(metaclass=SingletonMeta):
         # Initialize the application container
         self.container = container
         self.container.instance(container)
-        self.boot()
+        self._boot()
 
     def isBooted(self) -> bool:
         """
@@ -186,101 +192,118 @@ class Application(metaclass=SingletonMeta):
         """
         return self.container.forgetScopedInstances()
 
-    def boot(self):
+    def _boot(self):
         """
-        Bootstraps the application.
-
-        This method is responsible for loading the environment, configuration, and core providers.
-        It ensures the application is ready to handle requests or commands.
+        Bootstraps the application by loading environment configuration and core providers.
+        Notes
+        -----
+        The bootstrapping process involves several steps:
+        1. Loading essential services.
+        2. Executing pre-bootstrap provider hooks.
+        3. Initializing core components.
+        4. Executing post-bootstrap provider hooks.
+        5. Loading command-line interface commands.
+        After these steps, the application is marked as booted.
         """
-        # Load environment server
+        self._bootServices()
         self._beforeBootstrapProviders()
-
-        # Dynamically load application configuration
         self._bootstraping()
-
-        # Load core providers
         self._afterBootstrapProviders()
-
-        # Set the booted flag to True
+        self._loadCommands()
         self._booted = True
+
+    def _bootServices(self):
+        """
+        Bootstraps the application services.
+
+        This method is responsible for loading the application's services. It reads all the
+        ServiceProviders from the Core and those defined by the developer. Then, it stores
+        in class dictionaries the services that need to be loaded before and after the Bootstrap.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
+        services_bootstrapper_key = self.singleton(ServiceProvidersBootstrapper)
+        services_bootstrapper: ServiceProvidersBootstrapper = self.make(services_bootstrapper_key)
+        self._before_boot_service_providers = services_bootstrapper.getBeforeServiceProviders()
+        self._after_boot_service_providers = services_bootstrapper.getAfterServiceProviders()
 
     def _beforeBootstrapProviders(self):
         """
-        Registers and boots essential providers required before bootstrapping.
+        Loads and registers essential services before bootstrapping.
 
-        This method ensures that environment variables are loaded and available
-        for use during the bootstrapping process.
+        This method is responsible for loading and registering the services that are
+        required before the main bootstrapping process. It iterates through the list
+        of service providers that need to be initialized early, registers them, and
+        then boots them to make sure they are ready for use.
         """
-        # Load the path provider, which is responsible for resolving file paths.
-        # Developers can interact with it through the facade "orionis.luminate.facades.files.paths.paths_facade.Paths".
-        _path_provider = PathResolverProvider(app=self.container)
-        _path_provider.register()
-        _path_provider.boot()
-
-        # Load the environment provider, which is responsible for returning values from the .env file.
-        # This provider is essential as it must be loaded first to resolve environment variables.
-        # Developers can interact with it through the facade "orionis.luminate.facades.environment.environment_facade.Env".
-        _environment_provider = EnvironmentServiceProvider(app=self.container)
-        _environment_provider.register()
-        _environment_provider.boot()
+        for service in self._before_boot_service_providers:
+            _environment_provider : ServiceProvider = service(app=self.container)
+            _environment_provider.register()
+            _environment_provider.boot()
 
     def _bootstraping(self):
         """
-        Loads user-defined configuration, commands, and environment variables.
+        Loads configuration, commands, environment variables, and other bootstrappers.
 
-        This method initializes the configuration, commands, and environment variables
-        required for the application to function.
+        This method initializes and updates the class dictionaries with the results
+        from various bootstrappers. It ensures that the application has the necessary
+        configuration, commands, and environment variables loaded before proceeding
+        with the rest of the bootstrapping process.
         """
-        # This initializer loads the user-defined configuration from the "config" folder.
-        # It extracts configuration values and stores them as class properties for future use.
-        config_bootstrapper_key = self.singleton(ConfigBootstrapper)
-        config_bootstrapper: ConfigBootstrapper = self.make(config_bootstrapper_key)
-        self._config = config_bootstrapper.get()
+        singletons_bootstrappers = [
+            (self._config, ConfigBootstrapper),
+            (self._commands, CommandsBootstrapper),
+            (self._environment_vars, EnvironmentBootstrapper)
+        ]
+        for bootstrapper in singletons_bootstrappers:
+            property_cls, bootstrapper_class = bootstrapper
+            bootstrapper_key = self.singleton(bootstrapper_class)
+            bootstrapper_instance : IBootstrapper = self.make(bootstrapper_key)
+            property_cls.update(bootstrapper_instance.get())
 
-        # This initializer dynamically searches for all user-defined commands in the "commands" folder,
-        # both from the framework core and developer-defined commands.
-        # It stores them in a dictionary and registers them in the container.
-        commands_bootstrapper_key = self.singleton(CommandsBootstrapper)
-        commands_bootstrapper: CommandsBootstrapper = self.make(commands_bootstrapper_key)
-        self._commands = commands_bootstrapper.get()
+    def _loadCommands(self):
+        """
+        Loads CLI commands, including both core system commands and those defined by the developer.
+
+        This method iterates over the commands stored in the `_commands` attribute, binds each command 
+        to its corresponding concrete implementation, and registers the command alias.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
         for command in self._commands.keys():
-            _key_instance_container = self.bind(self._commands[command].get('concrete'))
-            self.alias(alias=command, concrete=_key_instance_container)
-
-        # Load environment variables and store them as class properties.
-        # This is useful for executing future tasks conditioned on environment values.
-        environment_bootstrapper_key = self.singleton(EnvironmentBootstrapper)
-        environment_bootstrapper: EnvironmentBootstrapper = self.make(environment_bootstrapper_key)
-        self._environment_vars = environment_bootstrapper.get()
+            data_command:dict = self._commands[command]
+            id_container_concrete = self.bind(data_command.get('concrete'))
+            self.alias(alias=command, concrete=id_container_concrete)
 
     def _afterBootstrapProviders(self):
         """
-        Registers and boots additional providers after bootstrapping.
+        Loads services into the container that depend on the Bootstrap process being completed.
 
-        This method ensures that configuration and logging providers are loaded
-        and available for use in the application.
+        This method iterates over the list of service providers that need to be loaded after the
+        Bootstrap process. For each service provider, it creates an instance, registers it, and
+        then boots it.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
         """
-        # Load the configuration provider, which is responsible for returning configuration values.
-        # Developers can interact with it through the facade "orionis.luminate.facades.config.config_facade.Config".
-        _environment_provider = ConfigServiceProvider(app=self.container)
-        _environment_provider.register()
-        _environment_provider.boot()
-
-        # Load the log provider based on the application configuration defined by the developer.
-        # Developers can interact with it through the facade "orionis.luminate.facades.log.log_facade.Log".
-        _log_provider = LogServiceProvider(app=self.container)
-        _log_provider.register()
-        _log_provider.boot()
-
-        # Load the scheduler provider, which is responsible for managing scheduled tasks.
-        # Developers can interact with it through the facade "orionis.luminate.facades.scheduler.scheduler_facade.Schedule".
-        _schedule_provider = ScheduleServiceProvider(app=self.container)
-        _schedule_provider.register()
-        _schedule_provider.boot()
-
-        # Load the commands provider, which is responsible for executing and managing CLI commands.
-        # Developers can interact with it through the facade "orionis.luminate.facades.commands.commands_facade.Commands".
-        _commands_provider = ReactorCommandsServiceProvider(app=self.container)
-        _commands_provider.register()
-        _commands_provider.boot()
+        for service in self._after_boot_service_providers:
+            _environment_provider : ServiceProvider = service(app=self.container)
+            _environment_provider.register()
+            _environment_provider.boot()

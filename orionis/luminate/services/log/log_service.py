@@ -1,9 +1,9 @@
 import logging
 import os
+from pathlib import Path
 import re
 from datetime import datetime
 from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
-from pathlib import Path
 from orionis.contracts.services.log.i_log_service import ILogguerService
 from orionis.luminate.services.config.config_service import ConfigService
 
@@ -69,11 +69,16 @@ class LogguerService(ILogguerService):
         """
         try:
 
+            base = Path(self.config_service.get("logging.base_path", os.getcwd()))
+            default_path = base / "storage" / "logs"
+            default_path.mkdir(parents=True, exist_ok=True)
+            default_path = default_path / "orionis.log"
+
             handlers = []
 
             channel : str = self.config_service.get("logging.default")
             config : dict = self.config_service.get(f"logging.channels.{channel}", {})
-            path : str = config.get("path", 'logs/orionis.log')
+            path : str = config.get("path", default_path)
             app_timezone : str = self.config_service.get("app.timezone", "UTC")
 
             if channel == "stack":

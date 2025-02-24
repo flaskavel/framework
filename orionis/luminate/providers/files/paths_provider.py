@@ -3,11 +3,12 @@ from orionis.luminate.services.files.path_resolver_service import PathResolverSe
 
 class PathResolverProvider(ServiceProvider):
 
+    beferoBootstrapping = True
+
     def register(self) -> None:
         """
         Registers services or bindings into the given container.
         """
-        self.beferoBootstrapping = True
         self._container_id = self.app.singleton(PathResolverService)
 
     def boot(self) -> None:

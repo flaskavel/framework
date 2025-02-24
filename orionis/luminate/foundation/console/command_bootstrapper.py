@@ -2,7 +2,7 @@ import pathlib
 import importlib
 import inspect
 from typing import Any, Callable, Dict, List
-from orionis.contracts.bootstrap.i_command_bootstrapper import ICommandsBootstrapper
+from orionis.contracts.foundation.console.i_command_bootstrapper import ICommandsBootstrapper
 from orionis.luminate.foundation.exceptions.exception_bootstrapper import BootstrapRuntimeError
 from orionis.luminate.console.base.command import BaseCommand
 

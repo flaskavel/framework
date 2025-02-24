@@ -1,5 +1,5 @@
 from typing import Dict
-from orionis.contracts.bootstrap.i_environment_bootstrapper import IEnvironmentBootstrapper
+from orionis.contracts.foundation.environment.i_environment_bootstrapper import IEnvironmentBootstrapper
 from orionis.luminate.facades.app import app
 from orionis.luminate.services.environment.environment_service import EnvironmentService
 

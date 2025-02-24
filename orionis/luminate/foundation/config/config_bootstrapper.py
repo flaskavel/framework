@@ -2,7 +2,7 @@ import importlib
 import pathlib
 from dataclasses import asdict
 from typing import Any, Dict
-from orionis.contracts.bootstrap.i_config_bootstrapper import IConfigBootstrapper
+from orionis.contracts.foundation.config.i_config_bootstrapper import IConfigBootstrapper
 from orionis.contracts.config.i_config import IConfig
 from orionis.luminate.foundation.exceptions.exception_bootstrapper import BootstrapRuntimeError
 
