@@ -5,7 +5,7 @@ import shutil
 import subprocess
 from unicodedata import normalize
 from orionis.framework import SKELETON, DOCS
-from orionis.installer.installer_output import InstallerOutput
+from orionis.installer.output.output import InstallerOutput
 
 class InstallerSetup:
     """

@@ -1,6 +1,6 @@
 from typing import Any, Callable
 from contextlib import contextmanager
-from orionis.contracts.foundation.i_bootstraper import IBootstrapper
+from orionis.luminate.contracts.foundation.i_bootstraper import IBootstrapper
 from orionis.luminate.container.container import Container
 from orionis.luminate.foundation.config.config_bootstrapper import ConfigBootstrapper
 from orionis.luminate.foundation.console.command_bootstrapper import CommandsBootstrapper

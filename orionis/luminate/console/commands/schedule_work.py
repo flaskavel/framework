@@ -1,7 +1,7 @@
 import importlib
 from orionis.luminate.console.base.command import BaseCommand
 from orionis.luminate.console.exceptions.cli_exception import CLIOrionisRuntimeError
-from orionis.contracts.console.i_task_manager import ITaskManager
+from orionis.luminate.contracts.console.i_task_manager import ITaskManager
 from orionis.luminate.facades.commands.scheduler_facade import Schedule
 
 

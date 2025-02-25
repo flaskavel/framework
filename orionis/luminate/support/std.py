@@ -1,4 +1,4 @@
-from orionis.contracts.support.i_std import IStdClass
+from orionis.luminate.contracts.support.i_std import IStdClass
 
 class StdClass(IStdClass):
     """

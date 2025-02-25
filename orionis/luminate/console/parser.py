@@ -3,7 +3,7 @@ import types
 import argparse
 from contextlib import redirect_stderr
 from io import StringIO
-from orionis.contracts.console.i_parser import IParser
+from orionis.luminate.contracts.console.i_parser import IParser
 
 class Parser(IParser):
     """

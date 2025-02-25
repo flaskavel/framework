@@ -1,5 +1,5 @@
 from typing import Any
-from orionis.contracts.facades.commands.i_scheduler_facade import ISchedule
+from orionis.luminate.contracts.facades.commands.i_scheduler_facade import ISchedule
 from orionis.luminate.facades.app_facade import app
 from orionis.luminate.services.commands.scheduler_service import ScheduleService
 

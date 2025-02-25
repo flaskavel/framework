@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 from typing import Any
 from dotenv import set_key, unset_key, dotenv_values
-from orionis.contracts.services.environment.i_environment_service import IEnvironmentService
+from orionis.luminate.contracts.services.environment.i_environment_service import IEnvironmentService
 
 class EnvironmentService(IEnvironmentService):
 

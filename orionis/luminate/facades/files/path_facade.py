@@ -1,5 +1,5 @@
 import os
-from orionis.contracts.facades.files.i_path_facade import IPath
+from orionis.luminate.contracts.facades.files.i_path_facade import IPath
 from orionis.luminate.services.files.path_resolver_service import PathResolverService
 
 class Path(IPath):

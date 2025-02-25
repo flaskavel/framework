@@ -1,4 +1,4 @@
-from orionis.contracts.providers.i_service_provider import IServiceProvider
+from orionis.luminate.contracts.providers.i_service_provider import IServiceProvider
 from orionis.luminate.container.container import Container
 
 class ServiceProvider(IServiceProvider):

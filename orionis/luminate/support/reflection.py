@@ -3,7 +3,7 @@ import inspect
 import importlib
 from enum import Enum
 from typing import Any, List, Optional
-from orionis.contracts.support.i_reflection import IReflection
+from orionis.luminate.contracts.support.i_reflection import IReflection
 
 class Reflection(IReflection):
     """

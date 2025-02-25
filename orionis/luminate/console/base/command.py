@@ -1,4 +1,4 @@
-from orionis.contracts.console.base.i_command import IBaseCommand
+from orionis.luminate.contracts.console.base.i_command import IBaseCommand
 from orionis.luminate.console.output.console import Console
 from orionis.luminate.console.output.progress_bar import ProgressBar
 

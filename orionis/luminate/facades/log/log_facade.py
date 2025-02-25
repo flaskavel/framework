@@ -1,4 +1,4 @@
-from orionis.contracts.facades.log.i_log_facade import ILog
+from orionis.luminate.contracts.facades.log.i_log_facade import ILog
 from orionis.luminate.facades.app_facade import app
 from orionis.luminate.services.log.log_service import LogguerService
 

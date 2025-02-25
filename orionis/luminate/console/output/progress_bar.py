@@ -1,5 +1,5 @@
 import sys
-from orionis.contracts.console.output.i_progress_bar import IProgressBar
+from orionis.luminate.contracts.console.output.i_progress_bar import IProgressBar
 
 class ProgressBar(IProgressBar):
     """

@@ -1,6 +1,6 @@
 import copy
 from typing import Any, Optional
-from orionis.contracts.services.config.i_config_service import IConfigService
+from orionis.luminate.contracts.services.config.i_config_service import IConfigService
 from orionis.luminate.foundation.config.config_bootstrapper import ConfigBootstrapper
 
 class ConfigService(IConfigService):

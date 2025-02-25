@@ -1,4 +1,4 @@
-from orionis.contracts.console.i_command_filter import ICommandFilter
+from orionis.luminate.contracts.console.i_command_filter import ICommandFilter
 
 # List of commands to exclude from output formatting
 EXCLUDED_COMMANDS = [

@@ -1,4 +1,4 @@
-from orionis.contracts.container.i_types import ITypes
+from orionis.luminate.contracts.container.i_types import ITypes
 
 class Types(ITypes):
     """

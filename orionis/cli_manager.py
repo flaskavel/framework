@@ -1,6 +1,6 @@
 import argparse
-from orionis.installer.installer_manager import InstallerManager
-from orionis.installer.installer_output import InstallerOutput
+from orionis.installer.manager import InstallerManager
+from orionis.installer.output.output import InstallerOutput
 
 # Main entry point for the Orionis CLI tool.
 def main():

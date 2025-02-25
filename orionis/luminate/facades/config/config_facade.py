@@ -1,5 +1,5 @@
 from typing import Any, Optional
-from orionis.contracts.facades.config.i_config_facade import IConfig
+from orionis.luminate.contracts.facades.config.i_config_facade import IConfig
 from orionis.luminate.facades.app_facade import app
 from orionis.luminate.services.config.config_service import ConfigService
 

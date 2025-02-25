@@ -1,7 +1,7 @@
 import importlib
 import inspect
 import pathlib
-from orionis.contracts.foundation.providers.i_service_providers_bootstrapper import IServiceProvidersBootstrapper
+from orionis.luminate.contracts.foundation.providers.i_service_providers_bootstrapper import IServiceProvidersBootstrapper
 from orionis.luminate.container.container import Container
 from orionis.luminate.foundation.exceptions.exception_bootstrapper import BootstrapRuntimeError
 from orionis.luminate.providers.service_provider import ServiceProvider

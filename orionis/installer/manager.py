@@ -1,9 +1,9 @@
 
 import subprocess
 import sys
-from orionis.contracts.installer.i_installer_manager import IInstallerManager
-from orionis.installer.installer_output import InstallerOutput
-from orionis.installer.installer_setup import InstallerSetup
+from orionis.installer.contracts.i_installer_manager import IInstallerManager
+from orionis.installer.contracts.i_installer_setup import InstallerSetup
+from orionis.installer.output.output import InstallerOutput
 
 class InstallerManager(IInstallerManager):
     """

@@ -2,7 +2,7 @@ import os
 import sys
 import getpass
 import datetime
-from orionis.contracts.console.output.i_console import IConsole
+from orionis.luminate.contracts.console.output.i_console import IConsole
 from orionis.luminate.console.output.styles import ANSIColors
 from orionis.luminate.support.exception_to_dict import ExceptionsToDict
 

@@ -2,7 +2,7 @@ import inspect
 from collections import deque
 from threading import Lock
 from typing import Callable, Any, Dict, get_args, get_origin
-from orionis.contracts.container.i_container import IContainer
+from orionis.luminate.contracts.container.i_container import IContainer
 from orionis.luminate.container.exception import OrionisContainerException, OrionisContainerValueError, OrionisContainerTypeError
 from orionis.luminate.container.types import Types
 

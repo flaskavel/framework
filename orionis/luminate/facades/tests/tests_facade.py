@@ -1,5 +1,5 @@
 import os
-from orionis.contracts.facades.tests.i_tests_facade import IUnitTests
+from orionis.luminate.contracts.facades.tests.i_tests_facade import IUnitTests
 from orionis.luminate.test.unit_test import UnitTest
 
 class UnitTests(IUnitTests):

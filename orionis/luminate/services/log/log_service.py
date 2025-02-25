@@ -4,7 +4,7 @@ from pathlib import Path
 import re
 from datetime import datetime
 from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
-from orionis.contracts.services.log.i_log_service import ILogguerService
+from orionis.luminate.contracts.services.log.i_log_service import ILogguerService
 from orionis.luminate.services.config.config_service import ConfigService
 
 class LogguerService(ILogguerService):
