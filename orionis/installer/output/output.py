@@ -60,7 +60,7 @@ class InstallerOutput(IInstallerOutput):
         try:
             # Try loading and printing ASCII art from the file
             dir_path = os.path.dirname(__file__)
-            path = os.path.join(dir_path, '..', 'static', 'ascii', 'icon.ascii')
+            path = os.path.join(dir_path, '..', '..', 'static', 'ascii', 'icon.ascii')
             with open(path, 'r', encoding='utf-8') as file:
                 content = file.read()
 
@@ -91,7 +91,7 @@ class InstallerOutput(IInstallerOutput):
         try:
             # Try loading and printing ASCII art from the file
             dir_path = os.path.dirname(__file__)
-            path = os.path.join(dir_path, '..', 'static', 'ascii', 'info.ascii')
+            path = os.path.join(dir_path, '..', '..', 'static', 'ascii', 'info.ascii')
             with open(path, 'r', encoding='utf-8') as file:
                 content = file.read()
 
