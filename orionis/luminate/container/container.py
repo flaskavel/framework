@@ -23,6 +23,14 @@ class Container(IContainer):
     _instance = None
     _lock = Lock()
 
+    @classmethod
+    def reset(cls):
+        """
+        Reset the container instance to None, allowing a new instance to be created.
+        """
+        cls._instance = None
+        super().__new__(cls)
+
     def __new__(cls):
         if cls._instance is None:
             with cls._lock:

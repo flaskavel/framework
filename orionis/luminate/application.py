@@ -65,6 +65,17 @@ class Application(metaclass=SingletonMeta):
             raise RuntimeError("Application has not been initialized yet. Please create an instance first.")
         return SingletonMeta._instances[cls]
 
+    @classmethod
+    def reset(cls):
+        """
+        Resets the application instance if it exists.
+
+        This method is used to reset the application instance and clear the singleton instances
+        stored in the `SingletonMeta` class.
+        """
+        if cls in SingletonMeta._instances:
+            del SingletonMeta._instances[cls]
+
     def __init__(self, container: Container):
         """
         Initializes the Application instance.
@@ -376,3 +387,21 @@ def app_booted():
         bool: True if the application has been booted, False otherwise.
     """
     return Application.booted
+
+def orionis():
+    """
+    Creates a new instance of the Orionis application.
+
+    Ensures that any existing singleton instance of `Application` is removed before
+    creating a fresh instance. It resets the singleton instances stored in `SingletonMeta`
+    and `Container`.
+
+    Returns
+    -------
+    Application
+        A new instance of the Orionis application.
+    """
+    Container.reset()
+    Application.reset()
+
+    return Application(Container())
