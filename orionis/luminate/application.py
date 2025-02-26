@@ -364,11 +364,8 @@ def app_context():
 
         # Check if the application has been booted
         if not Application.booted:
-            # Create a new application instance
-            app = Application(Container())
-            app.boot()
+            app = Application(Container()).boot()
         else:
-            # Get the current application instance
             app = Application.getCurrentInstance()
 
         # Yield the application instance
